@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @Entity
-public class Participant {
+public class Substitute {
 
 	@Id
 	@UuidGenerator
@@ -25,6 +25,5 @@ public class Participant {
 	@Column(nullable = false)
 	private String	profileLink;
 
-	private UUID	replacementParticipantId;
-
+	private UUID	tournamentId;
 }

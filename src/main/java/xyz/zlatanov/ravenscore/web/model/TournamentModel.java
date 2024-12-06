@@ -1,5 +1,6 @@
 package xyz.zlatanov.ravenscore.web.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
@@ -15,5 +16,6 @@ public class TournamentModel {
 	private String						description;
 	private Scoring						scoring;
 	private boolean						hidden;
-	private List<TournamentStageModel>	tournamentStageModelList;
+	private List<SubstituteModel>		substituteModelList			= new ArrayList<>();
+	private List<TournamentStageModel>	tournamentStageModelList	= new ArrayList<>();
 }

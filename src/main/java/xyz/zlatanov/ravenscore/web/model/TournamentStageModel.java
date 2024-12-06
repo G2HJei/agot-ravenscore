@@ -13,4 +13,5 @@ public class TournamentStageModel {
 	private String					id;
 	private String					name;
 	private List<ParticipantModel>	participantModelList	= new ArrayList<>();
+	private List<GameModel>			gameModelList			= new ArrayList<>();
 }

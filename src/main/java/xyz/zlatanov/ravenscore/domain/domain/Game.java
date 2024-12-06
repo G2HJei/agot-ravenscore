@@ -35,7 +35,7 @@ public class Game {
 	@Column(nullable = false)
 	private String		gameLink;
 
-	private int			round;
+	private Integer		round;
 
 	@Column(nullable = false)
 	private UUID		tournamentStageId;

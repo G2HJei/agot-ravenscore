@@ -8,16 +8,15 @@ create table tournament
     tournament_key varchar(32)  not null
 );
 
-
-create table participant
+create table substitute
 (
-    id                         uuid         not null primary key,
-    replacement_participant_id uuid,
-    name                       varchar(64)  not null,
-    substitute                 boolean      not null,
-    profile_link               varchar(255) not null,
-    constraint fk_replacement_participant_id foreign key (replacement_participant_id) references participant (id) on delete cascade
+    id            uuid         not null primary key,
+    tournament_id uuid         not null,
+    name          varchar(64)  not null,
+    profile_link  varchar(255) not null,
+    constraint fk_tournament_id foreign key (tournament_id) references tournament (id) on delete cascade
 );
+
 
 create table tournament_stage
 (
@@ -26,6 +25,15 @@ create table tournament_stage
     participant_id_list uuid[]       not null,
     name                varchar(255) not null,
     constraint fk_tournament_id foreign key (tournament_id) references tournament (id) on delete cascade
+);
+
+create table participant
+(
+    id                         uuid         not null primary key,
+    replacement_participant_id uuid,
+    name                       varchar(64)  not null,
+    profile_link               varchar(255) not null,
+    constraint fk_replacement_participant_id foreign key (replacement_participant_id) references participant (id) on delete cascade
 );
 
 create table game

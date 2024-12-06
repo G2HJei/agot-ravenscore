@@ -1,5 +1,6 @@
 package xyz.zlatanov.ravenscore.domain.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +10,6 @@ import xyz.zlatanov.ravenscore.domain.domain.Participant;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, UUID> {
+
+	List<Participant> findByIdIn(List<UUID> participantIds);
 }
