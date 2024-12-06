@@ -1,0 +1,20 @@
+RRRRRRRRRRRRRRRRR
+R::::::::::::::::R
+R::::::RRRRRR:::::R
+RR:::::R     R:::::R
+  R::::R     R:::::R  aaaaaaaaaaaaavvvvvvv           vvvvvvv eeeeeeeeeeee    nnnn  nnnnnnnn        ssssssssss       cccccccccccccccc   ooooooooooo   rrrrr   rrrrrrrrr       eeeeeeeeeeee
+  R::::R     R:::::R  a::::::::::::av:::::v         v:::::vee::::::::::::ee  n:::nn::::::::nn    ss::::::::::s    cc:::::::::::::::c oo:::::::::::oo r::::rrr:::::::::r    ee::::::::::::ee
+  R::::RRRRRR:::::R   aaaaaaaaa:::::av:::::v       v:::::ve::::::eeeee:::::een::::::::::::::nn ss:::::::::::::s  c:::::::::::::::::co:::::::::::::::or:::::::::::::::::r  e::::::eeeee:::::ee
+  R:::::::::::::RR             a::::a v:::::v     v:::::ve::::::e     e:::::enn:::::::::::::::ns::::::ssss:::::sc:::::::cccccc:::::co:::::ooooo:::::orr::::::rrrrr::::::re::::::e     e:::::e
+  R::::RRRRRR:::::R     aaaaaaa:::::a  v:::::v   v:::::v e:::::::eeeee::::::e  n:::::nnnn:::::n s:::::s  ssssss c::::::c     ccccccco::::o     o::::o r:::::r     r:::::re:::::::eeeee::::::e
+  R::::R     R:::::R  aa::::::::::::a   v:::::v v:::::v  e:::::::::::::::::e   n::::n    n::::n   s::::::s      c:::::c             o::::o     o::::o r:::::r     rrrrrrre:::::::::::::::::e
+  R::::R     R:::::R a::::aaaa::::::a    v:::::v:::::v   e::::::eeeeeeeeeee    n::::n    n::::n      s::::::s   c:::::c             o::::o     o::::o r:::::r            e::::::eeeeeeeeeee
+  R::::R     R:::::Ra::::a    a:::::a     v:::::::::v    e:::::::e             n::::n    n::::nssssss   s:::::s c::::::c     ccccccco::::o     o::::o r:::::r            e:::::::e
+RR:::::R     R:::::Ra::::a    a:::::a      v:::::::v     e::::::::e            n::::n    n::::ns:::::ssss::::::sc:::::::cccccc:::::co:::::ooooo:::::o r:::::r            e::::::::e
+R::::::R     R:::::Ra:::::aaaa::::::a       v:::::v       e::::::::eeeeeeee    n::::n    n::::ns::::::::::::::s  c:::::::::::::::::co:::::::::::::::o r:::::r             e::::::::eeeeeeee
+R::::::R     R:::::R a::::::::::aa:::a       v:::v         ee:::::::::::::e    n::::n    n::::n s:::::::::::ss    cc:::::::::::::::c oo:::::::::::oo  r:::::r              ee:::::::::::::e
+RRRRRRRR     RRRRRRR  aaaaaaaaaa  aaaa        vvv            eeeeeeeeeeeeee    nnnnnn    nnnnnn  sssssssssss        cccccccccccccccc   ooooooooooo    rrrrrrr                eeeeeeeeeeeeee
+
+
+
+                                                                                                                                                                                             
