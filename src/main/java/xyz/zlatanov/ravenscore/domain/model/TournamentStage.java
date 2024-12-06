@@ -1,16 +1,16 @@
 package xyz.zlatanov.ravenscore.domain.model;
 
-import static jakarta.persistence.CascadeType.ALL;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UuidGenerator;
 
-import jakarta.persistence.*;
+import io.hypersistence.utils.hibernate.type.array.UUIDArrayType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Data
@@ -20,27 +20,16 @@ public class TournamentStage {
 
 	@Id
 	@UuidGenerator
-	private UUID				id;
+	private UUID	id;
 
 	@Column(nullable = false)
-	private String				name;
+	private String	name;
 
-	@OneToMany(cascade = ALL)
-	@JoinColumn(name = "tournament_stage_id", nullable = false)
-	@ToString.Exclude
-	private List<Game>			gameList		= new ArrayList<>();
+	@Column(nullable = false)
+	private UUID	tournamentId;
 
-	@ManyToMany(mappedBy = "tournamentStageList")
-	@ToString.Exclude
-	private List<Participant>	participantList	= new ArrayList<>();
-
-	public void addParticipant(Participant participant) {
-		participantList.add(participant);
-		participant.tournamentStageList().add(this);
-	}
-
-	public void removeParticipant(Participant participant) {
-		participantList.remove(participant);
-		participant.tournamentStageList().remove(this);
-	}
+	@NotEmpty
+	@Type(UUIDArrayType.class)
+	@Column(columnDefinition = "UUID[]")
+	private UUID[]	participantIdList;
 }
