@@ -1,5 +1,5 @@
 package xyz.zlatanov.ravenscore.domain.model;
 
 public enum Ruleset {
-	IRON_BANK_TOURNAMENT
+	POSITION_PLUS_CITIES
 }

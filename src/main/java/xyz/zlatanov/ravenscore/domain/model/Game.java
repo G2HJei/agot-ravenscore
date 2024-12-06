@@ -12,6 +12,8 @@ import org.hibernate.annotations.UuidGenerator;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import lombok.ToString;
+import lombok.val;
 import lombok.experimental.Accessors;
 
 @Data
@@ -33,20 +35,24 @@ public class Game {
 	@Column(nullable = false)
 	private String				gameLink;
 
-	private short				currentRound;
+	private int					currentRound;
 
 	@NotEmpty
 	@OneToMany(cascade = ALL)
 	@JoinColumn(name = "game_id", nullable = false)
+	@ToString.Exclude
 	private List<Player>		playerList		= new ArrayList<>();
 
 	@NotEmpty
 	@ManyToMany(mappedBy = "gameList")
+	@ToString.Exclude
 	private List<Participant>	participantList	= new ArrayList<>();
 
-	public void addParticipant(Participant participant) {
-		participantList.add(participant);
-		participant.gameList().add(this);
+	public void addParticipants(Participant... participants) {
+		for (val p : participants) {
+			participantList.add(p);
+			p.gameList().add(this);
+		}
 	}
 
 	public void removeParticipant(Participant participant) {
