@@ -39,7 +39,7 @@ public class Player {
 	private Integer	score;
 
 	@Column(nullable = false)
-	private short	penaltyPoints	= 0;
+	private Integer	penaltyPoints	= 0;
 
 	@Column(nullable = false)
 	private UUID	gameId;
