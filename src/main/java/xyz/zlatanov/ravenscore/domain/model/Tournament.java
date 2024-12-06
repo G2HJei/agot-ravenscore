@@ -32,6 +32,9 @@ public class Tournament {
 	@Column(length = 32, nullable = false)
 	private Ruleset	scoring;
 
+	@Column(nullable = false)
+	private boolean	hidden	= false;
+
 	@Column(length = 32, nullable = false)
 	private String	tournamentKey;
 

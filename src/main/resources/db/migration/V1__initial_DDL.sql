@@ -4,6 +4,7 @@ create table tournament
     description    varchar(2000),
     name           varchar(255) not null,
     scoring        varchar(32)  not null,
+    hidden         boolean      not null,
     tournament_key varchar(32)  not null
 );
 
