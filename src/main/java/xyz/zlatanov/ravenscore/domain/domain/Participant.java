@@ -28,9 +28,6 @@ public class Participant {
 	@Column(nullable = false)
 	private boolean	substitute;
 
-	@Column(nullable = false)
-	private UUID	tournamentId;
-
 	private UUID	replacementParticipantId;
 
 }
