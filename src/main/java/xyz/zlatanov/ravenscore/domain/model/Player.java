@@ -2,6 +2,8 @@ package xyz.zlatanov.ravenscore.domain.model;
 
 import static jakarta.persistence.EnumType.STRING;
 
+import java.util.UUID;
+
 import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.Column;
@@ -18,7 +20,7 @@ public class Player {
 
 	@Id
 	@UuidGenerator
-	private String	id;
+	private UUID	id;
 
 	@Enumerated(STRING)
 	@Column(length = 16, nullable = false)
@@ -38,4 +40,9 @@ public class Player {
 
 	@Column(nullable = false)
 	private short	penaltyPoints	= 0;
+
+	@Column(nullable = false)
+	private UUID	gameId;
+
+	private UUID	participantId;
 }

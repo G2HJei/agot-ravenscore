@@ -1,17 +1,16 @@
 package xyz.zlatanov.ravenscore.domain.model;
 
-import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Data
@@ -21,28 +20,19 @@ public class Tournament {
 
 	@Id
 	@UuidGenerator
-	private UUID					id;
+	private UUID	id;
 
 	@Column(nullable = false)
-	private String					name;
+	private String	name;
 
 	@Column(length = 2000)
-	private String					description;
+	private String	description;
 
 	@Enumerated(STRING)
 	@Column(length = 32, nullable = false)
-	private Ruleset					scoring;
+	private Ruleset	scoring;
 
 	@Column(length = 32, nullable = false)
-	private String					tournamentKey;
+	private String	tournamentKey;
 
-	@OneToMany(cascade = ALL)
-	@JoinColumn(name = "tournament_id", nullable = false)
-	@ToString.Exclude
-	private List<Participant>		participantList		= new ArrayList<>();
-
-	@OneToMany(cascade = ALL)
-	@JoinColumn(name = "tournament_id", nullable = false)
-	@ToString.Exclude
-	private List<TournamentStage>	tournamentStageList	= new ArrayList<>();
 }
