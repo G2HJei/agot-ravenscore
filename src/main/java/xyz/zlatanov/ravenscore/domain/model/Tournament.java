@@ -30,7 +30,7 @@ public class Tournament {
 
 	@Enumerated(STRING)
 	@Column(length = 32, nullable = false)
-	private Ruleset	scoring;
+	private Scoring	scoring;
 
 	@Column(nullable = false)
 	private boolean	hidden	= false;
