@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<body>
+<main layout:fragment="content">
+    <div class="d-flex justify-content-start align-items-center">
+        <img th:src="@{'/logo.png'}" alt="Logo" class="d-inline-block align-text-top">
+        <div>
+            <p> Welcome my Lord,</p>
+            <p> In Ravenscore, you can create, manage and participate in tournaments of the classic board game A Game of
+                Thrones by Fantasy Flight games. The currently supported platform for online play is Swords and Ravens,
+                but
+                you can also use the platform to organize offline tournaments as well.</p>
+            <p> You can check out the ongoing tournaments <a th:href="${'/tourneys'}">here</a>.</p>
+            <p> Good luck and remember - in the game of thrones you win or you die! </p>
+        </div>
+    </div>
+</main>
+</body>
+</html>
