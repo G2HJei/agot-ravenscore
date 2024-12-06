@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.domain.model;
+package xyz.zlatanov.ravenscore.domain.domain;
 
 import java.util.UUID;
 
