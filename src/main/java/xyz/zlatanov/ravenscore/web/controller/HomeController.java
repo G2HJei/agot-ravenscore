@@ -10,10 +10,4 @@ public class HomeController {
 	String home() {
 		return "home";
 	}
-
-	@GetMapping("/tourneys")
-	String tourneys() {
-
-		return "tourneys";
-	}
 }

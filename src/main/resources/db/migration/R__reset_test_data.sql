@@ -10,13 +10,13 @@ VALUES ('11111111-1111-1111-1111-111111111111'::UUID, 'Winter Tournament of West
         'POSITION_PLUS_CITIES', false, 'WINT2024');
 
 -- Insert into participant table
-INSERT INTO participant (id, tournament_id, replacement_participant_id, name, substitute, profile_link)
-VALUES ('22222222-2222-2222-2222-222222222222'::UUID, '11111111-1111-1111-1111-111111111111'::UUID, NULL,
-        'Eddard Stark', false, 'https://example.com/profiles/eddard'),
-       ('33333333-3333-3333-3333-333333333333'::UUID, '11111111-1111-1111-1111-111111111111'::UUID,
-        '22222222-2222-2222-2222-222222222222'::UUID, 'Jon Snow', true, 'https://example.com/profiles/jon'),
-       ('44444444-4444-4444-4444-444444444444'::UUID, '11111111-1111-1111-1111-111111111111'::UUID, NULL,
-        'Daenerys Targaryen', false, 'https://example.com/profiles/daenerys');
+INSERT INTO participant (id, replacement_participant_id, name, substitute, profile_link)
+VALUES ('22222222-2222-2222-2222-222222222222'::UUID, NULL, 'Eddard Stark', false,
+        'https://example.com/profiles/eddard'),
+       ('33333333-3333-3333-3333-333333333333'::UUID, '22222222-2222-2222-2222-222222222222'::UUID, 'Jon Snow', true,
+        'https://example.com/profiles/jon'),
+       ('44444444-4444-4444-4444-444444444444'::UUID, NULL, 'Daenerys Targaryen', false,
+        'https://example.com/profiles/daenerys');
 
 -- Insert into tournament_stage table
 INSERT INTO tournament_stage (id, tournament_id, participant_id_list, name)
