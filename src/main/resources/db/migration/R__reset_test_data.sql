@@ -38,5 +38,6 @@ VALUES ('77777777-7777-7777-7777-777777777777'::UUID, '66666666-6666-6666-6666-6
         '44444444-4444-4444-4444-444444444444'::UUID, 2, 'Targaryen', 0, 6, 2, 2, 12, 4);
 
 -- Insert into substitute table
-INSERT INTO substitute (id, name, profile_link)
-VALUES ('99999999-9999-9999-9999-999999999999'::UUID, 'Balon Greyjoy', 'https://example.com/profiles/balon');
+INSERT INTO substitute (id, name, profile_link, tournament_id)
+VALUES ('99999999-9999-9999-9999-999999999999'::UUID, 'Balon Greyjoy', 'https://example.com/profiles/balon',
+        '11111111-1111-1111-1111-111111111111'::UUID);
