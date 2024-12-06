@@ -11,6 +11,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Data
@@ -29,17 +30,19 @@ public class Tournament {
 	private String					description;
 
 	@Enumerated(STRING)
-	@Column(length = 16, nullable = false)
-	private Ruleset					ruleset;
+	@Column(length = 32, nullable = false)
+	private Ruleset					scoring;
 
 	@Column(length = 32, nullable = false)
 	private String					tournamentKey;
 
 	@OneToMany(cascade = ALL)
 	@JoinColumn(name = "tournament_id", nullable = false)
+	@ToString.Exclude
 	private List<Participant>		participantList		= new ArrayList<>();
 
 	@OneToMany(cascade = ALL)
 	@JoinColumn(name = "tournament_id", nullable = false)
+	@ToString.Exclude
 	private List<TournamentStage>	tournamentStageList	= new ArrayList<>();
 }

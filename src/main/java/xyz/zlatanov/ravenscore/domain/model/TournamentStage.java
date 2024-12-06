@@ -10,6 +10,7 @@ import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Data
@@ -26,9 +27,11 @@ public class TournamentStage {
 
 	@OneToMany(cascade = ALL)
 	@JoinColumn(name = "tournament_stage_id", nullable = false)
+	@ToString.Exclude
 	private List<Game>			gameList		= new ArrayList<>();
 
 	@ManyToMany(mappedBy = "tournamentStageList")
+	@ToString.Exclude
 	private List<Participant>	participantList	= new ArrayList<>();
 
 	public void addParticipant(Participant participant) {

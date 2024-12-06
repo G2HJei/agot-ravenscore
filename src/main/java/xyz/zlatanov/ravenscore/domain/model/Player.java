@@ -24,17 +24,17 @@ public class Player {
 	@Column(length = 16, nullable = false)
 	private House	house;
 
-	private Short	rank;
+	private Integer	rank;
 
-	private Short	castles;
+	private Integer	castles;
 
-	private Short	landAreas;
+	private Integer	landAreas;
 
-	private Short	supply;
+	private Integer	supply;
 
-	private Short	ironThrone;
+	private Integer	ironThrone;
 
-	private Short	score;
+	private Integer	score;
 
 	@Column(nullable = false)
 	private short	penaltyPoints	= 0;
