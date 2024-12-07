@@ -10,6 +10,7 @@ public class ErrorHandlerController {
 
 	@ExceptionHandler(Exception.class)
 	public String unknownException(HttpServletRequest request, Exception e) {
+		e.printStackTrace();
 		return "error";
 	}
 }

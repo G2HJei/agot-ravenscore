@@ -15,7 +15,7 @@ import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.ParticipantRepository;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentStageRepository;
-import xyz.zlatanov.ravenscore.web.model.TournamentSummaryModel;
+import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentSummaryModel;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +65,7 @@ public class TourneysSummaryService {
 				.toList();
 		return (int) participants.stream()
 				.filter(p -> participantIds.contains(p.id()))
+				.distinct()
 				.count();
 	}
 

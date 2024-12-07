@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<body>
+<main layout:fragment="content">
+    <div class="container mt-5 position-relative">
+        <div class="title mb-3">The Grand Tournament</div>
+
+        <div class="subtitle mb-4">
+            <a href="#">Round 1</a>
+            <a href="#">Round 2</a>
+            <a href="#">Finals</a>
+        </div>
+
+        <div class="rules-icons">
+            <img src="icon-discard.png" alt="Discard Rules">
+            <img src="icon-rules.png" alt="Rules">
+        </div>
+
+        <div class="rankings">
+            <div class="section-title">Rankings</div>
+            <p>Pesho: 22 pts (23 total -1 penalty), 2 wins, 8.4 pt/game, 5 games</p>
+            <p>Ginka: 0 pts...</p>
+            <p>Reserves: Kuncho</p>
+        </div>
+
+        <div class="games">
+            <div class="section-title">Games</div>
+
+            <div class="game-card">
+                <strong>Tourney Game 1</strong> <span>[ADWD] [8p] [R5/6]</span>
+            </div>
+
+            <div class="game-card">
+                <strong>Tourney Game 2</strong> <span>[ADWD] [8p] [R5/6]</span>
+                <p class="mt-2">Players: Pesho, Gosho, Kum4o, Val4o</p>
+                <p>Ranking (final/ongoing):</p>
+                <ul>
+                    <li>6 pts <span class="penalty">[house icon]</span> The Waif / Pesho</li>
+                    <li>5 pts <span class="penalty">[house icon]</span> The Handsome Man / Gosho</li>
+                </ul>
+                <p>Final Score:</p>
+                <ul>
+                    <li>13 pts <span class="penalty">[house icon]</span> The Waif / Pesho</li>
+                    <li>9 pts <span class="penalty">[house icon]</span> The Handsome Man / Gosho</li>
+                </ul>
+                <p class="penalty">Penalty points: 1 pt <span class="penalty">[house icon]</span> The Waif / Pesho</p>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,21 +1,19 @@
-package xyz.zlatanov.ravenscore.web.model;
+package xyz.zlatanov.ravenscore.web.model.tourdetails;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import xyz.zlatanov.ravenscore.domain.domain.Scoring;
 
 @Data
 @Accessors(fluent = true)
-public class TournamentModel {
+public class TournamentDetailsModel {
 
 	private String						id;
 	private String						name;
 	private String						description;
-	private Scoring						scoring;
-	private boolean						hidden;
+	private String						startDate;
 	private List<SubstituteModel>		substituteModelList			= new ArrayList<>();
 	private List<TournamentStageModel>	tournamentStageModelList	= new ArrayList<>();
 }

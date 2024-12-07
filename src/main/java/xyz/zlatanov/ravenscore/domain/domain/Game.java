@@ -28,9 +28,9 @@ public class Game {
 	private String		name;
 
 	@Enumerated(STRING)
-	private GameType	gameType;
+	private GameType	type;
 
-	private String		gameLink;
+	private String		link;
 
 	private Integer		round;
 
