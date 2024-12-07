@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.model;
+package xyz.zlatanov.ravenscore.web.model.tourdetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,8 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class TournamentStageModel {
 
-	private String					id;
 	private String					name;
+	private String					startDate;
 	private List<ParticipantModel>	participantModelList	= new ArrayList<>();
 	private List<GameModel>			gameModelList			= new ArrayList<>();
 }

@@ -40,8 +40,8 @@ CREATE TABLE game
     tournament_stage_id uuid         NOT NULL,
     participant_id_list uuid[]       NOT NULL,
     round               INTEGER      NOT NULL,
-    game_link           VARCHAR(255) NOT NULL,
-    game_type           VARCHAR(32)  NOT NULL,
+    link                VARCHAR(255) NOT NULL,
+    type                VARCHAR(32)  NOT NULL,
     name                VARCHAR(255) NOT NULL,
     CONSTRAINT fk_tournament_stage_id FOREIGN KEY (tournament_stage_id) REFERENCES tournament_stage (id) ON DELETE cascade
 );

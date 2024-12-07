@@ -1,20 +1,18 @@
-package xyz.zlatanov.ravenscore.web.model;
+package xyz.zlatanov.ravenscore.web.model.tourdetails;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import xyz.zlatanov.ravenscore.domain.domain.GameType;
 
 @Data
 @Accessors(fluent = true)
 public class GameModel {
 
-	private String				id;
 	private String				name;
-	private GameType			gameType;
-	private String				gameLink;
-	private Integer				round;
+	private String				type;
+	private String				link;
+	private String				round;
 	private List<PlayerModel>	playerModelList	= new ArrayList<>();
 }
