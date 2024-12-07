@@ -25,23 +25,19 @@ public class Game {
 	@UuidGenerator
 	private UUID		id;
 
-	@Column(nullable = false)
 	private String		name;
 
 	@Enumerated(STRING)
-	@Column(length = 32, nullable = false)
 	private GameType	gameType;
 
-	@Column(nullable = false)
 	private String		gameLink;
 
 	private Integer		round;
 
-	@Column(nullable = false)
 	private UUID		tournamentStageId;
 
 	@NotEmpty
 	@Type(UUIDArrayType.class)
-	@Column(nullable = false)
+	@Column(columnDefinition = "UUID[]")
 	private UUID[]		participantIdList;
 }
