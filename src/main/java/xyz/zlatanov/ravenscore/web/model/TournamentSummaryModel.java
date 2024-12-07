@@ -10,6 +10,10 @@ public class TournamentSummaryModel {
 	private String	id;
 	private String	name;
 	private Integer	numberOfParticipants;
-	private String	startDate;
-	private String	lastStage;
+	private String	statusLabel;
+	private String	statusDate;
+
+	public int backgroundNumber() {
+		return name.length() % 4 + 1;
+	}
 }

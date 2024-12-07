@@ -6,14 +6,35 @@
 <body>
 <main layout:fragment="content">
     <div class="d-flex justify-content-start align-items-center mt-5">
-        <img th:src="@{'/logo.png'}" style="max-width: 50%" alt="Logo" class="d-inline-block align-text-top">
+        <img th:src="@{'/logo.png'}" style="max-width: 50%; height: 24rem" alt="Logo"
+             class="d-inline-block align-text-top">
         <div class="me-3">
             <p class="fst-italic"> Welcome my Lord,</p>
             <p class="fst-italic"> In Ravenscore, you can create, manage and participate in tournaments of the classic
-                board game A Game of Thrones by Fantasy Flight games. The currently supported platform for online play
-                is Swords and Ravens, but you can also manually manage any tournament you might host.</p>
-            <p class="fst-italic"> You can check out the ongoing tournaments <a th:href="${'/tourneys'}">here</a>.</p>
+                board game A Game of Thrones by Fantasy Flight games. Ravenscore is free, so you can also manage any
+                tournament you might host.</p>
             <p class="fst-italic"> Good luck and remember - in the game of thrones you win or you die! </p>
+        </div>
+    </div>
+    <h3 class="text-center mt-2 mb-3">Public Tournaments</h3>
+    <div class="row justify-content-center">
+        <div th:each="tourney : ${tourneysList}" class="col-12 col-lg-3 d-flex justify-content-center mb-3">
+            <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
+                <img th:src="@{'/backgrounds/bg-'+${tourney.backgroundNumber()}+'.jpg'}"
+                     class="card-img-top" alt="Background">
+                <div class="card-body">
+                    <a th:href="@{'/tourney/'+${tourney.id}}" class="stretched-link"></a>
+                    <h5 class="card-title text-center" th:text="${tourney.name}">Tourney name</h5>
+                    <p class="card-text text-muted text-center"
+                       th:text="${tourney.numberOfParticipants + ' participants'}">
+                        Participants</p>
+                    <p class="card-text text-center">
+                        <span th:text="${tourney.statusLabel}"></span>
+                        &nbsp;
+                        <span class="text-muted text-nowrap" th:text="${tourney.statusDate}"></span>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </main>
