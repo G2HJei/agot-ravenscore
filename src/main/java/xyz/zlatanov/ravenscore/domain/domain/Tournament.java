@@ -2,6 +2,7 @@ package xyz.zlatanov.ravenscore.domain.domain;
 
 import static jakarta.persistence.EnumType.STRING;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -20,22 +21,24 @@ public class Tournament {
 
 	@Id
 	@UuidGenerator
-	private UUID	id;
+	private UUID		id;
 
 	@Column(nullable = false)
-	private String	name;
+	private String		name;
 
 	@Column(length = 2000)
-	private String	description;
+	private String		description;
 
 	@Enumerated(STRING)
 	@Column(length = 32, nullable = false)
-	private Scoring	scoring;
+	private Scoring		scoring;
 
 	@Column(nullable = false)
-	private boolean	hidden	= false;
+	private boolean		hidden		= false;
 
 	@Column(length = 32, nullable = false)
-	private String	tournamentKey;
+	private String		tournamentKey;
 
+	@Column(nullable = false)
+	private LocalDate	startDate	= LocalDate.now();
 }

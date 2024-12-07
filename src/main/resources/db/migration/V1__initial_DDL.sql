@@ -1,69 +1,63 @@
-create table tournament
+CREATE TABLE tournament
 (
-    id             uuid         not null primary key,
-    description    varchar(2000),
-    name           varchar(255) not null,
-    scoring        varchar(32)  not null,
-    hidden         boolean      not null,
-    tournament_key varchar(32)  not null
+    id             uuid         NOT NULL PRIMARY KEY,
+    description    VARCHAR(2000),
+    name           VARCHAR(255) NOT NULL,
+    scoring        VARCHAR(32)  NOT NULL,
+    hidden         BOOLEAN      NOT NULL,
+    tournament_KEY VARCHAR(32)  NOT NULL,
+    start_date     DATE         NOT NULL
 );
-
-create table substitute
+CREATE TABLE substitute
 (
-    id            uuid         not null primary key,
-    tournament_id uuid         not null,
-    name          varchar(64)  not null,
-    profile_link  varchar(255) not null,
-    constraint fk_tournament_id foreign key (tournament_id) references tournament (id) on delete cascade
+    id            uuid        NOT NULL PRIMARY KEY,
+    tournament_id uuid        NOT NULL,
+    name          VARCHAR(64) NOT NULL,
+    profile_links VARCHAR(255)[],
+    CONSTRAINT fk_tournament_id FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON DELETE cascade
 );
-
-
-create table tournament_stage
+CREATE TABLE tournament_stage
 (
-    id                  uuid         not null primary key,
-    tournament_id       uuid         not null,
-    participant_id_list uuid[]       not null,
-    name                varchar(255) not null,
-    constraint fk_tournament_id foreign key (tournament_id) references tournament (id) on delete cascade
+    id                  uuid         NOT NULL PRIMARY KEY,
+    tournament_id       uuid         NOT NULL,
+    stage_number        INTEGER      NOT NULL,
+    participant_id_list uuid[]       NOT NULL,
+    name                VARCHAR(255) NOT NULL,
+    start_date          DATE         NOT NULL,
+    CONSTRAINT fk_tournament_id FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON DELETE cascade
 );
-
-create table participant
+CREATE TABLE participant
 (
-    id                         uuid         not null primary key,
+    id                         uuid        NOT NULL PRIMARY KEY,
     replacement_participant_id uuid,
-    name                       varchar(64)  not null,
-    profile_link               varchar(255) not null,
-    constraint fk_replacement_participant_id foreign key (replacement_participant_id) references participant (id) on delete cascade
+    name                       VARCHAR(64) NOT NULL,
+    profile_links              VARCHAR(255)[],
+    CONSTRAINT fk_replacement_participant_id FOREIGN KEY (replacement_participant_id) REFERENCES participant (id) ON DELETE cascade
 );
-
-create table game
+CREATE TABLE game
 (
-    id                  uuid         not null primary key,
-    tournament_stage_id uuid         not null,
-    participant_id_list uuid[]       not null,
-    current_round       integer      not null,
-    game_link           varchar(255) not null,
-    game_type           varchar(32)  not null,
-    name                varchar(255) not null,
-
-    constraint fk_tournament_stage_id foreign key (tournament_stage_id) references tournament_stage (id) on delete cascade
+    id                  uuid         NOT NULL PRIMARY KEY,
+    tournament_stage_id uuid         NOT NULL,
+    participant_id_list uuid[]       NOT NULL,
+    round               INTEGER      NOT NULL,
+    game_link           VARCHAR(255) NOT NULL,
+    game_type           VARCHAR(32)  NOT NULL,
+    name                VARCHAR(255) NOT NULL,
+    CONSTRAINT fk_tournament_stage_id FOREIGN KEY (tournament_stage_id) REFERENCES tournament_stage (id) ON DELETE cascade
 );
-
-
-create table player
+CREATE TABLE player
 (
-    id             uuid        not null primary key,
-    game_id        uuid        not null,
+    id             uuid        NOT NULL PRIMARY KEY,
+    game_id        uuid        NOT NULL,
     participant_id uuid,
-    castles        integer,
-    house          varchar(16) not null,
-    iron_throne    integer,
-    land_areas     integer,
-    penalty_points smallint    not null,
-    rank           integer,
-    score          integer,
-    supply         integer,
-    constraint fk_game_id foreign key (game_id) references game (id) on delete cascade,
-    constraint fk_participant_id foreign key (participant_id) references participant (id) on delete cascade
+    castles        INTEGER,
+    house          VARCHAR(16) NOT NULL,
+    iron_throne    INTEGER,
+    land_areas     INTEGER,
+    penalty_points SMALLINT    NOT NULL,
+    RANK           INTEGER,
+    score          INTEGER,
+    supply         INTEGER,
+    CONSTRAINT fk_game_id FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE cascade,
+    CONSTRAINT fk_participant_id FOREIGN KEY (participant_id) REFERENCES participant (id) ON DELETE cascade
 );
-
