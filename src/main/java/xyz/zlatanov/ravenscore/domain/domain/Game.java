@@ -42,6 +42,6 @@ public class Game {
 
 	@NotEmpty
 	@Type(UUIDArrayType.class)
-	@Column(columnDefinition = "UUID[]")
+	@Column(nullable = false)
 	private UUID[]		participantIdList;
 }

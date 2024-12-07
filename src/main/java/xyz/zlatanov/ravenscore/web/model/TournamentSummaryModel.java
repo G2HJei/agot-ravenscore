@@ -11,5 +11,5 @@ public class TournamentSummaryModel {
 	private String	name;
 	private Integer	numberOfParticipants;
 	private String	startDate;
-	private String	activeStage;
+	private String	lastStage;
 }
