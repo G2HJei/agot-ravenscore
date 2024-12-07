@@ -21,11 +21,10 @@ public class Substitute {
 	@UuidGenerator
 	private UUID		id;
 
-	@Column(length = 64, nullable = false)
 	private String		name;
 
 	@Type(StringArrayType.class)
-	@Column(nullable = false)
+	@Column(columnDefinition = "VARCHAR[]")
 	private String[]	profileLinks;
 
 	private UUID		tournamentId;

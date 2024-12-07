@@ -23,20 +23,16 @@ public class TournamentStage {
 	@UuidGenerator
 	private UUID		id;
 
-	@Column(nullable = false)
 	private String		name;
 
-	@Column(nullable = false)
 	private Integer		stageNumber;
 
-	@Column(nullable = false)
 	private LocalDate	startDate	= LocalDate.now();
 
-	@Column(nullable = false)
 	private UUID		tournamentId;
 
 	@NotEmpty
 	@Type(UUIDArrayType.class)
-	@Column(columnDefinition = "UUID[]", nullable = false)
+	@Column(columnDefinition = "UUID[]")
 	private UUID[]		participantIdList;
 }

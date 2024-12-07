@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -23,7 +22,6 @@ public class Player {
 	private UUID	id;
 
 	@Enumerated(STRING)
-	@Column(length = 16, nullable = false)
 	private House	house;
 
 	private Integer	rank;
@@ -38,10 +36,8 @@ public class Player {
 
 	private Integer	score;
 
-	@Column(nullable = false)
 	private Integer	penaltyPoints	= 0;
 
-	@Column(nullable = false)
 	private UUID	gameId;
 
 	private UUID	participantId;

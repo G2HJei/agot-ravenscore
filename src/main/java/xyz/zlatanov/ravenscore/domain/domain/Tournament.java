@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -23,22 +22,16 @@ public class Tournament {
 	@UuidGenerator
 	private UUID		id;
 
-	@Column(nullable = false)
 	private String		name;
 
-	@Column(length = 2000)
 	private String		description;
 
 	@Enumerated(STRING)
-	@Column(length = 32, nullable = false)
 	private Scoring		scoring;
 
-	@Column(nullable = false)
 	private boolean		hidden		= false;
 
-	@Column(length = 32, nullable = false)
 	private String		tournamentKey;
 
-	@Column(nullable = false)
 	private LocalDate	startDate	= LocalDate.now();
 }
