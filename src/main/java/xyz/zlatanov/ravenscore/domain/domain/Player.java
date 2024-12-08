@@ -28,12 +28,6 @@ public class Player {
 
 	private Integer	castles;
 
-	private Integer	landAreas;
-
-	private Integer	supply;
-
-	private Integer	ironThrone;
-
 	private Integer	score;
 
 	private Integer	penaltyPoints	= 0;

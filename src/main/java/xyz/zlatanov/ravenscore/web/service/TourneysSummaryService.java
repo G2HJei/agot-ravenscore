@@ -19,19 +19,19 @@ import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentSummaryModel;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class TourneysSummaryService {
 
 	private final TournamentRepository		tournamentRepository;
 	private final ParticipantRepository		participantRepository;
 	private final TournamentStageRepository	tournamentStageRepository;
 
+	@Transactional(readOnly = true)
 	public List<TournamentSummaryModel> getPublicTourneys() {
 		val tourneys = tournamentRepository.findByHiddenFalse();
 		val tourIds = tourneys.stream().map(Tournament::id).toList();
-		val stages = tournamentStageRepository.findByTournamentIdIn(tourIds);
+		val stages = tournamentStageRepository.findByTournamentIdInOrderByStartDate(tourIds);
 		val participantIds = stages.stream().flatMap(ts -> Arrays.stream(ts.participantIdList())).toList();
-		val participants = participantRepository.findByIdIn(participantIds);
+		val participants = participantRepository.findByIdInOrderByName(participantIds);
 		return buildModel(tourneys, stages, participants);
 	}
 
@@ -73,6 +73,5 @@ public class TourneysSummaryService {
 		return stages.stream()
 				.filter(s -> s.tournamentId().equals(tourId))
 				.max(Comparator.comparing(TournamentStage::stageNumber));
-
 	}
 }

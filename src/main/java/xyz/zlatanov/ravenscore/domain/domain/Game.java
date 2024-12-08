@@ -36,6 +36,8 @@ public class Game {
 
 	private UUID		tournamentStageId;
 
+	private Boolean		completed;
+
 	@NotEmpty
 	@Type(UUIDArrayType.class)
 	@Column(columnDefinition = "UUID[]")
