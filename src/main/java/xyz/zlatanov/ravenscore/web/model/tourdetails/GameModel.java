@@ -16,5 +16,8 @@ public class GameModel {
 	private String				link;
 	private String				round;
 	private Boolean				completed;
+	private Boolean				playersRevealed;
+	private List<String>		participantIdList;
 	private List<PlayerModel>	playerModelList	= new ArrayList<>();
+
 }

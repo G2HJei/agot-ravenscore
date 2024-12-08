@@ -36,7 +36,10 @@ public class TournamentDetailsBuilder {
 		return substituteList.stream()
 				.map(sub -> new SubstituteModel()
 						.name(sub.name())
-						.profileLinks(Arrays.stream(sub.profileLinks()).map(ProfileLink::new).toList()))
+						.profileLinks(Arrays.stream(sub.profileLinks())
+								.map(ProfileLink::new)
+								.sorted(Comparator.comparing(ProfileLink::link, Comparator.nullsFirst(Comparator.naturalOrder())))
+								.toList()))
 				.toList();
 	}
 
@@ -60,6 +63,10 @@ public class TournamentDetailsBuilder {
 						.link(g.link())
 						.round(g.round().toString())
 						.completed(g.completed())
+						.participantIdList(Arrays.stream(g.participantIdList()).map(UUID::toString).toList())
+						.playersRevealed(playerList.stream()
+								.filter(player -> player.gameId().equals(g.id()))
+								.allMatch(player -> player.participantId() != null))
 						.playerModelList(getPlayers(g.id())))
 				.toList();
 	}
@@ -67,18 +74,27 @@ public class TournamentDetailsBuilder {
 	private List<PlayerModel> getPlayers(UUID gameId) {
 		return playerList.stream()
 				.filter(player -> player.gameId().equals(gameId))
-				.map(player -> new PlayerModel()
-						.name(Optional.ofNullable(player.participantId())
-								.map(participantId -> participantList.stream()
-										.filter(p -> p.id().equals(participantId))
-										.findFirst()
-										.map(Participant::name)
-										.orElseThrow(() -> new RavenscoreException("Invalid player-participant connection.")))
-								.orElse(capitalizeFirstLetter(player.house())))
-						.house(capitalizeFirstLetter(player.house()))
-						.castles(player.castles())
-						.score(player.score())
-						.penaltyPoints(player.penaltyPoints()))
+				.map(player -> {
+					val participant = Optional.ofNullable(player.participantId())
+							.map(participantId -> participantList.stream()
+									.filter(p -> p.id().equals(participantId))
+									.findFirst()
+									.orElseThrow(() -> new RavenscoreException("Invalid player-participant connection.")));
+					return new PlayerModel()
+							.name(participant.map(Participant::name).orElse(capitalizeFirstLetter(player.house())))
+							.profileLinks(participant
+									.map(p -> Arrays.stream(p.profileLinks()).toList()
+											.stream()
+											.map(ProfileLink::new)
+											.sorted(Comparator.comparing(ProfileLink::link,
+													Comparator.nullsFirst(Comparator.naturalOrder())))
+											.toList())
+									.orElse(List.of()))
+							.house(capitalizeFirstLetter(player.house()))
+							.castles(player.castles())
+							.score(player.score())
+							.penaltyPoints(player.penaltyPoints());
+				})
 				.toList();
 	}
 
@@ -96,6 +112,7 @@ public class TournamentDetailsBuilder {
 					val completedGames = games.stream().filter(Game::completed).toList().size();
 					val points = new PlayerPointsCalculator(games, players).calculatePoints();
 					return new ParticipantModel()
+							.id(participant.id().toString())
 							.name(participant.name())
 							.profileLinks(Arrays.stream(participant.profileLinks()).map(ProfileLink::new).toList())
 							.games(completedGames + "/" + games.size())

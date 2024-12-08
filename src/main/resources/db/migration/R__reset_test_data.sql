@@ -16,7 +16,7 @@ VALUES ('22222222-2222-2222-2222-222222222222'::UUID, NULL, 'Eddard Stark',
        ('33333333-3333-3333-3333-333333333333'::UUID, '22222222-2222-2222-2222-222222222222'::UUID, 'Jon Snow',
         ARRAY ['https://thronemaster.com/profiles/jon']),
        ('44444444-4444-4444-4444-444444444444'::UUID, NULL, 'Daenerys Targaryen',
-        ARRAY ['https://swordsandravens.com/profiles/daenerys']);
+        ARRAY ['https://swordsandravens.com/profiles/daenerys', 'Daenerys69']);
 
 -- Insert into tournament_stage table
 INSERT INTO tournament_stage (id, tournament_id, stage_number, participant_id_list, name, start_date)

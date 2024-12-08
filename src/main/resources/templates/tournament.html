@@ -6,15 +6,15 @@
 <body>
 <main layout:fragment="content">
     <div class="d-flex justify-content-center align-items-center">
-        <h2 class="ms-3" th:text="${model.name}">Tourney Name</h2>
+        <h2 class="text-muted ms-3" th:text="${model.name}">Tourney Name</h2>
     </div>
 
-    <div class="d-flex justify-content-start align-items-center mb-3">
+    <div class="d-flex justify-content-center align-items-center mb-3">
         <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph ms-1 me-3"
                 data-bs-toggle="tooltip" data-bs-title="Show tourney rules & details" onclick="showRules()"></button>
         <ul class="nav nav-underline mb-3">
             <li class="nav-item" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
-                <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : '')}" href="#"
+                <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : 'text-muted')}" href="#"
                    th:text="${stage.name}">Stage</a>
             </li>
         </ul>
@@ -70,7 +70,7 @@
                 <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
                      data-bs-parent="#accordionGames">
                     <div class="accordion-body ms-3">
-                        <div class="d-flex justify-content-start gap-2 w-100">
+                        <div class="d-flex justify-content-start gap-3 w-100">
                             <div class="card" style="width: 15rem; position: relative; overflow: hidden;">
                                 <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
                                      class="card-img-top" alt="Background">
@@ -81,31 +81,78 @@
                                 </div>
                             </div>
                             <div class="w-100">
-                                <p>
-                                <h6 class="text-center">Rankings</h6>
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Player</th>
-                                        <th scope="col">Score</th>
-                                        <th scope="col">Penalty pts.</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr th:each="player, playerIdx: ${game.playerModelList}">
-                                        <th scope="row" th:text="${playerIdx.index+1}">#</th>
-                                        <td>
-                                            <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
-                                                 style="max-height: 1.5rem">&nbsp;
-                                            <text th:text="${player.name}"></text>
-                                        </td>
-                                        <td th:text="${player.score}">score</td>
-                                        <td th:text="${player.penaltyPoints}">score</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                </p>
+                                <div th:if="${not game.playersRevealed}">
+                                    <h6 class="text-center">Participants</h6>
+                                    <div class="row mb-3">
+                                        <th:block th:each="participant : ${stage.participantModelList}">
+                                            <th:block th:if="${game.participantIdList.contains(participant.id)}">
+                                                <div class="col-4 mb-3">
+                                                    <span th:text="${participant.name}">Stark</span>
+                                                    <br/>
+                                                    <th:block th:each="link : ${participant.profileLinks}">
+                                                        <span th:if="${link.link eq null}"
+                                                              class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                                                              data-bs-toggle="tooltip"
+                                                              data-bs-title="Alias"
+                                                              th:text="' ' + ${link.label}">Handle</span>
+                                                        <a th:if="${link.link ne null}" class="text-decoration-none"
+                                                           th:href="link.link"
+                                                           target="_blank">
+                                                        <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                                                              data-bs-toggle="tooltip"
+                                                              th:data-bs-title="${'External player profile: '+link.link}"
+                                                              th:text="'  ' + ${link.label}">Profile</span>
+                                                        </a>
+                                                    </th:block>
+                                                </div>
+                                            </th:block>
+                                        </th:block>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="text-center">Rankings</h6>
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Player</th>
+                                            <th scope="col">Points</th>
+                                            <th scope="col">Castles</th>
+                                            <th scope="col">Penalty pts.</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="player, playerIdx: ${game.playerModelList}">
+                                            <th class="align-middle" scope="row" th:text="${playerIdx.index+1}">#</th>
+                                            <td class="d-flex justify-content-start align-items-center">
+                                                <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
+                                                     style="max-height: 2.25rem">&nbsp;
+                                                <div class="ms-3">
+                                                    <text th:text="${player.name}">Lannister</text>&nbsp;
+                                                    <br/>
+                                                    <th:block th:each="link : ${player.profileLinks}">
+                                                        <span th:if="${link.link eq null}"
+                                                              class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                                                              data-bs-toggle="tooltip" data-bs-title="Alias"
+                                                              th:text="' ' + ${link.label}">Handle</span>
+                                                        <a th:if="${link.link ne null}" class="text-decoration-none"
+                                                           th:href="link.link"
+                                                           target="_blank">
+                                                            <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                                                                  data-bs-toggle="tooltip"
+                                                                  th:data-bs-title="${'External player profile: '+link.link}"
+                                                                  th:text="'  ' + ${link.label}">Profile</span>
+                                                        </a>
+                                                    </th:block>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle" th:text="${player.score}">Pts</td>
+                                            <td class="align-middle" th:text="${player.castles}"></td>
+                                            <td class="align-middle" th:text="${player.penaltyPoints}">score</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -113,7 +160,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- RULES MODAL-->
     <div class="modal modal-lg fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
@@ -129,17 +175,26 @@
                     <span th:utext="#{'scoring.'+${model.scoring}}"></span>
                     </p>
                     <hr/>
+                    <h6 class="fw-semibold">Description</h6>
                     <p th:text="${model.description}">Rules description</p>
                     <hr/>
                     <h6 class="fw-semibold">Substitutes</h6>
                     <th:block th:each="substitute : ${model.substituteModelList}">
                         <span th:text="${substitute.name}"> Sub Name</span>&nbsp;
-                        <a th:each="link : ${substitute.profileLinks}" class="text-decoration-none" th:href="link.link"
-                           target="_blank">
-                            <span class="badge rounded-pill bi bi-person-fill text-bg-secondary"
-                                  data-bs-toggle="tooltip" th:data-bs-title="${link.link}"
-                                  th:text="' ' + ${link.label}">Profile</span>
-                        </a>
+                        <th:block th:each="link : ${substitute.profileLinks}">
+                                                    <span th:if="${link.link eq null}"
+                                                          class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                                                          data-bs-toggle="tooltip" data-bs-title="Alias"
+                                                          th:text="' ' + ${link.label}">Handle</span>
+                            <a th:if="${link.link ne null}" class="text-decoration-none"
+                               th:href="link.link"
+                               target="_blank">
+                                                        <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                                                              data-bs-toggle="tooltip"
+                                                              th:data-bs-title="${'External player profile: '+link.link}"
+                                                              th:text="'  ' + ${link.label}">Profile</span>
+                            </a>
+                        </th:block>
                     </th:block>
                 </div>
             </div>
