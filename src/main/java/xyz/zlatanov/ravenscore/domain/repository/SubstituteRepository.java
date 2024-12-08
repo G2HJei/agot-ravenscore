@@ -11,5 +11,5 @@ import xyz.zlatanov.ravenscore.domain.domain.Substitute;
 @Repository
 public interface SubstituteRepository extends JpaRepository<Substitute, UUID> {
 
-	List<Substitute> findByTournamentIdIn(List<UUID> tourIds);
+	List<Substitute> findByTournamentIdInOrderByName(List<UUID> tourIds);
 }

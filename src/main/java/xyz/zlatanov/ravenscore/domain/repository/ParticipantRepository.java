@@ -11,5 +11,5 @@ import xyz.zlatanov.ravenscore.domain.domain.Participant;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, UUID> {
 
-	List<Participant> findByIdIn(List<UUID> participantIds);
+	List<Participant> findByIdInOrderByName(List<UUID> participantIds);
 }
