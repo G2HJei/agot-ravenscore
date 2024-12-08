@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class ParticipantModel {
 
+	private String				id;
 	private String				name;
 	private List<ProfileLink>	profileLinks	= new ArrayList<>();
 	private String				games;

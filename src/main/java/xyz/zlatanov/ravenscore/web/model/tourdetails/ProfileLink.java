@@ -18,7 +18,6 @@ public class ProfileLink {
 	private String	link;
 
 	public ProfileLink(String link) {
-		this.link = link;
 		try {
 			val tpd = InternetDomainName.from(new URI(link).getHost())
 					.topPrivateDomain();
@@ -29,8 +28,9 @@ public class ProfileLink {
 				case "swordsandravens" -> "SnR";
 				default -> capitalizeFirstLetter(simpleDomain);
 			};
+			this.link = link;
 		} catch (Exception e) {
-			label = "Profile";
+			label = link; // discord handle or anything else that is not a hyperlink
 		}
 	}
 }
