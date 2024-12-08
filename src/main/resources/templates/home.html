@@ -41,7 +41,7 @@
     <div class="row justify-content-center">
         <div th:each="tourney : ${tourneysList}" class="col-12 col-lg-3 d-flex justify-content-center mb-3">
             <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
-                <img th:src="@{'/backgrounds/bg-'+${tourney.backgroundNumber()}+'.jpg'}"
+                <img th:src="@{'/cards/bg-'+${tourney.backgroundNumber}+'.jpg'}"
                      class="card-img-top" alt="Background">
                 <div class="card-body">
                     <a th:href="@{'/tourney/'+${tourney.id}}" class="stretched-link"></a>

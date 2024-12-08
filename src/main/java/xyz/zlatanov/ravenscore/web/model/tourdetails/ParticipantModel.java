@@ -10,11 +10,15 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class ParticipantModel {
 
-	private String			name;
-	private List<String>	profileLinks	= new ArrayList<>();
-	private String			games;
-	private Integer			points;
-	private Integer			penaltyPoints;
-	private Integer			wins;
-	private String			avgPoints;
+	private String				name;
+	private List<ProfileLink>	profileLinks	= new ArrayList<>();
+	private String				games;
+	private Integer				points;
+	private Integer				penaltyPoints;
+	private Integer				wins;
+	private String				avgPoints;
+
+	public Integer actualPoints() {
+		return points - penaltyPoints;
+	}
 }
