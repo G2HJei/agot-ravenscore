@@ -34,9 +34,9 @@ public class TournamentDetailsService {
 		val participantIds = tourStages.stream().flatMap(ts -> Arrays.stream(ts.participantIdList())).toList();
 		val participants = participantRepository.findByIdInOrderByName(participantIds);
 		val substitutes = substituteRepository.findByTournamentIdInOrderByName(List.of(tourId));
-		val games = gameRepository.findByTournamentStageIdInOrderByTypeAndName(stageIds);
+		val games = gameRepository.findByTournamentStageIdInOrderByTypeAscNameAsc(stageIds);
 		val gameIds = games.stream().map(Game::id).toList();
-		val players = playerRepository.findByGameIdInOrderByRankAndName(gameIds);
+		val players = playerRepository.findByGameIdInOrderByRankAscHouseAsc(gameIds);
 		return new TournamentDetailsBuilder(tournament, tourStages, substitutes, participants, games, players).build();
 	}
 

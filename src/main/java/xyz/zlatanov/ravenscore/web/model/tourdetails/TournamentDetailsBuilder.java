@@ -26,6 +26,7 @@ public class TournamentDetailsBuilder {
 				.id(tournament.id().toString())
 				.name(tournament.name())
 				.description(tournament.description())
+				.scoring(tournament.scoring())
 				.startDate(DATE_FORMATTER.format(tournament.startDate()))
 				.substituteModelList(getSubstitutes())
 				.tournamentStageModelList(getTournamentStages());
@@ -35,7 +36,7 @@ public class TournamentDetailsBuilder {
 		return substituteList.stream()
 				.map(sub -> new SubstituteModel()
 						.name(sub.name())
-						.profileLinks(List.of(sub.profileLinks())))
+						.profileLinks(Arrays.stream(sub.profileLinks()).map(ProfileLink::new).toList()))
 				.toList();
 	}
 
@@ -55,7 +56,7 @@ public class TournamentDetailsBuilder {
 				.filter(g -> g.tournamentStageId().equals(stageId))
 				.map(g -> new GameModel()
 						.name(g.name())
-						.type(g.type().toString())
+						.type(g.type())
 						.link(g.link())
 						.round(g.round().toString())
 						.completed(g.completed())
@@ -71,8 +72,8 @@ public class TournamentDetailsBuilder {
 								.map(participantId -> participantList.stream()
 										.filter(p -> p.id().equals(participantId))
 										.findFirst()
-										.map(Participant::name))
-								.orElseThrow(() -> new RavenscoreException("Invalid player-participant connection."))
+										.map(Participant::name)
+										.orElseThrow(() -> new RavenscoreException("Invalid player-participant connection.")))
 								.orElse(capitalizeFirstLetter(player.house())))
 						.house(capitalizeFirstLetter(player.house()))
 						.castles(player.castles())
@@ -93,10 +94,10 @@ public class TournamentDetailsBuilder {
 							.filter(player -> participant.id().equals(player.participantId()))
 							.toList();
 					val completedGames = games.stream().filter(Game::completed).toList().size();
-					val points = new PlayerPointsCalculator(games, players, tournament.scoring()).calculatePoints();
+					val points = new PlayerPointsCalculator(games, players).calculatePoints();
 					return new ParticipantModel()
 							.name(participant.name())
-							.profileLinks(Arrays.asList(participant.profileLinks()))
+							.profileLinks(Arrays.stream(participant.profileLinks()).map(ProfileLink::new).toList())
 							.games(completedGames + "/" + games.size())
 							.points(points)
 							.penaltyPoints(players.stream().map(Player::penaltyPoints).reduce(Integer::sum).orElse(0))
@@ -105,6 +106,7 @@ public class TournamentDetailsBuilder {
 									: DECIMAL_FORMATTER
 											.format(BigDecimal.valueOf(points).divide(BigDecimal.valueOf(completedGames), 2, UP)));
 				})
+				.sorted((o1, o2) -> -o1.actualPoints().compareTo(o2.actualPoints()))
 				.toList();
 	}
 
@@ -113,7 +115,6 @@ public class TournamentDetailsBuilder {
 
 		private final List<Game>	games;
 		private final List<Player>	players;
-		private final Scoring		scoring;
 
 		public Integer calculatePoints() {
 			val gamesMap = new LinkedHashMap<UUID, Game>();
@@ -121,13 +122,13 @@ public class TournamentDetailsBuilder {
 					.filter(Game::completed)
 					.toList()
 					.forEach(g -> gamesMap.put(g.id(), g));
-			return switch (scoring) {
-				case POSITION_PLUS_CITIES -> players.stream()
-						.filter(p -> gamesMap.containsKey(p.gameId()))
-						.map(p -> (gamesMap.get(p.gameId()).participantIdList().length - p.rank() + p.castles() + (p.rank() == 1 ? 3 : 0)))
-						.reduce(Integer::sum)
-						.orElse(0);
-			};
+			return players.stream()
+					.filter(p -> gamesMap.containsKey(p.gameId()))
+					// todo this should be in the frontend to autofill score before submitting
+					// (gamesMap.get(p.gameId()).participantIdList().length - p.rank() + p.castles() + (p.rank() == 1 ? 3 : 0))
+					.map(Player::score)
+					.reduce(Integer::sum)
+					.orElse(0);
 		}
 	}
 }
