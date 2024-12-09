@@ -35,19 +35,48 @@
             </thead>
             <tbody>
             <tr th:each="participant, participantIdx: ${stage.participantModelList}">
-                <th scope="row" th:text="${participantIdx.index+1}">#</th>
-                <td th:text="${participant.name}">Name</td>
-                <td th:text="${participant.games}">Games</td>
-                <td th:if="${participant.penaltyPoints() eq 0}" th:text="${participant.points}">Mark</td>
-                <td th:if="${participant.penaltyPoints() ne 0}">
+                <th class="align-middle" scope="row" th:text="${participantIdx.index+1}">#</th>
+                <td class="d-flex justify-content-start align-items-center">
+                    <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
+                                             style="max-height: 2.25rem">&nbsp;-->
+                    <div class="ms-3">
+                        <text th:text="${participant.name}"
+                              th:class="${participant.profileLinks.isEmpty() ? 'text-muted' : ''}">
+                            Petyr Baelish
+                        </text>
+                        <br/>
+                        <span th:if="${participant.replacedLabel ne null}"
+                              class="badge rounded-pill bi bi-arrow-left-right text-bg-secondary d-inline-block"
+                              data-bs-toggle="tooltip" th:data-bs-title="${participant.replacedLabel}"></span>
+                        <th:block th:each="link : ${participant.profileLinks}">
+                            <span th:if="${link.link eq null}"
+                                  class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                                  data-bs-toggle="tooltip" data-bs-title="Alias"
+                                  th:text="' ' + ${link.label}">Handle</span>
+                            <a th:if="${link.link ne null}" class="text-decoration-none"
+                               th:href="link.link"
+                               target="_blank">
+                                <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                                      data-bs-toggle="tooltip"
+                                      th:data-bs-title="${'External player profile: '+link.link}"
+                                      th:text="'  ' + ${link.label}">Profile</span>
+                            </a>
+                        </th:block>
+                    </div>
+                </td>
+                <td class="align-middle" th:text="${participant.games}">Games</td>
+                <td class="align-middle" th:if="${participant.penaltyPoints() eq 0}" th:text="${participant.points}">
+                    Mark
+                </td>
+                <td class="align-middle" th:if="${participant.penaltyPoints() ne 0}">
                     <text th:text="${participant.points - participant.penaltyPoints}">Pts</text>&nbsp;
                     <text class="text-muted fst-italic"
                           th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen. pts.)'}">
                         Pts with penalties
                     </text>
                 </td>
-                <td th:text="${participant.wins}">Wins</td>
-                <td th:text="${participant.avgPoints}">Avg pts</td>
+                <td class="align-middle" th:text="${participant.wins}">Wins</td>
+                <td class="align-middle" th:text="${participant.avgPoints}">Avg pts</td>
             </tr>
             </tbody>
         </table>
@@ -128,7 +157,10 @@
                                                 <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
                                                      style="max-height: 2.25rem">&nbsp;
                                                 <div class="ms-3">
-                                                    <text th:text="${player.name}">Lannister</text>&nbsp;
+                                                    <text th:text="${player.name}"
+                                                          th:class="${player.profileLinks.isEmpty() ? 'text-muted' : ''}">
+                                                        Lannister
+                                                    </text>
                                                     <br/>
                                                     <th:block th:each="link : ${player.profileLinks}">
                                                         <span th:if="${link.link eq null}"
