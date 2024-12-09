@@ -20,7 +20,7 @@ CREATE TABLE tournament_stage
 (
     id                  UUID         NOT NULL PRIMARY KEY,
     tournament_id       UUID         NOT NULL,
-    stage_number        INTEGER      NOT NULL,
+    qualification_count INTEGER      NOT NULL,
     participant_id_list UUID[]       NOT NULL,
     name                VARCHAR(255) NOT NULL,
     start_date          DATE         NOT NULL,
