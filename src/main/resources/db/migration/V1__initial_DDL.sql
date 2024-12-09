@@ -23,7 +23,7 @@ CREATE TABLE tournament_stage
     qualification_count INTEGER      NOT NULL,
     participant_id_list UUID[]       NOT NULL,
     name                VARCHAR(255) NOT NULL,
-    start_date          DATE         NOT NULL,
+    start_date          TIMESTAMP(6) NOT NULL,
     CONSTRAINT fk_tournament_id FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON DELETE cascade
 );
 CREATE TABLE participant

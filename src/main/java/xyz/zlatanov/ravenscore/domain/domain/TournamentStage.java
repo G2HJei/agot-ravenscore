@@ -1,6 +1,6 @@
 package xyz.zlatanov.ravenscore.domain.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.Type;
@@ -20,17 +20,18 @@ public class TournamentStage {
 
 	@Id
 	@UuidGenerator
-	private UUID		id;
+	private UUID			id;
 
-	private String		name;
+	private String			name;
 
-	private Integer		qualificationCount;
+	private Integer			qualificationCount;
 
-	private LocalDate	startDate			= LocalDate.now();
+	// timestamp for sorting purposes
+	private LocalDateTime	startDate			= LocalDateTime.now();
 
-	private UUID		tournamentId;
+	private UUID			tournamentId;
 
 	@Type(UUIDArrayType.class)
 	@Column(columnDefinition = "UUID[]")
-	private UUID[]		participantIdList	= new UUID[] {};
+	private UUID[]			participantIdList	= new UUID[] {};
 }
