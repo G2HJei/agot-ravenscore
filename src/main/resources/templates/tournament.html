@@ -5,7 +5,7 @@
       layout:decorate="~{layout/layout}">
 <body>
 <main layout:fragment="content">
-    <h2 class="text-muted ms-3 text-center" th:text="${model.name}">Tourney Name</h2>
+    <h3 class="text-muted ms-3 text-center" th:text="${model.name}">Tourney Name</h3>
     <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}">(Tournament Admin Mode)</h5>
 
     <div class="d-flex justify-content-center align-items-center mb-3">
@@ -116,13 +116,14 @@
                                      class="card-img-top" alt="Background">
                                 <div class="card-body">
                                     <a th:href="${game.link}" class="stretched-link"></a>
-                                    <h5 class="card-title text-center" th:text="${game.type.longName}">Game type</h5>
+                                    <h5 class="card-title text-center text-brand" th:text="${game.type.longName}">Game
+                                        type</h5>
                                     <text class="d-flex justify-content-center text-muted">Go to game</text>
                                 </div>
                             </div>
                             <div class="w-100">
                                 <div th:if="${not game.playersRevealed}">
-                                    <h6 class="text-center">Participants</h6>
+                                    <h6 class="text-center mb-2">Participants</h6>
                                     <div class="row mb-3">
                                         <th:block th:each="participant : ${stage.participantModelList}">
                                             <th:block th:if="${game.participantIdList.contains(participant.id)}">
@@ -232,7 +233,7 @@
 
     <!-- RULES MODAL-->
     <div class="modal modal-lg fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="rulesModalLabel">Tournament Rules</h1>
@@ -240,27 +241,27 @@
                 </div>
                 <div class="modal-body">
                     <h6 class="fw-semibold">Scoring</h6>
-                    <span th:utext="#{'scoring.'+${model.scoring}}"></span>
-                    <hr/>
+                    <div class="mb-3" th:utext="#{'scoring.description.'+${model.scoring}}"></div>
                     <h6 class="fw-semibold">Description</h6>
-                    <p th:text="${model.description}">Rules description</p>
-                    <hr/>
-                    <h6 class="fw-semibold">Substitutes</h6>
-                    <th:block th:each="substitute : ${model.substituteModelList}">
-                        <span th:text="${substitute.name}"> Sub Name</span>&nbsp;
-                        <th:block th:each="link : ${substitute.profileLinks}">
+                    <div class="mb-3" th:text="${model.description}">Rules description</div>
+                    <th:block th:if="${not model.substituteModelList.isEmpty()}">
+                        <h6 class="fw-semibold">Substitutes</h6>
+                        <th:block th:each="substitute : ${model.substituteModelList}">
+                            <span th:text="${substitute.name}"> Sub Name</span>&nbsp;
+                            <th:block th:each="link : ${substitute.profileLinks}">
                                                     <span th:if="${link.link eq null}"
                                                           class="badge rounded-pill bi bi-person-fill text-bg-secondary"
                                                           data-bs-toggle="tooltip" data-bs-title="Alias"
                                                           th:text="' ' + ${link.label}">Handle</span>
-                            <a th:if="${link.link ne null}" class="text-decoration-none"
-                               th:href="link.link"
-                               target="_blank">
+                                <a th:if="${link.link ne null}" class="text-decoration-none"
+                                   th:href="link.link"
+                                   target="_blank">
                                                         <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
                                                               data-bs-toggle="tooltip"
                                                               th:data-bs-title="${'External player profile: '+link.link}"
                                                               th:text="'  ' + ${link.label}">Profile</span>
-                            </a>
+                                </a>
+                            </th:block>
                         </th:block>
                     </th:block>
                 </div>

@@ -17,7 +17,7 @@ public class TournamentController {
 
 	private final TournamentDetailsService tournamentDetailsService;
 
-	@GetMapping("/tourney/{tournamentId}")
+	@GetMapping("/tournament/{tournamentId}")
 	String tourneyDetails(
 			@PathVariable UUID tournamentId,
 			@CookieValue(name = "tournamentKeyHash", defaultValue = "") String tournamentKeyHash,
