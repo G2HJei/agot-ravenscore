@@ -12,6 +12,7 @@ public class ParticipantModel {
 
 	private String				id;
 	private String				name;
+	private String				replacedLabel;
 	private List<ProfileLink>	profileLinks	= new ArrayList<>();
 	private String				games;
 	private Integer				points;

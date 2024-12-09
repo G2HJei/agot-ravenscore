@@ -101,6 +101,7 @@ public class TournamentDetailsBuilder {
 	private List<ParticipantModel> getParticipants(TournamentStage stage) {
 		val participantIds = Arrays.stream(stage.participantIdList()).toList();
 		return participantList.stream()
+				.filter(p -> p.replacementParticipantId() == null)
 				.filter(p -> participantIds.contains(p.id()))
 				.map(participant -> {
 					val games = gameList.stream()
@@ -114,6 +115,7 @@ public class TournamentDetailsBuilder {
 					return new ParticipantModel()
 							.id(participant.id().toString())
 							.name(participant.name())
+							.replacedLabel(getReplacedLabel(participant.id()))
 							.profileLinks(Arrays.stream(participant.profileLinks()).map(ProfileLink::new).toList())
 							.games(completedGames + "/" + games.size())
 							.points(points)
@@ -131,6 +133,7 @@ public class TournamentDetailsBuilder {
 	public static class PlayerPointsCalculator {
 
 		private final List<Game>	games;
+
 		private final List<Player>	players;
 
 		public Integer calculatePoints() {
@@ -147,5 +150,15 @@ public class TournamentDetailsBuilder {
 					.reduce(Integer::sum)
 					.orElse(0);
 		}
+
+	}
+
+	private String getReplacedLabel(UUID participantId) {
+		val replacedParticipantsNames = participantList.stream()
+				.filter(p -> Objects.equals(p.replacementParticipantId(), participantId))
+				.map(Participant::name)
+				.toList();
+		return replacedParticipantsNames.isEmpty() ? null
+				: "Replaced " + String.join(", ", replacedParticipantsNames);
 	}
 }
