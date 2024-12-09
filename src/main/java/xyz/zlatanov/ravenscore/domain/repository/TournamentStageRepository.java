@@ -11,6 +11,6 @@ import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
 @Repository
 public interface TournamentStageRepository extends JpaRepository<TournamentStage, UUID> {
 
-	List<TournamentStage> findByTournamentIdInOrderByStartDate(List<UUID> list);
+	List<TournamentStage> findByTournamentIdInOrderByStartDateDesc(List<UUID> list);
 
 }

@@ -10,7 +10,6 @@ import io.hypersistence.utils.hibernate.type.array.UUIDArrayType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -27,12 +26,11 @@ public class TournamentStage {
 
 	private Integer		qualificationCount;
 
-	private LocalDate	startDate	= LocalDate.now();
+	private LocalDate	startDate			= LocalDate.now();
 
 	private UUID		tournamentId;
 
-	@NotEmpty
 	@Type(UUIDArrayType.class)
 	@Column(columnDefinition = "UUID[]")
-	private UUID[]		participantIdList;
+	private UUID[]		participantIdList	= new UUID[] {};
 }

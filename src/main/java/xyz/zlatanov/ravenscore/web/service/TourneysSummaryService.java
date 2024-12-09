@@ -29,7 +29,7 @@ public class TourneysSummaryService {
 	public List<TournamentSummaryModel> getPublicTourneys() {
 		val tourneys = tournamentRepository.findByHiddenFalse();
 		val tourIds = tourneys.stream().map(Tournament::id).toList();
-		val stages = tournamentStageRepository.findByTournamentIdInOrderByStartDate(tourIds);
+		val stages = tournamentStageRepository.findByTournamentIdInOrderByStartDateDesc(tourIds);
 		val participantIds = stages.stream().flatMap(ts -> Arrays.stream(ts.participantIdList())).toList();
 		val participants = participantRepository.findByIdInOrderByName(participantIds);
 		return buildModel(tourneys, stages, participants);
