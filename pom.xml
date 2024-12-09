@@ -17,6 +17,10 @@
         <java.version>21</java.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <commons-text.version>1.12.0</commons-text.version>
+        <bootstrap.version>5.3.3</bootstrap.version>
+        <bootstrap-icons.version>1.11.0</bootstrap-icons.version>
+        <jquery.version>3.7.1</jquery.version>
+        <guava.version>33.3.1-jre</guava.version>
     </properties>
     <dependencies>
         <dependency>
@@ -114,12 +118,27 @@
             <groupId>nz.net.ultraq.thymeleaf</groupId>
             <artifactId>thymeleaf-layout-dialect</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>${bootstrap.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>bootstrap-icons</artifactId>
+            <version>${bootstrap-icons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>jquery</artifactId>
+            <version>${jquery.version}</version>
+        </dependency>
 
         <!-- Utility -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.3.1-jre</version>
+            <version>${guava.version}</version>
         </dependency>
 
     </dependencies>

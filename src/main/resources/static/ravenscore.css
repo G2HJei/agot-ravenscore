@@ -1,3 +1,8 @@
+:root {
+    --rs-brand-color: rgba(218, 165, 32, 0.75);
+    --rs-text-color: #6c757d;
+}
+
 /*---------------
 # Layout
 -----------------*/
@@ -15,11 +20,6 @@
     padding-right: 0;
 }
 
-.accordion-button:not(.collapsed) {
-    color: rgb(44, 44, 44);
-    background-color: rgba(227, 227, 227, 0.3);
-}
-
 .accordion-body > .row {
     margin-left: 0;
     margin-right: 0;
@@ -30,6 +30,35 @@
 .accordion-button:focus {
     box-shadow: none;
     border-color: rgba(0, 0, 0, .125);
+}
+
+.accordion-button:not(.collapsed) {
+    color: rgb(44, 44, 44);
+    background-color: rgba(227, 227, 227, 0.3);
+}
+
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23DAA520'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+.accordion-button.collapsed::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23DAA520'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+/*-----------------------
+# Input Customization
+-------------------------*/
+.form-control:focus {
+    box-shadow: 0 0 0 0.1rem var(--rs-brand-color);
+    border-color: var(--rs-brand-color);
+}
+
+/*-----------------------
+# Button Customization
+-------------------------*/
+.btn-outline-secondary {
+    --bs-btn-hover-bg: var(--rs-brand-color);
+    --bs-btn-hover-border-color: var(--rs-text-color);
 }
 
 /*---------------
@@ -52,4 +81,8 @@
 
 .highlight-primary:hover {
     color: whitesmoke !important;
+}
+
+.text-brand {
+    color: var(--rs-brand-color);
 }
