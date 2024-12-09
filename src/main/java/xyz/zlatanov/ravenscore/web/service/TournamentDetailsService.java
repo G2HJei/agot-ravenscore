@@ -27,7 +27,7 @@ public class TournamentDetailsService {
 	private final PlayerRepository			playerRepository;
 
 	@Transactional(readOnly = true)
-	public TournamentDetailsModel getTournamentDetails(UUID tourId) {
+	public TournamentDetailsModel getTournamentDetails(UUID tourId, String adminKeyHash) {
 		val tournament = tournamentRepository.findById(tourId).orElseThrow(() -> new RavenscoreException("Tournament not found."));
 		val tourStages = tournamentStageRepository.findByTournamentIdInOrderByStartDate(List.of(tournament.id()));
 		val stageIds = tourStages.stream().map(TournamentStage::id).toList();
@@ -37,7 +37,7 @@ public class TournamentDetailsService {
 		val games = gameRepository.findByTournamentStageIdInOrderByTypeAscNameAsc(stageIds);
 		val gameIds = games.stream().map(Game::id).toList();
 		val players = playerRepository.findByGameIdInOrderByRankAscHouseAsc(gameIds);
-		return new TournamentDetailsBuilder(tournament, tourStages, substitutes, participants, games, players).build();
+		return new TournamentDetailsBuilder(tournament, adminKeyHash, tourStages, substitutes, participants, games, players).build();
 	}
 
 }
