@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.UnlockRequest;
 
 @RestController
 @RequiredArgsConstructor

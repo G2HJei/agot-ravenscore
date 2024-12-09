@@ -1,13 +1,14 @@
 TRUNCATE TABLE tournament CASCADE;
-TRUNCATE TABLE participant CASCADE;
+TRUNCATE TABLE substitute CASCADE;
 TRUNCATE TABLE tournament_stage CASCADE;
+TRUNCATE TABLE participant CASCADE;
 TRUNCATE TABLE game CASCADE;
 TRUNCATE TABLE player CASCADE;
 
 -- Insert into tournament table
 INSERT INTO tournament (id, description, name, scoring, hidden, tournament_key, start_date)
 VALUES ('11111111-1111-1111-1111-111111111111'::UUID, 'Winter Tournament of Westeros', 'Winter Clash',
-        'POSITION_PLUS_CITIES', false, 'WINT2024', '2024-01-01');
+        'RANKING_PLUS_CASTLES', false, 'WINT2024', '2024-01-01');
 
 -- Insert into participant table
 INSERT INTO participant (id, replacement_participant_id, name, profile_links)

@@ -39,21 +39,102 @@
     </div>
     <h3 class="text-center mt-4 mb-3">Tournaments</h3>
     <div class="row justify-content-center">
+        <div class="col-12 col-lg-3 d-flex justify-content-center mb-3">
+            <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
+                <img th:src="@{'/cards/bg-new.jpg'}" class="card-img-top" alt="Background">
+                <div class="card-body">
+                    <a href="#" class="stretched-link" data-bs-toggle="modal"
+                       data-bs-target="#newTournamentModal"></a>
+                    <h5 class="card-title text-brand text-center">New Tournament</h5>
+                    <p class="card-text text-muted text-center">
+                        Host a new Game of Thrones tournament</p>
+                    <div class="ms-auto"></div>
+                </div>
+            </div>
+        </div>
         <div th:each="tourney : ${tourneysList}" class="col-12 col-lg-3 d-flex justify-content-center mb-3">
             <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
                 <img th:src="@{'/cards/bg-'+${tourney.backgroundNumber}+'.jpg'}"
                      class="card-img-top" alt="Background">
                 <div class="card-body">
-                    <a th:href="@{'/tourney/'+${tourney.id}}" class="stretched-link"></a>
-                    <h5 class="card-title text-center" th:text="${tourney.name}">Tourney name</h5>
+                    <a th:href="@{'/tournament/'+${tourney.id}}" class="stretched-link"></a>
+                    <h5 class="card-title text-center text-brand" th:text="${tourney.name}">Tourney name</h5>
                     <p class="card-text text-muted text-center"
                        th:text="${tourney.numberOfParticipants + ' participants'}">
                         Participants</p>
                     <p class="card-text text-center">
                         <span th:text="${tourney.statusLabel}"></span>
-                        &nbsp;
+                        <br/>
                         <span class="text-muted text-nowrap" th:text="${tourney.statusDate}"></span>
                     </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- NEW TOURNAMENT MODAL-->
+    <div class="modal modal-lg fade" id="newTournamentModal" tabindex="-1" aria-labelledby="newTournamentModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="newTournamentModalLabel">Host New Tournament</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newTournamentForm" method='POST' action="/new-tournament"
+                          th:object="${newTournamentForm}">
+                        <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
+                            <div style="width: 67%">
+                                <label for="tournamentName" class="form-label">Name</label>
+                                <input type="text" required minlength="8" maxlength="100" class="form-control"
+                                       id="tournamentName" th:field="*{name}"
+                                       placeholder="Enter tournament name">
+                            </div>
+                            <div style="width: 33%">
+                                <div class="d-flex justify-content-start align-items-end gap-2">
+                                    <div class="w-100">
+                                        <label for="scoring" class="form-label">Scoring</label>
+                                        <select id="scoring" th:field="*{scoring}" class="form-select "
+                                                aria-label="Select scoring">
+                                            <option th:each="scoring, scoringIdx : ${scoringOptions}"
+                                                    th:value="${scoring}" th:text="#{'scoring.label.'+${scoring}}">
+                                                Scoring Option
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <i class="bi bi-question-circle text-muted fs-5 mb-1" data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       th:title="#{scoring.shortdescription.RANKING_PLUS_CASTLES}"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tournamentDescription" class="form-label">Rules</label>
+                            <textarea class="form-control" style="height: 100px" id="tournamentDescription"
+                                      maxlength="2000" th:field="*{description}"
+                                      placeholder="Enter tournament rules and description"></textarea>
+                        </div>
+                        <div class="form-check mb-1">
+                            <input type="checkbox" class="form-check-input" id="tournamentHidden"
+                                   th:field="*{hidden}">
+                            <label class="form-check-label" for="tournamentHidden">Private tournament</label>
+                        </div>
+                        <div class="text-muted fst-italic mb-3">
+                            (Only people with direct link will be able to access the tournament.)
+                        </div>
+                        <div class="w-25 mb-1">
+                            <label for="tournamentKey" class="form-label">Key</label>
+                            <input type="text" required minlength="8" maxlength="32" class="form-control"
+                                   id="tournamentKey" th:field="*{tournamentKey}" placeholder="Enter tournament key">
+
+                        </div>
+                        <div class="text-muted fst-italic">
+                            (Keep your key safe - you will need it to administer your tournament.)
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

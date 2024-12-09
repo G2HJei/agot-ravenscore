@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.controller;
+package xyz.zlatanov.ravenscore.web.model.tourdetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
