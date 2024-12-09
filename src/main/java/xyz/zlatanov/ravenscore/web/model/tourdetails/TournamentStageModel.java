@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 public class TournamentStageModel {
 
 	private String					name;
+	private Integer					qualificationCount;
 	private String					startDate;
 	private List<ParticipantModel>	participantModelList	= new ArrayList<>();
 	private List<GameModel>			gameModelList			= new ArrayList<>();

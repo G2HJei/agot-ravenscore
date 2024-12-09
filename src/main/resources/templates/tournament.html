@@ -49,7 +49,7 @@
                     <div class="d-flex justify-content-start align-items-center">
                         <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
                                                  style="max-height: 2.25rem">&nbsp;-->
-                        <div class="ms-3">
+                        <div>
                             <text th:text="${participant.name}"
                                   th:class="${participant.profileLinks.isEmpty() ? 'text-muted' : ''}">
                                 Petyr Baelish

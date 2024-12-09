@@ -50,6 +50,7 @@ public class TournamentDetailsBuilder {
 				.filter(stage -> stage.tournamentId().equals(tournament.id()))
 				.map(stage -> new TournamentStageModel()
 						.name(stage.name())
+						.qualificationCount(stage.qualificationCount())
 						.startDate(DATE_FORMATTER.format(stage.startDate()))
 						.participantModelList(getParticipants(stage))
 						.gameModelList(getGames(stage.id())))

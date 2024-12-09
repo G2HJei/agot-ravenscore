@@ -22,7 +22,7 @@ VALUES ('22222222-2222-2222-2222-222222222222'::UUID, NULL, 'Eddard Stark',
         ARRAY ['https://swordsandravens.com/profiles/daenerys', 'Daenerys69']);
 
 -- Insert into tournament_stage table
-INSERT INTO tournament_stage (id, tournament_id, stage_number, participant_id_list, name, start_date)
+INSERT INTO tournament_stage (id, tournament_id, qualification_count, participant_id_list, name, start_date)
 VALUES ('55555555-5555-5555-5555-555555555555'::UUID, '11111111-1111-1111-1111-111111111111'::UUID, 1,
         ARRAY ['22222222-2222-2222-2222-222222222222'::UUID, '33333333-3333-3333-3333-333333333333'::UUID, '72222222-2222-2222-2222-222222222222'::UUID, '44444444-4444-4444-4444-444444444444'::UUID],
         'Winter War Round 1', '2024-01-01');

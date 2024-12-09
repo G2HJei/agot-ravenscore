@@ -25,7 +25,7 @@ public class TournamentStage {
 
 	private String		name;
 
-	private Integer		stageNumber;
+	private Integer		qualificationCount;
 
 	private LocalDate	startDate	= LocalDate.now();
 

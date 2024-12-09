@@ -72,6 +72,6 @@ public class TourneysSummaryService {
 	private Optional<TournamentStage> getLastStage(UUID tourId, List<TournamentStage> stages) {
 		return stages.stream()
 				.filter(s -> s.tournamentId().equals(tourId))
-				.max(Comparator.comparing(TournamentStage::stageNumber));
+				.max(Comparator.comparing(TournamentStage::startDate));
 	}
 }
