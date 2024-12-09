@@ -29,7 +29,7 @@ public class TournamentDetailsService {
 	@Transactional(readOnly = true)
 	public TournamentDetailsModel getTournamentDetails(UUID tourId, String adminKeyHash) {
 		val tournament = tournamentRepository.findById(tourId).orElseThrow(() -> new RavenscoreException("Tournament not found."));
-		val tourStages = tournamentStageRepository.findByTournamentIdInOrderByStartDate(List.of(tournament.id()));
+		val tourStages = tournamentStageRepository.findByTournamentIdInOrderByStartDateDesc(List.of(tournament.id()));
 		val stageIds = tourStages.stream().map(TournamentStage::id).toList();
 		val participantIds = tourStages.stream().flatMap(ts -> Arrays.stream(ts.participantIdList())).toList();
 		val participants = participantRepository.findByIdInOrderByName(participantIds);

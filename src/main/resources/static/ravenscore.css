@@ -54,8 +54,27 @@
 }
 
 /*-----------------------
+# Nav Links Customization
+-------------------------*/
+.nav-underline .nav-link:hover,
+.nav-underline .nav-link.active {
+    /*      text-black      */
+    --bs-text-opacity: 1;
+    color: rgba(var(--bs-black-rgb), var(--bs-text-opacity)) !important;
+
+    border-bottom-color: var(--rs-brand-color);
+}
+
+.nav-underline .nav-link {
+    /*      text-muted      */
+    --bs-text-opacity: 1;
+    color: var(--bs-secondary-color) !important;
+}
+
+/*-----------------------
 # Select Customization
 -------------------------*/
+
 .form-select:focus {
     box-shadow: 0 0 0 0.1rem var(--rs-brand-color);
     border-color: var(--rs-brand-color);
@@ -68,6 +87,7 @@
 /*-----------------------
 # Button Customization
 -------------------------*/
+
 .btn-outline-secondary {
     --bs-btn-color: var(--rs-brand-color);
     --bs-btn-hover-bg: var(--rs-brand-color);

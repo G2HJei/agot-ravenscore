@@ -17,187 +17,198 @@
                 class="btn btn-sm btn-outline-secondary bi bi-unlock-fill ms-1 me-2"
                 data-bs-toggle="tooltip" data-bs-title="Tournament administration is unlocked. Click to lock it."
                 onclick="lockAdmin()"></button>
-        <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-3"
+        <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-2"
                 data-bs-toggle="tooltip" data-bs-title="Show tournament rules & details"
                 onclick="showModal('rulesModal')"></button>
-        <ul class="nav nav-underline mb-3">
-            <li class="nav-item" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
-                <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : 'text-muted')}" href="#"
+        <button th:if="${model.adminUnlocked}" type="button" class="btn btn-sm btn-outline-secondary bi bi-plus-lg me-3"
+                data-bs-toggle="tooltip" data-bs-title="Create new tournament stage"
+                onclick="showModal('newStageModal')"></button>
+        <ul id="stageNav" class="nav nav-underline mb-3" role="tablist">
+            <li class="nav-item" role="presentation" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
+                <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : '')}" href="#"
+                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}"
                    th:text="${stage.name}">Stage</a>
             </li>
         </ul>
     </div>
 
     <div id="tournamentRoot" th:data-tour-id="${model.id}" class="tab-content"
-         th:each="stage : ${model.tournamentStageModelList}">
-        <h5 class="text-center">Rankings</h5>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Player</th>
-                <th scope="col">Games</th>
-                <th scope="col">Points</th>
-                <th scope="col">Wins</th>
-                <th scope="col">Avg. points</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="participant, participantIdx: ${stage.participantModelList}">
-                <th class="align-middle" scope="row" th:text="${participantIdx.index+1}">#</th>
-                <td>
-                    <div class="d-flex justify-content-start align-items-center">
-                        <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
-                                                 style="max-height: 2.25rem">&nbsp;-->
-                        <div>
-                            <text th:text="${participant.name}"
-                                  th:class="${participant.profileLinks.isEmpty() ? 'text-muted' : ''}">
-                                Petyr Baelish
-                            </text>
-                            <br/>
-                            <span th:if="${participant.replacedLabel ne null}"
-                                  class="badge rounded-pill bi bi-arrow-left-right text-bg-secondary d-inline-block"
-                                  data-bs-toggle="tooltip" th:data-bs-title="${participant.replacedLabel}"></span>
-                            <th:block th:each="link : ${participant.profileLinks}">
+         th:each="stage, stageIdx : ${model.tournamentStageModelList}">
+        <div th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
+            <h5 class="text-center">Rankings</h5>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Player</th>
+                    <th scope="col">Games</th>
+                    <th scope="col">Points</th>
+                    <th scope="col">Wins</th>
+                    <th scope="col">Avg. points</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="participant, participantIdx: ${stage.participantModelList}">
+                    <th class="align-middle" scope="row" th:text="${participantIdx.index+1}">#</th>
+                    <td>
+                        <div class="d-flex justify-content-start align-items-center">
+                            <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
+                                                     style="max-height: 2.25rem">&nbsp;-->
+                            <div>
+                                <text th:text="${participant.name}"
+                                      th:class="${participant.profileLinks.isEmpty() ? 'text-muted' : ''}">
+                                    Petyr Baelish
+                                </text>
+                                <br/>
+                                <span th:if="${participant.replacedLabel ne null}"
+                                      class="badge rounded-pill bi bi-arrow-left-right text-bg-secondary d-inline-block"
+                                      data-bs-toggle="tooltip" th:data-bs-title="${participant.replacedLabel}"></span>
+                                <th:block th:each="link : ${participant.profileLinks}">
                             <span th:if="${link.link eq null}"
                                   class="badge rounded-pill bi bi-person-fill text-bg-secondary"
                                   data-bs-toggle="tooltip" data-bs-title="Alias"
                                   th:text="' ' + ${link.label}">Handle</span>
-                                <a th:if="${link.link ne null}" class="text-decoration-none"
-                                   th:href="link.link"
-                                   target="_blank">
+                                    <a th:if="${link.link ne null}" class="text-decoration-none"
+                                       th:href="link.link"
+                                       target="_blank">
                                 <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
                                       data-bs-toggle="tooltip"
                                       th:data-bs-title="${'External player profile: '+link.link}"
                                       th:text="'  ' + ${link.label}">Profile</span>
-                                </a>
-                            </th:block>
-                        </div>
-                    </div>
-                </td>
-                <td class="align-middle" th:text="${participant.games}">Games</td>
-                <td class="align-middle" th:if="${participant.penaltyPoints() eq 0}" th:text="${participant.points}">
-                    Mark
-                </td>
-                <td class="align-middle" th:if="${participant.penaltyPoints() ne 0}">
-                    <text th:text="${participant.points - participant.penaltyPoints}">Pts</text>&nbsp;
-                    <text class="text-muted fst-italic"
-                          th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen. pts.)'}">
-                        Pts with penalties
-                    </text>
-                </td>
-                <td class="align-middle" th:text="${participant.wins}">Wins</td>
-                <td class="align-middle" th:text="${participant.avgPoints}">Avg pts</td>
-            </tr>
-            </tbody>
-        </table>
-
-        <h5 class="text-center mt-5">Games</h5>
-        <div class="accordion accordion-flush" id="accordionGames">
-            <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
-                <h6 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
-                            aria-controls="flush-collapse">
-                        <text class="text-muted" th:text="${game.type.shortname}">Type</text>&nbsp;
-                        <text th:text="${game.name}">Name</text>&nbsp;
-                        <text th:if="${not game.completed}" class="text-muted fst-italic"
-                              th:text="${'(round '+game.round+')'}">Round
-                        </text>
-                        <text th:if="${game.completed}" class="text-muted fst-italic">(Completed)</text>
-                    </button>
-                </h6>
-                <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
-                     data-bs-parent="#accordionGames">
-                    <div class="accordion-body ms-3">
-                        <div class="d-flex justify-content-start gap-3 w-100">
-                            <div class="card" style="width: 15rem; position: relative; overflow: hidden;">
-                                <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
-                                     class="card-img-top" alt="Background">
-                                <div class="card-body">
-                                    <a th:href="${game.link}" class="stretched-link"></a>
-                                    <h5 class="card-title text-center text-brand" th:text="${game.type.longName}">Game
-                                        type</h5>
-                                    <text class="d-flex justify-content-center text-muted">Go to game</text>
-                                </div>
+                                    </a>
+                                </th:block>
                             </div>
-                            <div class="w-100">
-                                <div th:if="${not game.playersRevealed}">
-                                    <h6 class="text-center mb-2">Participants</h6>
-                                    <div class="row mb-3">
-                                        <th:block th:each="participant : ${stage.participantModelList}">
-                                            <th:block th:if="${game.participantIdList.contains(participant.id)}">
-                                                <div class="col-4 mb-3">
-                                                    <span th:text="${participant.name}">Stark</span>
-                                                    <br/>
-                                                    <th:block th:each="link : ${participant.profileLinks}">
+                        </div>
+                    </td>
+                    <td class="align-middle" th:text="${participant.games}">Games</td>
+                    <td class="align-middle" th:if="${participant.penaltyPoints() eq 0}"
+                        th:text="${participant.points}">
+                        Mark
+                    </td>
+                    <td class="align-middle" th:if="${participant.penaltyPoints() ne 0}">
+                        <text th:text="${participant.points - participant.penaltyPoints}">Pts</text>&nbsp;
+                        <text class="text-muted fst-italic"
+                              th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen. pts.)'}">
+                            Pts with penalties
+                        </text>
+                    </td>
+                    <td class="align-middle" th:text="${participant.wins}">Wins</td>
+                    <td class="align-middle" th:text="${participant.avgPoints}">Avg pts</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h5 class="text-center mt-5">Games</h5>
+            <div class="accordion accordion-flush" id="accordionGames">
+                <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
+                    <h6 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
+                                aria-controls="flush-collapse">
+                            <text class="text-muted" th:text="${game.type.shortname}">Type</text>&nbsp;
+                            <text th:text="${game.name}">Name</text>&nbsp;
+                            <text th:if="${not game.completed}" class="text-muted fst-italic"
+                                  th:text="${'(round '+game.round+')'}">Round
+                            </text>
+                            <text th:if="${game.completed}" class="text-muted fst-italic">(Completed)</text>
+                        </button>
+                    </h6>
+                    <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
+                         data-bs-parent="#accordionGames">
+                        <div class="accordion-body ms-3">
+                            <div class="d-flex justify-content-start gap-3 w-100">
+                                <div class="card" style="width: 15rem; position: relative; overflow: hidden;">
+                                    <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
+                                         class="card-img-top" alt="Background">
+                                    <div class="card-body">
+                                        <a th:href="${game.link}" class="stretched-link"></a>
+                                        <h5 class="card-title text-center text-brand" th:text="${game.type.longName}">
+                                            Game
+                                            type</h5>
+                                        <text class="d-flex justify-content-center text-muted">Go to game</text>
+                                    </div>
+                                </div>
+                                <div class="w-100">
+                                    <div th:if="${not game.playersRevealed}">
+                                        <h6 class="text-center mb-2">Participants</h6>
+                                        <div class="row mb-3">
+                                            <th:block th:each="participant : ${stage.participantModelList}">
+                                                <th:block th:if="${game.participantIdList.contains(participant.id)}">
+                                                    <div class="col-4 mb-3">
+                                                        <span th:text="${participant.name}">Stark</span>
+                                                        <br/>
+                                                        <th:block th:each="link : ${participant.profileLinks}">
                                                         <span th:if="${link.link eq null}"
                                                               class="badge rounded-pill bi bi-person-fill text-bg-secondary"
                                                               data-bs-toggle="tooltip"
                                                               data-bs-title="Alias"
                                                               th:text="' ' + ${link.label}">Handle</span>
-                                                        <a th:if="${link.link ne null}" class="text-decoration-none"
-                                                           th:href="link.link"
-                                                           target="_blank">
+                                                            <a th:if="${link.link ne null}" class="text-decoration-none"
+                                                               th:href="link.link"
+                                                               target="_blank">
                                                         <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
                                                               data-bs-toggle="tooltip"
                                                               th:data-bs-title="${'External player profile: '+link.link}"
                                                               th:text="'  ' + ${link.label}">Profile</span>
-                                                        </a>
-                                                    </th:block>
-                                                </div>
+                                                            </a>
+                                                        </th:block>
+                                                    </div>
+                                                </th:block>
                                             </th:block>
-                                        </th:block>
+                                        </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <h6 class="text-center">Rankings</h6>
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col"></th>
-                                            <th scope="col">Player</th>
-                                            <th scope="col">Points</th>
-                                            <th scope="col">Castles</th>
-                                            <th scope="col">Penalty pts.</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="player, playerIdx: ${game.playerModelList}">
-                                            <th class="align-middle" scope="row" th:text="${playerIdx.index+1}">#</th>
-                                            <td>
-                                                <div class="d-flex justify-content-start align-items-center">
-                                                    <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
-                                                         style="max-height: 2.25rem">&nbsp;
-                                                    <div class="ms-3">
-                                                        <text th:text="${player.name}"
-                                                              th:class="${player.profileLinks.isEmpty() ? 'text-muted' : ''}">
-                                                            Lannister
-                                                        </text>
-                                                        <br/>
-                                                        <th:block th:each="link : ${player.profileLinks}">
+                                    <div>
+                                        <h6 class="text-center">Rankings</h6>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col">Player</th>
+                                                <th scope="col">Points</th>
+                                                <th scope="col">Castles</th>
+                                                <th scope="col">Penalty pts.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="player, playerIdx: ${game.playerModelList}">
+                                                <th class="align-middle" scope="row" th:text="${playerIdx.index+1}">#
+                                                </th>
+                                                <td>
+                                                    <div class="d-flex justify-content-start align-items-center">
+                                                        <img th:src="@{'/icons/'+${player.house}+'.png'}"
+                                                             alt="house icon"
+                                                             style="max-height: 2.25rem">&nbsp;
+                                                        <div class="ms-3">
+                                                            <text th:text="${player.name}"
+                                                                  th:class="${player.profileLinks.isEmpty() ? 'text-muted' : ''}">
+                                                                Lannister
+                                                            </text>
+                                                            <br/>
+                                                            <th:block th:each="link : ${player.profileLinks}">
                                                         <span th:if="${link.link eq null}"
                                                               class="badge rounded-pill bi bi-person-fill text-bg-secondary"
                                                               data-bs-toggle="tooltip" data-bs-title="Alias"
                                                               th:text="' ' + ${link.label}">Handle</span>
-                                                            <a th:if="${link.link ne null}" class="text-decoration-none"
-                                                               th:href="link.link"
-                                                               target="_blank">
+                                                                <a th:if="${link.link ne null}"
+                                                                   class="text-decoration-none"
+                                                                   th:href="link.link"
+                                                                   target="_blank">
                                                             <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
                                                                   data-bs-toggle="tooltip"
                                                                   th:data-bs-title="${'External player profile: '+link.link}"
                                                                   th:text="'  ' + ${link.label}">Profile</span>
-                                                            </a>
-                                                        </th:block>
+                                                                </a>
+                                                            </th:block>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td class="align-middle" th:text="${player.score}">Pts</td>
-                                            <td class="align-middle" th:text="${player.castles}"></td>
-                                            <td class="align-middle" th:text="${player.penaltyPoints}">score</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                </td>
+                                                <td class="align-middle" th:text="${player.score}">Pts</td>
+                                                <td class="align-middle" th:text="${player.castles}"></td>
+                                                <td class="align-middle" th:text="${player.penaltyPoints}">score</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -268,6 +279,47 @@
             </div>
         </div>
     </div>
+
+    <!-- NEW STAGE MODAL-->
+    <div class="modal fade" id="newStageModal" tabindex="-1" aria-labelledby="newStageModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="newStageModalLabel">New Tournament Stage</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newStageForm" method='POST'
+                          th:action="@{'/tournament/'+${model.id}+'/new-stage'}"
+                          th:object="${newStageForm}">
+                        <input type="hidden" th:field="*{tournamentId}">
+                        <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
+                            <div style="width: 67%">
+                                <label for="stageName" class="form-label">Name</label>
+                                <input type="text" required minlength="4" maxlength="100" class="form-control"
+                                       id="stageName" th:field="*{name}"
+                                       placeholder="Enter stage name">
+                            </div>
+                            <div style="width: 33%">
+                                <label for="qualifyCount" class="form-label">Qualifying players</label>
+                                <input type="number" required min="1" max="64" class="form-control"
+                                       id="qualifyCount" th:field="*{qualificationCount}">
+                            </div>
+                        </div>
+                        <div class="text-muted fst-italic text-center mb-3">
+                            You can change the amount of players qualifying for the next round at any point.
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript-->
     <script th:inline="javascript">
         function showModal(modalId) {
             $("#" + modalId).modal("show");
