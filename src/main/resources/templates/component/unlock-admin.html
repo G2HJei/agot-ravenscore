@@ -24,6 +24,15 @@
 </div>
 
 <script th:inline="javascript">
+    function showUnlockModal() {
+        $("#unlockAdminModal").modal("show");
+    }
+
+    function lockAdmin() {
+        document.cookie = `tournamentKeyHash=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        location.reload();
+    }
+
     function unlockAdmin() {
         $.ajax({
             url: "/unlock-tournament",
@@ -45,10 +54,5 @@
                 }
         })
         ;
-    }
-
-    function lockAdmin() {
-        document.cookie = `tournamentKeyHash=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-        location.reload();
     }
 </script>

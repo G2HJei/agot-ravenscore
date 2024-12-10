@@ -1,0 +1,66 @@
+<div id="tournamentStageModalContainer"></div>
+
+<script th:inline="javascript">
+    const STAGE_MODAL = `
+    <div class="modal fade show" id="stageModal" tabindex="-1" aria-labelledby="stageModalLabel" aria-modal="true"
+         role="dialog" style="display: block;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="stageModalLabel">{{title}}</h1>
+                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="/tournament/{{tour-id}}/stage">
+                        <input type="hidden" name="stageId" value="{{stage-id}}">
+                        <input type="hidden" name="tournamentId" value="{{tour-id}}">
+                        <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
+                            <div style="width: 67%">
+                                <label for="stageName" class="form-label">Name</label>
+                                <input type="text" required="" minlength="4" maxlength="100" class="form-control"
+                                       id="stageName" placeholder="Enter stage name" name="name" value="{{stage-name}}">
+                            </div>
+                            <div style="width: 33%">
+                                <label for="qualifyCount" class="form-label">Qualifying players</label>
+                                <input type="number" required="" min="1" max="64" class="form-control" id="qualifyCount"
+                                       name="qualificationCount" value="{{qualification-count}}">
+                            </div>
+                        </div>
+                        <div class="text-muted fst-italic text-center mb-3">
+                            You can change the amount of players qualifying for the next round at any point.
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>`
+
+    function newTournamentStage() {
+        refreshStageModal(STAGE_MODAL
+            .replace("{{title}}", "New Tournament Stage")
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replace("{{stage-id}}", "")
+            .replace("{{stage-name}}", "")
+            .replace("{{qualification-count}}", "1")
+        );
+    }
+
+    function editTournamentStage() {
+        let selectedStage = $('#stageNav .nav-item .nav-link.active');
+        refreshStageModal(STAGE_MODAL
+            .replace("{{title}}", "Modify Tournament Stage")
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replace("{{stage-id}}", getSelectedStageId())
+            .replace("{{stage-name}}", selectedStage.text())
+            .replace("{{qualification-count}}", selectedStage.data('rs-stage-qualification-count'))
+        );
+    }
+
+    function refreshStageModal(playerModalHTML) {
+        $("#tournamentStageModalContainer").empty().append(playerModalHTML);
+        $("#stageModal").modal("show");
+    }
+</script>

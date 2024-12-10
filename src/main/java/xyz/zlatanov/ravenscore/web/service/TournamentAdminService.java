@@ -34,20 +34,36 @@ public class TournamentAdminService {
 	@Transactional
 	public void createNewStage(String tournamentKeyHash, @Valid StageForm stageForm) {
 		validateAdminRights(tournamentKeyHash, stageForm.getTournamentId());
-		tournamentStageRepository.save(new TournamentStage()
-				.name(stageForm.getName())
-				.tournamentId(stageForm.getTournamentId())
-				.qualificationCount(stageForm.getQualificationCount()));
+		if (stageForm.getStageId() == null) {
+			createStage(stageForm);
+		} else {
+			updateStage(stageForm);
+		}
 	}
 
 	@Transactional
-	public void player(String tournamentKeyHash, PlayerForm playerForm) {
+	public void player(String tournamentKeyHash, @Valid PlayerForm playerForm) {
 		validateAdminRights(tournamentKeyHash, playerForm.getTournamentId());
 		if (playerForm.getTournamentStageId() != null) {
 			participant(playerForm);
 		} else {
 			substitute(playerForm);
 		}
+	}
+
+	private void createStage(@Valid StageForm stageForm) {
+		tournamentStageRepository.save(new TournamentStage()
+				.name(stageForm.getName())
+				.tournamentId(stageForm.getTournamentId())
+				.qualificationCount(stageForm.getQualificationCount()));
+	}
+
+	private void updateStage(@Valid StageForm stageForm) {
+		val stage = tournamentStageRepository.findById(stageForm.getStageId())
+				.orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		tournamentStageRepository.save(stage
+				.name(stageForm.getName())
+				.qualificationCount(stageForm.getQualificationCount()));
 	}
 
 	private void validateAdminRights(String tournamentKeyHash, UUID tournamentId) {
