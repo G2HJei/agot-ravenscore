@@ -36,11 +36,43 @@
                         <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg remove-alias" data-bs-toggle="tooltip" data-bs-title="Remove"></button>
                     </div>`;
 
+    function newParticipant() {
+        refreshModal(PLAYER_MODAL
+            .replace("{{title}}", "New Player")
+            .replace("{{player-id}}", "")
+            .replace("{{tour-id}}", getTournamentId())
+            .replace("{{stage-id}}", getSelectedStageId())
+            .replace("{{player-name}}", "")
+            .replace("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
+    }
+
+    function editParticipant(subElt) {
+        // Identify the parent container of the clicked element
+        const actionContainer = $(subElt).closest(".action-container");
+
+        // Extract the substitute aliases from the clicked container
+        const aliases = [];
+        actionContainer.find(".player-alias").each(function () {
+            aliases.push($(this).text().trim());
+        });
+
+        const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
+        const playerModalHTML = PLAYER_MODAL
+            .replace("{{title}}", "Modify Player")
+            .replace("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
+            .replace("{{tour-id}}", getTournamentId())
+            .replace("{{stage-id}}", getSelectedStageId())
+            .replace("{{player-name}}", actionContainer.find(".player-name").text().trim())
+            .replace("{{profile-links}}", profileLinksHTML);
+
+        refreshModal(playerModalHTML);
+    }
+
     function newSubstitute() {
         refreshModal(PLAYER_MODAL
             .replace("{{title}}", "New Substitute")
-            .replace("{{tour-id}}", getTournamentId())
             .replace("{{player-id}}", "")
+            .replace("{{tour-id}}", getTournamentId())
             .replace("{{stage-id}}", "")
             .replace("{{player-name}}", "")
             .replace("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
@@ -52,20 +84,17 @@
 
         // Extract the substitute aliases from the clicked container
         const aliases = [];
-        actionContainer.find(".sub-alias").each(function () {
+        actionContainer.find(".player-alias").each(function () {
             aliases.push($(this).text().trim());
         });
 
-        // Generate the PROFILE_LINK HTML for each alias
         const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
-
-        // Generate the PLAYER MODAL HTML with the name and profile links
         const playerModalHTML = PLAYER_MODAL
             .replace("{{title}}", "Modify Substitute")
+            .replace("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
             .replace("{{tour-id}}", getTournamentId())
-            .replace("{{player-id}}", actionContainer.find(".sub-name").data("rs-sub-id"))
             .replace("{{stage-id}}", "")
-            .replace("{{player-name}}", actionContainer.find(".sub-name").text().trim())
+            .replace("{{player-name}}", actionContainer.find(".player-name").text().trim())
             .replace("{{profile-links}}", profileLinksHTML);
 
         refreshModal(playerModalHTML);

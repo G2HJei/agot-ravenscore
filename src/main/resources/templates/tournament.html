@@ -46,7 +46,7 @@
                 <tr>
                     <th scope="col">
                         <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
-                                data-bs-title="Add player" onclick="showNewParticipantModal()"
+                                data-bs-title="Add player" onclick="newParticipant()"
                                 class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
                     </th>
                     <th scope="col">Player</th>
@@ -61,7 +61,7 @@
                     <th class="align-middle fst-italic fw-lighter text-center" scope="col" colspan="6">This
                         tournament stage has no participants yet.
                         <th:block th:if="${model.adminUnlocked}">Please
-                            <a href="#" onclick="showNewParticipantModal()"
+                            <a href="#" onclick="newParticipant()"
                                class="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add
                                 players</a>.
                         </th:block>
@@ -70,30 +70,33 @@
                 <tr th:each="participant, participantIdx: ${stage.participantModelList}">
                     <th class="align-middle" scope="row" th:text="${participantIdx.index+1}">#</th>
                     <td>
-                        <div class="d-flex justify-content-start align-items-center">
+                        <div class="d-flex justify-content-start align-items-center action-container">
                             <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
                                                      style="max-height: 2.25rem">&nbsp;-->
                             <div>
                                 <text th:text="${participant.name}"
-                                      th:class="${participant.profileLinks.isEmpty() ? 'text-muted' : ''}">
+                                      th:data-rs-player-id="${participant.id}"
+                                      th:class="${'player-name ' + (participant.profileLinks.isEmpty() ? 'text-muted' : '')}">
                                     Petyr Baelish
                                 </text>
+                                <i class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
+                                   data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
                                 <br/>
                                 <span th:if="${participant.replacedLabel ne null}"
                                       class="badge rounded-pill bi bi-arrow-left-right text-bg-secondary d-inline-block"
                                       data-bs-toggle="tooltip" th:data-bs-title="${participant.replacedLabel}"></span>
                                 <th:block th:each="link : ${participant.profileLinks}">
-                            <span th:if="${link.link eq null}"
-                                  class="badge rounded-pill bi bi-person-fill text-bg-secondary"
-                                  data-bs-toggle="tooltip" data-bs-title="Alias"
-                                  th:text="' ' + ${link.label}">Handle</span>
+                                    <span th:if="${link.link eq null}"
+                                          class="badge rounded-pill bi bi-person-fill text-bg-secondary player-alias"
+                                          data-bs-toggle="tooltip" data-bs-title="Alias"
+                                          th:text="' ' + ${link.label}">Handle</span>
                                     <a th:if="${link.link ne null}" class="text-decoration-none"
                                        th:href="link.link"
                                        target="_blank">
-                                <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
-                                      data-bs-toggle="tooltip"
-                                      th:data-bs-title="${'External player profile: '+link.link}"
-                                      th:text="'  ' + ${link.label}">Profile</span>
+                                        <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary player-alias"
+                                              data-bs-toggle="tooltip"
+                                              th:data-bs-title="${'External player profile: '+link.link}"
+                                              th:text="'  ' + ${link.label}">Profile</span>
                                     </a>
                                 </th:block>
                             </div>
@@ -127,20 +130,20 @@
             </h6>
             <div class="row">
                 <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
-                    <span th:text="${substitute.name}" class="sub-name"
-                          th:data-rs-sub-id="${substitute.id}"> Sub Name</span>&nbsp;
+                    <span th:text="${substitute.name}" class="player"
+                          th:data-rs-player-id="${substitute.id}"> Sub Name</span>&nbsp;
                     <i class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
                        data-bs-title="Edit/remove" onclick="editSubstitute(this)"></i>
                     <br/>
                     <th:block th:each="link : ${substitute.profileLinks}">
                         <span th:if="${link.link eq null}"
-                              class="badge rounded-pill bi bi-person-fill text-bg-secondary sub-alias"
+                              class="badge rounded-pill bi bi-person-fill text-bg-secondary player-alias"
                               data-bs-toggle="tooltip" data-bs-title="Alias"
                               th:text="' ' + ${link.label}">Handle</span>
                         <a th:if="${link.link ne null}" class="text-decoration-none"
                            th:href="link.link"
                            target="_blank">
-                         <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary sub-alias"
+                         <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary player-alias"
                                data-bs-toggle="tooltip"
                                th:data-bs-title="${'External player profile: '+link.link}"
                                th:text="'  ' + ${link.label}">Profile</span>
@@ -339,12 +342,6 @@
     <!-- JavaScript-->
     <script th:inline="javascript">
 
-        // new player
-        function showNewParticipantModal() {
-            $("#playerModalLabel").text("New Player");
-            $("#playerStageId").val(getSelectedStageId());
-            $("#playerModal").modal("show");
-        }
 
         // show on hover support
         $(document).ready(function () {
