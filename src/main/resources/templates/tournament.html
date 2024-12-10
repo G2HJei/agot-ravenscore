@@ -161,6 +161,11 @@
 
             <!-- STAGE GAMES -->
             <h5 class="text-center mt-5">Games</h5>
+            <div class="align-middle fst-italic fw-lighter text-center">This tournament stage has no games yet. Why not
+                <a href="#" onclick="newGame()"
+                   class="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
+                    one</a> now?
+            </div>
             <div class="accordion accordion-flush" th:id="${'accordionGames-'+stageIdx.index}">
                 <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
                     <h6 class="accordion-header">
