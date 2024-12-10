@@ -37,8 +37,9 @@ public class TournamentDetailsBuilder {
 	private List<SubstituteModel> getSubstitutes() {
 		return substituteList.stream()
 				.map(sub -> new SubstituteModel()
+						.id(sub.id().toString())
 						.name(sub.name())
-						.profileLinks(Arrays.stream(sub.profileLinks())
+						.profileLinks(Arrays.stream(Optional.ofNullable(sub.profileLinks()).orElse(new String[] {}))
 								.map(ProfileLink::new)
 								.sorted(Comparator.comparing(ProfileLink::link, Comparator.nullsFirst(Comparator.naturalOrder())))
 								.toList()))

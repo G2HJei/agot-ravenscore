@@ -11,11 +11,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class PlayerForm {
 
+	private UUID		playerId;
 	@NotEmpty
 	private UUID		tournamentId;
 	private UUID		tournamentStageId;
 	@NotEmpty
 	@Size(min = 2, max = 64)
 	private String		name;
-	private String[]	profileLinks;
+	private String[]	profileLinks	= new String[] {};
 }

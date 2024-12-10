@@ -39,12 +39,12 @@ public class TournamentAdminService {
 	}
 
 	@Transactional
-	public void addPlayer(String tournamentKeyHash, PlayerForm playerForm) {
+	public void player(String tournamentKeyHash, PlayerForm playerForm) {
 		validateAdminRights(tournamentKeyHash, playerForm.getTournamentId());
 		if (playerForm.getTournamentStageId() != null) {
-			createParticipant(playerForm);
+			participant(playerForm);
 		} else {
-			createSubstitute(playerForm);
+			substitute(playerForm);
 		}
 	}
 
@@ -56,14 +56,22 @@ public class TournamentAdminService {
 		}
 	}
 
-	private void createSubstitute(PlayerForm playerForm) {
-		substituteRepository.save(new Substitute()
-				.name(playerForm.getName())
-				.tournamentId(playerForm.getTournamentId())
-				.profileLinks(playerForm.getProfileLinks()));
+	private void substitute(PlayerForm playerForm) {
+		if (playerForm.getPlayerId() == null) {
+			substituteRepository.save(new Substitute()
+					.name(playerForm.getName())
+					.tournamentId(playerForm.getTournamentId())
+					.profileLinks(playerForm.getProfileLinks()));
+		} else {
+			val substitute = substituteRepository.findById(playerForm.getPlayerId())
+					.orElseThrow(() -> new RavenscoreException("Invalid substitute"));
+			substituteRepository.save(substitute
+					.name(playerForm.getName())
+					.profileLinks(playerForm.getProfileLinks()));
+		}
 	}
 
-	private void createParticipant(PlayerForm playerForm) {
+	private void participant(PlayerForm playerForm) {
 		val participant = participantRepository.save(
 				new Participant()
 						.name(playerForm.getName())
