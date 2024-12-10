@@ -20,7 +20,7 @@
                 onclick="lockAdmin()"></button>
         <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-2"
                 data-bs-toggle="tooltip" data-bs-title="Show tournament rules & details"
-                onclick="showModal('rulesModal')"></button>
+                onclick="showRulesModal()"></button>
         <button th:if="${model.adminUnlocked}" type="button" class="btn btn-sm btn-outline-secondary bi bi-plus-lg me-3"
                 data-bs-toggle="tooltip" data-bs-title="Create new tournament stage"
                 onclick="newTournamentStage()"></button>
@@ -282,37 +282,16 @@
         </div>
     </div>
 
-    <!-- RULES MODAL-->
-    <div class="modal modal-lg fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="rulesModalLabel">Tournament Rules</h1>
-                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h6 class="fw-semibold">Scoring</h6>
-                    <div class="mb-3" th:utext="#{'scoring.description.'+${model.scoring}}"></div>
-                    <h6 class="fw-semibold">Description</h6>
-                    <div class="mb-3" th:text="${model.description}">Rules description</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Components -->
+    <div layout:replace="~{component/rules}"></div>
     <div layout:replace="~{component/unlock-admin}"></div>
     <div th:if="${model.adminUnlocked}">
         <div layout:replace="~{component/stage}"></div>
         <div layout:replace="~{component/player}"></div>
     </div>
 
-    <!-- JavaScript-->
+    <!-- Utility cross-component functions -->
     <script th:inline="javascript">
-
-
-        // show on hover support
         $(document).ready(function () {
             $(".action-container").hover(function () {
                     $(this).find('.action-icon').removeClass('visually-hidden');
@@ -323,7 +302,6 @@
             );
         })
 
-        //utils
         function getTournamentId() {
             return $('#tournamentRoot').data('rs-tour-id');
         }
