@@ -1,0 +1,54 @@
+<!-- UNLOCK MODAL-->
+<div class="modal modal-sm fade" id="unlockAdminModal" tabindex="-1" aria-labelledby="unlockAdminModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="unlockAdminModalLabel">Tournament Admin</h1>
+                <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <input type="email" class="form-control" id="tournamentKey" placeholder="Administration key">
+                </div>
+                <div class="d-flex justify-content-end align-items-center">
+                    <div id="tournamentKeyError" class="text-danger visually-hidden ms-1 me-auto">
+                        Incorrect key!
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary" onclick="unlockAdmin()">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    function unlockAdmin() {
+        $.ajax({
+            url: "/unlock-tournament",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                tournamentId: $("#tournamentRoot").data("rs-tour-id"),
+                tournamentKey: $("#tournamentKey").val()
+            }),
+            success: response => {
+                console.log(response);
+                document.cookie = `tournamentKeyHash=${encodeURIComponent(response)}; path=/`;
+                location.reload();
+            },
+            error:
+                () => {
+                    console.log("ERROR!!!");
+                    $("#tournamentKeyError").removeClass("visually-hidden");
+                }
+        })
+        ;
+    }
+
+    function lockAdmin() {
+        document.cookie = `tournamentKeyHash=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        location.reload();
+    }
+</script>

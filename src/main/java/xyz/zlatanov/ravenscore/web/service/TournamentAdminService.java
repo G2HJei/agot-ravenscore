@@ -1,9 +1,11 @@
 package xyz.zlatanov.ravenscore.web.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,28 +60,60 @@ public class TournamentAdminService {
 
 	private void substitute(PlayerForm playerForm) {
 		if (playerForm.getPlayerId() == null) {
-			substituteRepository.save(new Substitute()
-					.name(playerForm.getName())
-					.tournamentId(playerForm.getTournamentId())
-					.profileLinks(playerForm.getProfileLinks()));
+			createSubstitute(playerForm);
 		} else {
-			val substitute = substituteRepository.findById(playerForm.getPlayerId())
-					.orElseThrow(() -> new RavenscoreException("Invalid substitute"));
-			substituteRepository.save(substitute
-					.name(playerForm.getName())
-					.profileLinks(playerForm.getProfileLinks()));
+			updateSubstitute(playerForm);
 		}
 	}
 
+	private void createSubstitute(PlayerForm playerForm) {
+		substituteRepository.save(new Substitute()
+				.name(playerForm.getName())
+				.tournamentId(playerForm.getTournamentId())
+				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
+	}
+
+	private void updateSubstitute(PlayerForm playerForm) {
+		val substitute = substituteRepository.findById(playerForm.getPlayerId())
+				.orElseThrow(() -> new RavenscoreException("Invalid substitute"));
+		substituteRepository.save(substitute
+				.name(playerForm.getName())
+				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
+	}
+
 	private void participant(PlayerForm playerForm) {
+		if (playerForm.getPlayerId() == null) {
+			createParticipant(playerForm);
+		} else {
+			updateParticipant(playerForm);
+		}
+	}
+
+	private void createParticipant(PlayerForm playerForm) {
 		val participant = participantRepository.save(
 				new Participant()
 						.name(playerForm.getName())
-						.profileLinks(playerForm.getProfileLinks()));
+						.profileLinks(trimEmpty(playerForm.getProfileLinks())));
 		val stage = tournamentStageRepository.findById(playerForm.getTournamentStageId())
 				.orElseThrow(() -> new RavenscoreException("Invalid tournament stage."));
 		val participantIdList = new TreeSet<>(List.of(stage.participantIdList()));
 		participantIdList.add(participant.id());
 		tournamentStageRepository.save(stage.participantIdList(participantIdList.toArray(new UUID[] {})));
+	}
+
+	private void updateParticipant(PlayerForm playerForm) {
+		val participant = participantRepository.findById(playerForm.getPlayerId())
+				.orElseThrow(() -> new RavenscoreException("Invalid participant"));
+		participantRepository.save(participant
+				.name(playerForm.getName())
+				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
+	}
+
+	private String[] trimEmpty(String[] items) {
+		val trimmed = Arrays.stream(items)
+				.filter(StringUtils::isNotEmpty)
+				.distinct()
+				.toList();
+		return trimmed.toArray(new String[] {});
 	}
 }

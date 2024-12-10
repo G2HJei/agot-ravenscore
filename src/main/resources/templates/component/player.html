@@ -1,0 +1,92 @@
+<div id="playerModalContainer"></div>
+
+<script th:inline="javascript">
+    const PLAYER_MODAL = `
+            <div class="modal fade show" id="playerModal" tabindex="-1" aria-labelledby="playerModalLabel" aria-modal="true" role="dialog" style="display: block;">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="playerModalLabel">{{title}}</h1>
+                            <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="newSubstituteForm" method="POST" action="/tournament/{{tour-id}}/player">
+                                <input type="hidden" name="playerId" value="{{player-id}}">
+                                <input type="hidden" name="tournamentStageId" value="{{stage-id}}">
+                                <div class="mb-3">
+                                    <label for="playerName" class="form-label">Name</label>
+                                    <input type="text" required="" minlength="2" maxlength="64" class="form-control" id="playerName" placeholder="Enter player name" name="name" value="{{player-name}}">
+                                </div>
+                                <label for="profileLinks" class="form-label">Profile links & aliases</label>
+                                <div id="profileLinks">
+                                {{profile-links}}
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center mt-3">
+                                    <button type="button" id="addAlias" data-bs-toggle="tooltip" data-bs-title="Add alias" class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
+                                    <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    const PROFILE_LINK = `
+                    <div class="input-group mb-2">
+                        <input type="text" name="profileLinks" class="form-control" placeholder="Enter player alias or link" value="{{profile-link}}">
+                        <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg remove-alias" data-bs-toggle="tooltip" data-bs-title="Remove"></button>
+                    </div>`;
+
+    function newSubstitute() {
+        refreshModal(PLAYER_MODAL
+            .replace("{{title}}", "New Substitute")
+            .replace("{{tour-id}}", getTournamentId())
+            .replace("{{player-id}}", "")
+            .replace("{{stage-id}}", "")
+            .replace("{{player-name}}", "")
+            .replace("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
+    }
+
+    function editSubstitute(subElt) {
+        // Identify the parent container of the clicked element
+        const actionContainer = $(subElt).closest(".action-container");
+
+        // Extract the substitute aliases from the clicked container
+        const aliases = [];
+        actionContainer.find(".sub-alias").each(function () {
+            aliases.push($(this).text().trim());
+        });
+
+        // Generate the PROFILE_LINK HTML for each alias
+        const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
+
+        // Generate the PLAYER MODAL HTML with the name and profile links
+        const playerModalHTML = PLAYER_MODAL
+            .replace("{{title}}", "Modify Substitute")
+            .replace("{{tour-id}}", getTournamentId())
+            .replace("{{player-id}}", actionContainer.find(".sub-name").data("rs-sub-id"))
+            .replace("{{stage-id}}", "")
+            .replace("{{player-name}}", actionContainer.find(".sub-name").text().trim())
+            .replace("{{profile-links}}", profileLinksHTML);
+
+        refreshModal(playerModalHTML);
+    }
+
+    function refreshModal(playerModalHTML) {
+        $("#playerModalContainer").empty().append(playerModalHTML);
+        $("#addAlias").tooltip();
+        $(".remove-alias").tooltip();
+        $("#playerModal").modal("show");
+    }
+
+
+    $(document).ready(() => {
+        $("#playerModalContainer").on('click', '#addAlias', function () {
+            $('#profileLinks').append(PROFILE_LINK.replace("{{profile-link}}", ""));
+            $(".remove-alias").tooltip();
+        });
+
+        $("#playerModalContainer").on('click', '.remove-alias', function () {
+            $(this).closest('.input-group').remove();
+        });
+    });
+</script>
