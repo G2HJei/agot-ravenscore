@@ -119,3 +119,7 @@
 .text-brand {
     color: var(--rs-brand-color);
 }
+
+.action-icon {
+    color: var(--rs-brand-color);
+}
