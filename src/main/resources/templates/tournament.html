@@ -126,13 +126,15 @@
                         onclick="showNewSubstituteModal()"></button>
             </h6>
             <div class="row">
-                <div class="col-4 mb-3" th:each="substitute : ${model.substituteModelList}">
+                <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
                     <span th:text="${substitute.name}"> Sub Name</span>&nbsp;
                     <th:block th:each="link : ${substitute.profileLinks}">
                         <span th:if="${link.link eq null}"
                               class="badge rounded-pill bi bi-person-fill text-bg-secondary"
                               data-bs-toggle="tooltip" data-bs-title="Alias"
                               th:text="' ' + ${link.label}">Handle</span>
+                        <i class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
+                           data-bs-title="Edit/remove"></i>
                         <br/>
                         <a th:if="${link.link ne null}" class="text-decoration-none"
                            th:href="link.link"
@@ -409,7 +411,7 @@
             $("#newPlayerModal").modal("show");
         }
 
-        $(document).ready(function () {
+        $(document).ready(() => {
             $('#addAlias').click(function () {
                 $('#stringArray').append(`
                     <div class="input-group mb-2">
@@ -422,6 +424,17 @@
                 $(this).closest('.input-group').remove();
             });
         });
+
+        // show on hover support
+        $(document).ready(function () {
+            $(".action-container").hover(function () {
+                    $(this).find('.action-icon').removeClass('visually-hidden');
+                },
+                function () {
+                    $(this).find('.action-icon').addClass('visually-hidden');
+                }
+            );
+        })
 
         //other
         function getSelectedStageId() {
