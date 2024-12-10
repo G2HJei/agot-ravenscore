@@ -68,7 +68,7 @@
                     </th>
                 </tr>
                 <tr th:each="participant, participantIdx: ${stage.participantModelList}">
-                    <th class="align-middle text-center" scope="row" th:text="${participantIdx.index+1}">#</th>
+                    <th class="align-middle" scope="row" th:text="${participantIdx.index+1}">#</th>
                     <td>
                         <div class="d-flex justify-content-start align-items-center">
                             <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
@@ -123,7 +123,7 @@
                 <button th:if="${model.adminUnlocked}" type="button"
                         class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-2"
                         data-bs-toggle="tooltip" data-bs-title="Add substitute player"
-                        onclick="showNewSubstituteModal()"></button>
+                        onclick="newSubstitute()"></button>
             </h6>
             <div class="row">
                 <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
@@ -270,31 +270,6 @@
         </div>
     </div>
 
-    <!-- UNLOCK MODAL-->
-    <div class="modal modal-sm fade" id="unlockAdminModal" tabindex="-1" aria-labelledby="unlockAdminModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="unlockAdminModalLabel">Tournament Admin</h1>
-                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <input type="email" class="form-control" id="tournamentKey" placeholder="Administration key">
-                    </div>
-                    <div class="d-flex justify-content-end align-items-center">
-                        <div id="tournamentKeyError" class="text-danger visually-hidden ms-1 me-auto">
-                            Incorrect key!
-                        </div>
-                        <button type="button" class="btn btn-outline-secondary" onclick="unlockAdmin()">Unlock</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- RULES MODAL-->
     <div class="modal modal-lg fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -355,68 +330,21 @@
         </div>
     </div>
 
-    <!-- NEW PLAYER MODAL-->
-    <div id="playerModalContainer"></div>
+    <!-- Components -->
+    <div th:if="${model.adminUnlocked}">
+        <div layout:replace="~{component/unlock-admin}"></div>
+        <div layout:replace="~{component/player}"></div>
+    </div>
 
     <!-- JavaScript-->
     <script th:inline="javascript">
 
-        // new player/sub stuff
-        function showNewSubstituteModal() {
-            $("#playerModalLabel").text("New Substitute");
-            $("#playerStageId").val(null);
-            $("#playerModal").modal("show");
-        }
-
+        // new player
         function showNewParticipantModal() {
             $("#playerModalLabel").text("New Player");
             $("#playerStageId").val(getSelectedStageId());
             $("#playerModal").modal("show");
         }
-
-        function editSubstitute(subElt) {
-            // Identify the parent container of the clicked element
-            const actionContainer = $(subElt).closest(".action-container");
-
-            // Extract the substitute aliases from the clicked container
-            const aliases = [];
-            actionContainer.find(".sub-alias").each(function () {
-                aliases.push($(this).text().trim());
-            });
-
-            // Generate the PROFILE_LINK HTML for each alias
-            const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
-
-            // Generate the PLAYER MODAL HTML with the name and profile links
-            const playerModalHTML = PLAYER_MODAL
-                .replace("{{title}}", "Modify Substitute")
-                .replace("{{tour-id}}", getTournamentId())
-                .replace("{{player-id}}", actionContainer.find(".sub-name").data("rs-sub-id"))
-                .replace("{{stage-id}}", "")
-                .replace("{{player-name}}", actionContainer.find(".sub-name").text().trim())
-                .replace("{{profile-links}}", profileLinksHTML);
-
-            // Add the generated modal to the container
-            $("#playerModalContainer").append(playerModalHTML);
-
-            // Refresh tooltips
-            $("#addAlias").tooltip();
-            $(".remove-alias").tooltip();
-
-            // Show the modal
-            $("#playerModal").modal("show");
-        }
-
-        $(document).ready(() => {
-            $("#playerModalContainer").on('click', '#addAlias', function () {
-                $('#profileLinks').append(PROFILE_LINK.replace("{{profile-link}}", ""));
-                $(".remove-alias").tooltip();
-            });
-
-            $("#playerModalContainer").on('click', '.remove-alias', function () {
-                $(this).closest('.input-group').remove();
-            });
-        });
 
         // show on hover support
         $(document).ready(function () {
@@ -442,73 +370,6 @@
         function showModal(modalId) {
             $("#" + modalId).modal("show");
         }
-
-        function unlockAdmin() {
-            $.ajax({
-                url: "/unlock-tournament",
-                method: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({
-                    tournamentId: $("#tournamentRoot").data("rs-tour-id"),
-                    tournamentKey: $("#tournamentKey").val()
-                }),
-                success: response => {
-                    console.log(response);
-                    document.cookie = `tournamentKeyHash=${encodeURIComponent(response)}; path=/`;
-                    location.reload();
-                },
-                error:
-                    () => {
-                        console.log("ERROR!!!");
-                        $("#tournamentKeyError").removeClass("visually-hidden");
-                    }
-            })
-            ;
-        }
-
-        function lockAdmin() {
-            document.cookie = `tournamentKeyHash=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-            location.reload();
-        }
-
-        //---------//
-        //TEMPLATES//
-        //---------//
-        // tour-id, stage-id, player-name, profile-link(s)
-        const PLAYER_MODAL = `
-            <div class="modal fade show" id="playerModal" tabindex="-1" aria-labelledby="playerModalLabel" aria-modal="true" role="dialog" style="display: block;">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="playerModalLabel">{{title}}</h1>
-                            <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="newSubstituteForm" method="POST" action="/tournament/{{tour-id}}/player">
-                                <input type="hidden" name="playerId" value="{{player-id}}">
-                                <input type="hidden" name="tournamentStageId" value="{{stage-id}}">
-                                <div class="mb-3">
-                                    <label for="playerName" class="form-label">Name</label>
-                                    <input type="text" required="" minlength="2" maxlength="64" class="form-control" id="playerName" placeholder="Enter player name" name="name" value="{{player-name}}">
-                                </div>
-                                <label for="profileLinks" class="form-label">Profile links & aliases</label>
-                                <div id="profileLinks">
-                                {{profile-links}}
-                                </div>
-                                <div class="d-flex justify-content-end align-items-center mt-3">
-                                    <button type="button" id="addAlias" data-bs-toggle="tooltip" data-bs-title="Add alias" class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
-                                    <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>`
-        const PROFILE_LINK = `
-                    <div class="input-group mb-2">
-                        <input type="text" name="profileLinks" class="form-control" placeholder="Enter player alias or link" value="{{profile-link}}">
-                        <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg remove-alias" data-bs-toggle="tooltip" data-bs-title="Remove"></button>
-                    </div>`
     </script>
 </main>
 </body>
