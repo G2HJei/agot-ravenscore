@@ -38,11 +38,11 @@ public class TournamentController {
 		return "redirect:/tournament/" + tournamentId;
 	}
 
-	@PostMapping("/tournament/{tournamentId}/new-player")
+	@PostMapping("/tournament/{tournamentId}/player")
 	String tourneyDetails(@PathVariable UUID tournamentId,
 			@CookieValue(name = "tournamentKeyHash", defaultValue = "") String tournamentKeyHash,
 			@ModelAttribute PlayerForm playerForm) {
-		tournamentAdminService.addPlayer(tournamentKeyHash, playerForm);
+		tournamentAdminService.player(tournamentKeyHash, playerForm);
 		return "redirect:/tournament/" + tournamentId;
 	}
 }

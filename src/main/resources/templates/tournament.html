@@ -35,7 +35,7 @@
         </ul>
     </div>
 
-    <div id="tournamentRoot" th:data-tour-id="${model.id}" class="tab-content"
+    <div id="tournamentRoot" th:data-rs-tour-id="${model.id}" class="tab-content"
          th:each="stage, stageIdx : ${model.tournamentStageModelList}">
         <div th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
 
@@ -127,19 +127,20 @@
             </h6>
             <div class="row">
                 <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
-                    <span th:text="${substitute.name}"> Sub Name</span>&nbsp;
+                    <span th:text="${substitute.name}" class="sub-name"
+                          th:data-rs-sub-id="${substitute.id}"> Sub Name</span>&nbsp;
+                    <i class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
+                       data-bs-title="Edit/remove" onclick="editSubstitute(this)"></i>
+                    <br/>
                     <th:block th:each="link : ${substitute.profileLinks}">
                         <span th:if="${link.link eq null}"
-                              class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                              class="badge rounded-pill bi bi-person-fill text-bg-secondary sub-alias"
                               data-bs-toggle="tooltip" data-bs-title="Alias"
                               th:text="' ' + ${link.label}">Handle</span>
-                        <i class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
-                           data-bs-title="Edit/remove"></i>
-                        <br/>
                         <a th:if="${link.link ne null}" class="text-decoration-none"
                            th:href="link.link"
                            target="_blank">
-                         <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                         <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary sub-alias"
                                data-bs-toggle="tooltip"
                                th:data-bs-title="${'External player profile: '+link.link}"
                                th:text="'  ' + ${link.label}">Profile</span>
@@ -355,72 +356,64 @@
     </div>
 
     <!-- NEW PLAYER MODAL-->
-    <div th:if="${model.adminUnlocked}" class="modal fade" id="newPlayerModal" tabindex="-1"
-         aria-labelledby="newPlayerModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="newPlayerModalLabel">New Player</h1>
-                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="newSubstituteForm" method='POST'
-                          th:action="@{'/tournament/'+${model.id}+'/new-player'}"
-                          th:object="${newPlayerForm}">
-                        <input id="newPlayerStageId" type="hidden" th:field="*{tournamentStageId}">
-                        <div class="mb-3">
-                            <label for="playerName" class="form-label">Name</label>
-                            <input type="text" required minlength="2" maxlength="64" class="form-control"
-                                   id="playerName" th:field="*{name}"
-                                   placeholder="Enter player name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="stringArray" class="form-label">Profile links & aliases</label>
-                            <div id="stringArray" class="input-group">
-                                <input type="text" th:field="*{profileLinks}" class="form-control mb-2"
-                                       placeholder="Enter player alias or link">
-                            </div>
-
-                        </div>
-                        <div class="d-flex justify-content-end align-items-center">
-                            <button type="button" id="addAlias" data-bs-toggle="tooltip" data-bs-title="Add alias"
-                                    class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
-                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="playerModalContainer"></div>
 
     <!-- JavaScript-->
     <script th:inline="javascript">
 
         // new player/sub stuff
         function showNewSubstituteModal() {
-            $("#newPlayerModalLabel").text("New Substitute");
-            $("#newPlayerStageId").val(null);
-            $("#newPlayerModal").modal("show");
+            $("#playerModalLabel").text("New Substitute");
+            $("#playerStageId").val(null);
+            $("#playerModal").modal("show");
         }
 
         function showNewParticipantModal() {
-            $("#newPlayerModalLabel").text("New Player");
-            $("#newPlayerStageId").val(getSelectedStageId());
-            $("#newPlayerModal").modal("show");
+            $("#playerModalLabel").text("New Player");
+            $("#playerStageId").val(getSelectedStageId());
+            $("#playerModal").modal("show");
+        }
+
+        function editSubstitute(subElt) {
+            // Identify the parent container of the clicked element
+            const actionContainer = $(subElt).closest(".action-container");
+
+            // Extract the substitute aliases from the clicked container
+            const aliases = [];
+            actionContainer.find(".sub-alias").each(function () {
+                aliases.push($(this).text().trim());
+            });
+
+            // Generate the PROFILE_LINK HTML for each alias
+            const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
+
+            // Generate the PLAYER MODAL HTML with the name and profile links
+            const playerModalHTML = PLAYER_MODAL
+                .replace("{{title}}", "Modify Substitute")
+                .replace("{{tour-id}}", getTournamentId())
+                .replace("{{player-id}}", actionContainer.find(".sub-name").data("rs-sub-id"))
+                .replace("{{stage-id}}", "")
+                .replace("{{player-name}}", actionContainer.find(".sub-name").text().trim())
+                .replace("{{profile-links}}", profileLinksHTML);
+
+            // Add the generated modal to the container
+            $("#playerModalContainer").append(playerModalHTML);
+
+            // Refresh tooltips
+            $("#addAlias").tooltip();
+            $(".remove-alias").tooltip();
+
+            // Show the modal
+            $("#playerModal").modal("show");
         }
 
         $(document).ready(() => {
-            $('#addAlias').click(function () {
-                $('#stringArray').append(`
-                    <div class="input-group mb-2">
-                        <input type="text" name="profileLinks" class="form-control" placeholder="Enter player alias or link">
-                        <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg removeAlias"></button>
-                    </div>
-                `);
+            $("#playerModalContainer").on('click', '#addAlias', function () {
+                $('#profileLinks').append(PROFILE_LINK.replace("{{profile-link}}", ""));
+                $(".remove-alias").tooltip();
             });
-            $(document).on('click', '.removeAlias', function () {
+
+            $("#playerModalContainer").on('click', '.remove-alias', function () {
                 $(this).closest('.input-group').remove();
             });
         });
@@ -436,11 +429,16 @@
             );
         })
 
-        //other
+        //utils
+        function getTournamentId() {
+            return $('#tournamentRoot').data('rs-tour-id');
+        }
+
         function getSelectedStageId() {
             return $('#stageNav .nav-item .nav-link.active').data('rs-stage-id');
         }
 
+        //other
         function showModal(modalId) {
             $("#" + modalId).modal("show");
         }
@@ -451,7 +449,7 @@
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
-                    tournamentId: $("#tournamentRoot").attr("data-tour-id"),
+                    tournamentId: $("#tournamentRoot").data("rs-tour-id"),
                     tournamentKey: $("#tournamentKey").val()
                 }),
                 success: response => {
@@ -473,6 +471,44 @@
             location.reload();
         }
 
+        //---------//
+        //TEMPLATES//
+        //---------//
+        // tour-id, stage-id, player-name, profile-link(s)
+        const PLAYER_MODAL = `
+            <div class="modal fade show" id="playerModal" tabindex="-1" aria-labelledby="playerModalLabel" aria-modal="true" role="dialog" style="display: block;">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="playerModalLabel">{{title}}</h1>
+                            <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="newSubstituteForm" method="POST" action="/tournament/{{tour-id}}/player">
+                                <input type="hidden" name="playerId" value="{{player-id}}">
+                                <input type="hidden" name="tournamentStageId" value="{{stage-id}}">
+                                <div class="mb-3">
+                                    <label for="playerName" class="form-label">Name</label>
+                                    <input type="text" required="" minlength="2" maxlength="64" class="form-control" id="playerName" placeholder="Enter player name" name="name" value="{{player-name}}">
+                                </div>
+                                <label for="profileLinks" class="form-label">Profile links & aliases</label>
+                                <div id="profileLinks">
+                                {{profile-links}}
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center mt-3">
+                                    <button type="button" id="addAlias" data-bs-toggle="tooltip" data-bs-title="Add alias" class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
+                                    <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>`
+        const PROFILE_LINK = `
+                    <div class="input-group mb-2">
+                        <input type="text" name="profileLinks" class="form-control" placeholder="Enter player alias or link" value="{{profile-link}}">
+                        <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg remove-alias" data-bs-toggle="tooltip" data-bs-title="Remove"></button>
+                    </div>`
     </script>
 </main>
 </body>

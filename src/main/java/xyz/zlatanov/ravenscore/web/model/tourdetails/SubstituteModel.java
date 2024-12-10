@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class SubstituteModel {
 
+	private String				id;
 	private String				name;
 	private List<ProfileLink>	profileLinks	= new ArrayList<>();
 }
