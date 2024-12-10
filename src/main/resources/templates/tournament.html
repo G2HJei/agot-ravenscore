@@ -135,6 +135,9 @@
                         data-bs-toggle="tooltip" data-bs-title="Add substitute player"
                         onclick="newSubstitute()"></button>
             </h6>
+            <div th:if="${model.substituteModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">
+                The tournament has no substitutes.
+            </div>
             <div class="row">
                 <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
                     <span th:text="${substitute.name}" class="player-name"
@@ -161,7 +164,8 @@
 
             <!-- STAGE GAMES -->
             <h5 class="text-center mt-5">Games</h5>
-            <div class="align-middle fst-italic fw-lighter text-center">This tournament stage has no games yet. Why not
+            <div th:if="${stage.gameModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">This
+                tournament stage has no games yet. Why not
                 <a href="#" onclick="newGame()"
                    class="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
                     one</a> now?
