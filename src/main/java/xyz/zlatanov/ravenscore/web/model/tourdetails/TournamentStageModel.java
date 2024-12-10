@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class TournamentStageModel {
 
+	private String					id;
 	private String					name;
 	private Integer					qualificationCount;
 	private String					startDate;

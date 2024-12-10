@@ -49,6 +49,7 @@ public class TournamentDetailsBuilder {
 		return tournamentStageList.stream()
 				.filter(stage -> stage.tournamentId().equals(tournament.id()))
 				.map(stage -> new TournamentStageModel()
+						.id(stage.id().toString())
 						.name(stage.name())
 						.qualificationCount(stage.qualificationCount())
 						.startDate(DATE_FORMATTER.format(stage.startDate()))

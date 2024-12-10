@@ -8,6 +8,7 @@
     <h3 class="text-muted ms-3 text-center" th:text="${model.name}">Tourney Name</h3>
     <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}">(Tournament Admin Mode)</h5>
 
+    <!-- NAVIGATION ROW -->
     <div class="d-flex justify-content-center align-items-center mb-3">
         <button th:if="${not model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-key-fill ms-1 me-2"
@@ -26,8 +27,10 @@
         <ul id="stageNav" class="nav nav-underline mb-3" role="tablist">
             <li class="nav-item" role="presentation" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
                 <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : '')}" href="#"
-                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}"
-                   th:text="${stage.name}">Stage</a>
+                   th:data-rs-stage-id="${stage.id}" th:text="${stage.name}"
+                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}">
+                    Stage
+                </a>
             </li>
         </ul>
     </div>
@@ -35,11 +38,17 @@
     <div id="tournamentRoot" th:data-tour-id="${model.id}" class="tab-content"
          th:each="stage, stageIdx : ${model.tournamentStageModelList}">
         <div th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
+
+            <!-- STAGE RANKINGS -->
             <h5 class="text-center">Rankings</h5>
-            <table class="table">
+            <table class="table mb-4">
                 <thead>
                 <tr>
-                    <th scope="col"></th>
+                    <th scope="col">
+                        <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                                data-bs-title="Add player" onclick="showNewParticipantModal()"
+                                class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
+                    </th>
                     <th scope="col">Player</th>
                     <th scope="col">Games</th>
                     <th scope="col">Points</th>
@@ -48,8 +57,18 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:if="${stage.participantModelList.isEmpty()}">
+                    <th class="align-middle fst-italic fw-lighter text-center" scope="col" colspan="6">This
+                        tournament stage has no participants yet.
+                        <th:block th:if="${model.adminUnlocked}">Please
+                            <a href="#" onclick="showNewParticipantModal()"
+                               class="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add
+                                players</a>.
+                        </th:block>
+                    </th>
+                </tr>
                 <tr th:each="participant, participantIdx: ${stage.participantModelList}">
-                    <th class="align-middle" scope="row" th:text="${participantIdx.index+1}">#</th>
+                    <th class="align-middle text-center" scope="row" th:text="${participantIdx.index+1}">#</th>
                     <td>
                         <div class="d-flex justify-content-start align-items-center">
                             <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
@@ -98,8 +117,38 @@
                 </tbody>
             </table>
 
+            <!-- SUBSTITUTES -->
+            <h6 class="fw-semibold">
+                Substitute players
+                <button th:if="${model.adminUnlocked}" type="button"
+                        class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-2"
+                        data-bs-toggle="tooltip" data-bs-title="Add substitute player"
+                        onclick="showNewSubstituteModal()"></button>
+            </h6>
+            <div class="row">
+                <div class="col-4 mb-3" th:each="substitute : ${model.substituteModelList}">
+                    <span th:text="${substitute.name}"> Sub Name</span>&nbsp;
+                    <th:block th:each="link : ${substitute.profileLinks}">
+                        <span th:if="${link.link eq null}"
+                              class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                              data-bs-toggle="tooltip" data-bs-title="Alias"
+                              th:text="' ' + ${link.label}">Handle</span>
+                        <br/>
+                        <a th:if="${link.link ne null}" class="text-decoration-none"
+                           th:href="link.link"
+                           target="_blank">
+                         <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                               data-bs-toggle="tooltip"
+                               th:data-bs-title="${'External player profile: '+link.link}"
+                               th:text="'  ' + ${link.label}">Profile</span>
+                        </a>
+                    </th:block>
+                </div>
+            </div>
+
+            <!-- STAGE GAMES -->
             <h5 class="text-center mt-5">Games</h5>
-            <div class="accordion accordion-flush" id="accordionGames">
+            <div class="accordion accordion-flush" th:id="${'accordionGames-'+stageIdx.index}">
                 <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
                     <h6 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -114,7 +163,7 @@
                         </button>
                     </h6>
                     <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
-                         data-bs-parent="#accordionGames">
+                         th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
                         <div class="accordion-body ms-3">
                             <div class="d-flex justify-content-start gap-3 w-100">
                                 <div class="card" style="width: 15rem; position: relative; overflow: hidden;">
@@ -221,11 +270,12 @@
     <!-- UNLOCK MODAL-->
     <div class="modal modal-sm fade" id="unlockAdminModal" tabindex="-1" aria-labelledby="unlockAdminModalLabel"
          aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="unlockAdminModalLabel">Tournament Admin</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -248,46 +298,29 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="rulesModalLabel">Tournament Rules</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <h6 class="fw-semibold">Scoring</h6>
                     <div class="mb-3" th:utext="#{'scoring.description.'+${model.scoring}}"></div>
                     <h6 class="fw-semibold">Description</h6>
                     <div class="mb-3" th:text="${model.description}">Rules description</div>
-                    <th:block th:if="${not model.substituteModelList.isEmpty()}">
-                        <h6 class="fw-semibold">Substitutes</h6>
-                        <th:block th:each="substitute : ${model.substituteModelList}">
-                            <span th:text="${substitute.name}"> Sub Name</span>&nbsp;
-                            <th:block th:each="link : ${substitute.profileLinks}">
-                                                    <span th:if="${link.link eq null}"
-                                                          class="badge rounded-pill bi bi-person-fill text-bg-secondary"
-                                                          data-bs-toggle="tooltip" data-bs-title="Alias"
-                                                          th:text="' ' + ${link.label}">Handle</span>
-                                <a th:if="${link.link ne null}" class="text-decoration-none"
-                                   th:href="link.link"
-                                   target="_blank">
-                                                        <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
-                                                              data-bs-toggle="tooltip"
-                                                              th:data-bs-title="${'External player profile: '+link.link}"
-                                                              th:text="'  ' + ${link.label}">Profile</span>
-                                </a>
-                            </th:block>
-                        </th:block>
-                    </th:block>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- NEW STAGE MODAL-->
-    <div class="modal fade" id="newStageModal" tabindex="-1" aria-labelledby="newStageModalLabel"
+    <div th:if="${model.adminUnlocked}" class="modal fade" id="newStageModal" tabindex="-1"
+         aria-labelledby="newStageModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="newStageModalLabel">New Tournament Stage</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="newStageForm" method='POST'
@@ -319,8 +352,82 @@
         </div>
     </div>
 
+    <!-- NEW PLAYER MODAL-->
+    <div th:if="${model.adminUnlocked}" class="modal fade" id="newPlayerModal" tabindex="-1"
+         aria-labelledby="newPlayerModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="newPlayerModalLabel">New Player</h1>
+                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newSubstituteForm" method='POST'
+                          th:action="@{'/tournament/'+${model.id}+'/new-player'}"
+                          th:object="${newPlayerForm}">
+                        <input id="newPlayerStageId" type="hidden" th:field="*{tournamentStageId}">
+                        <div class="mb-3">
+                            <label for="playerName" class="form-label">Name</label>
+                            <input type="text" required minlength="2" maxlength="64" class="form-control"
+                                   id="playerName" th:field="*{name}"
+                                   placeholder="Enter player name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="stringArray" class="form-label">Profile links & aliases</label>
+                            <div id="stringArray" class="input-group">
+                                <input type="text" th:field="*{profileLinks}" class="form-control mb-2"
+                                       placeholder="Enter player alias or link">
+                            </div>
+
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <button type="button" id="addAlias" data-bs-toggle="tooltip" data-bs-title="Add alias"
+                                    class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
+                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript-->
     <script th:inline="javascript">
+
+        // new player/sub stuff
+        function showNewSubstituteModal() {
+            $("#newPlayerModalLabel").text("New Substitute");
+            $("#newPlayerStageId").val(null);
+            $("#newPlayerModal").modal("show");
+        }
+
+        function showNewParticipantModal() {
+            $("#newPlayerModalLabel").text("New Player");
+            $("#newPlayerStageId").val(getSelectedStageId());
+            $("#newPlayerModal").modal("show");
+        }
+
+        $(document).ready(function () {
+            $('#addAlias').click(function () {
+                $('#stringArray').append(`
+                    <div class="input-group mb-2">
+                        <input type="text" name="profileLinks" class="form-control" placeholder="Enter player alias or link">
+                        <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg removeAlias"></button>
+                    </div>
+                `);
+            });
+            $(document).on('click', '.removeAlias', function () {
+                $(this).closest('.input-group').remove();
+            });
+        });
+
+        //other
+        function getSelectedStageId() {
+            return $('#stageNav .nav-item .nav-link.active').data('rs-stage-id');
+        }
+
         function showModal(modalId) {
             $("#" + modalId).modal("show");
         }
