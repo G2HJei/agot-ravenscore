@@ -13,7 +13,7 @@
         <button th:if="${not model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-key-fill ms-1 me-2"
                 data-bs-toggle="tooltip" data-bs-title="Unlock tournament administration"
-                onclick="showModal('unlockAdminModal')"></button>
+                onclick="showUnlockModal()"></button>
         <button th:if="${model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-unlock-fill ms-1 me-2"
                 data-bs-toggle="tooltip" data-bs-title="Tournament administration is unlocked. Click to lock it."
@@ -23,12 +23,18 @@
                 onclick="showModal('rulesModal')"></button>
         <button th:if="${model.adminUnlocked}" type="button" class="btn btn-sm btn-outline-secondary bi bi-plus-lg me-3"
                 data-bs-toggle="tooltip" data-bs-title="Create new tournament stage"
-                onclick="showModal('newStageModal')"></button>
+                onclick="newTournamentStage()"></button>
+        <button th:if="${model.adminUnlocked}" type="button"
+                class="btn btn-sm btn-outline-secondary bi bi-pencil-fill me-2"
+                data-bs-toggle="tooltip" data-bs-title="Modify tournament stage"
+                onclick="editTournamentStage()"></button>
         <ul id="stageNav" class="nav nav-underline mb-3" role="tablist">
             <li class="nav-item" role="presentation" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
                 <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : '')}" href="#"
-                   th:data-rs-stage-id="${stage.id}" th:text="${stage.name}"
-                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}">
+                   th:data-rs-stage-id="${stage.id}"
+                   th:data-rs-stage-qualification-count="${stage.qualificationCount}"
+                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}"
+                   th:text="${stage.name}">
                     Stage
                 </a>
             </li>
@@ -44,16 +50,16 @@
             <table class="table mb-4">
                 <thead>
                 <tr>
-                    <th scope="col">
+                    <th scope="col" style="width: 5%">
                         <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
                                 data-bs-title="Add player" onclick="newParticipant()"
                                 class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
                     </th>
-                    <th scope="col">Player</th>
-                    <th scope="col">Games</th>
-                    <th scope="col">Points</th>
-                    <th scope="col">Wins</th>
-                    <th scope="col">Avg. points</th>
+                    <th scope="col" style="width: 40%">Player</th>
+                    <th scope="col" class="text-center">Games</th>
+                    <th scope="col" class="text-center">Points</th>
+                    <th scope="col" class="text-center">Wins</th>
+                    <th scope="col" class="text-center">Avg. points</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -68,18 +74,18 @@
                     </th>
                 </tr>
                 <tr th:each="participant, participantIdx: ${stage.participantModelList}">
-                    <th class="align-middle" scope="row" th:text="${participantIdx.index+1}">#</th>
+                    <th class="align-middle text-center" scope="row" th:text="${participantIdx.index+1}">#</th>
                     <td>
                         <div class="d-flex justify-content-start align-items-center action-container">
                             <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
                                                      style="max-height: 2.25rem">&nbsp;-->
                             <div>
-                                <text th:text="${participant.name}"
-                                      th:data-rs-player-id="${participant.id}"
-                                      th:class="${'player-name ' + (participant.profileLinks.isEmpty() ? 'text-muted' : '')}">
+                                <text th:text="${participant.name}" class="player-name"
+                                      th:data-rs-player-id="${participant.id}">
                                     Petyr Baelish
                                 </text>
-                                <i class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
+                                <i th:if="${model.adminUnlocked}"
+                                   class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
                                    data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
                                 <br/>
                                 <span th:if="${participant.replacedLabel ne null}"
@@ -102,20 +108,21 @@
                             </div>
                         </div>
                     </td>
-                    <td class="align-middle" th:text="${participant.games}">Games</td>
-                    <td class="align-middle" th:if="${participant.penaltyPoints() eq 0}"
+                    <td class="align-middle text-center" th:text="${participant.games}">Games</td>
+                    <td class="align-middle text-center" th:if="${participant.penaltyPoints() eq 0}"
                         th:text="${participant.points}">
-                        Mark
+                        Points
                     </td>
-                    <td class="align-middle" th:if="${participant.penaltyPoints() ne 0}">
+                    <td class="align-middle text-center" th:if="${participant.penaltyPoints() ne 0}">
                         <text th:text="${participant.points - participant.penaltyPoints}">Pts</text>&nbsp;
+                        <br/>
                         <text class="text-muted fst-italic"
                               th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen. pts.)'}">
                             Pts with penalties
                         </text>
                     </td>
-                    <td class="align-middle" th:text="${participant.wins}">Wins</td>
-                    <td class="align-middle" th:text="${participant.avgPoints}">Avg pts</td>
+                    <td class="align-middle text-center" th:text="${participant.wins}">Wins</td>
+                    <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
                 </tr>
                 </tbody>
             </table>
@@ -132,8 +139,8 @@
                 <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
                     <span th:text="${substitute.name}" class="player"
                           th:data-rs-player-id="${substitute.id}"> Sub Name</span>&nbsp;
-                    <i class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
-                       data-bs-title="Edit/remove" onclick="editSubstitute(this)"></i>
+                    <i th:if="${model.adminUnlocked}" class="bi bi-pencil-square visually-hidden action-icon"
+                       data-bs-toggle="tooltip" data-bs-title="Edit/remove" onclick="editSubstitute(this)"></i>
                     <br/>
                     <th:block th:each="link : ${substitute.profileLinks}">
                         <span th:if="${link.link eq null}"
@@ -219,9 +226,9 @@
                                             <tr>
                                                 <th scope="col"></th>
                                                 <th scope="col">Player</th>
-                                                <th scope="col">Points</th>
-                                                <th scope="col">Castles</th>
-                                                <th scope="col">Penalty pts.</th>
+                                                <th scope="col" class="text-center">Points</th>
+                                                <th scope="col" class="text-center">Castles</th>
+                                                <th scope="col" class="text-center">Penalty pts.</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -257,9 +264,11 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="align-middle" th:text="${player.score}">Pts</td>
-                                                <td class="align-middle" th:text="${player.castles}"></td>
-                                                <td class="align-middle" th:text="${player.penaltyPoints}">score</td>
+                                                <td class="align-middle text-center" th:text="${player.score}">Pts</td>
+                                                <td class="align-middle text-center" th:text="${player.castles}"></td>
+                                                <td class="align-middle text-center" th:text="${player.penaltyPoints}">
+                                                    score
+                                                </td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -292,50 +301,10 @@
         </div>
     </div>
 
-    <!-- NEW STAGE MODAL-->
-    <div th:if="${model.adminUnlocked}" class="modal fade" id="newStageModal" tabindex="-1"
-         aria-labelledby="newStageModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="newStageModalLabel">New Tournament Stage</h1>
-                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="newStageForm" method='POST'
-                          th:action="@{'/tournament/'+${model.id}+'/new-stage'}"
-                          th:object="${newStageForm}">
-                        <input type="hidden" th:field="*{tournamentId}">
-                        <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
-                            <div style="width: 67%">
-                                <label for="stageName" class="form-label">Name</label>
-                                <input type="text" required minlength="4" maxlength="100" class="form-control"
-                                       id="stageName" th:field="*{name}"
-                                       placeholder="Enter stage name">
-                            </div>
-                            <div style="width: 33%">
-                                <label for="qualifyCount" class="form-label">Qualifying players</label>
-                                <input type="number" required min="1" max="64" class="form-control"
-                                       id="qualifyCount" th:field="*{qualificationCount}">
-                            </div>
-                        </div>
-                        <div class="text-muted fst-italic text-center mb-3">
-                            You can change the amount of players qualifying for the next round at any point.
-                        </div>
-                        <div class="d-flex justify-content-end align-items-center">
-                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Components -->
+    <div layout:replace="~{component/unlock-admin}"></div>
     <div th:if="${model.adminUnlocked}">
-        <div layout:replace="~{component/unlock-admin}"></div>
+        <div layout:replace="~{component/stage}"></div>
         <div layout:replace="~{component/player}"></div>
     </div>
 
@@ -361,11 +330,6 @@
 
         function getSelectedStageId() {
             return $('#stageNav .nav-item .nav-link.active').data('rs-stage-id');
-        }
-
-        //other
-        function showModal(modalId) {
-            $("#" + modalId).modal("show");
         }
     </script>
 </main>

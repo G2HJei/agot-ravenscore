@@ -30,7 +30,7 @@ public class TournamentController {
 		return "tournament";
 	}
 
-	@PostMapping("/tournament/{tournamentId}/new-stage")
+	@PostMapping("/tournament/{tournamentId}/stage")
 	String newStage(@PathVariable UUID tournamentId,
 			@CookieValue(name = "tournamentKeyHash", defaultValue = "") String tournamentKeyHash,
 			@ModelAttribute StageForm stageForm) {

@@ -13,6 +13,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class StageForm {
 
+	private UUID	stageId;
+
 	@NotNull
 	private UUID	tournamentId;
 

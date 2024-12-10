@@ -37,7 +37,7 @@
                     </div>`;
 
     function newParticipant() {
-        refreshModal(PLAYER_MODAL
+        refreshPlayerModal(PLAYER_MODAL
             .replace("{{title}}", "New Player")
             .replace("{{player-id}}", "")
             .replace("{{tour-id}}", getTournamentId())
@@ -65,11 +65,11 @@
             .replace("{{player-name}}", actionContainer.find(".player-name").text().trim())
             .replace("{{profile-links}}", profileLinksHTML);
 
-        refreshModal(playerModalHTML);
+        refreshPlayerModal(playerModalHTML);
     }
 
     function newSubstitute() {
-        refreshModal(PLAYER_MODAL
+        refreshPlayerModal(PLAYER_MODAL
             .replace("{{title}}", "New Substitute")
             .replace("{{player-id}}", "")
             .replace("{{tour-id}}", getTournamentId())
@@ -97,10 +97,10 @@
             .replace("{{player-name}}", actionContainer.find(".player-name").text().trim())
             .replace("{{profile-links}}", profileLinksHTML);
 
-        refreshModal(playerModalHTML);
+        refreshPlayerModal(playerModalHTML);
     }
 
-    function refreshModal(playerModalHTML) {
+    function refreshPlayerModal(playerModalHTML) {
         $("#playerModalContainer").empty().append(playerModalHTML);
         $("#addAlias").tooltip();
         $(".remove-alias").tooltip();
