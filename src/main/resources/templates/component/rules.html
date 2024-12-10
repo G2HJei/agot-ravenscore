@@ -1,0 +1,24 @@
+<div class="modal modal-lg fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="rulesModalLabel">Tournament Rules</h1>
+                <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="fw-semibold">Scoring</h6>
+                <div class="mb-3" th:utext="#{'scoring.description.'+${model.scoring}}"></div>
+                <h6 class="fw-semibold">Description</h6>
+                <div class="mb-3" th:text="${model.description}">Rules description</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    function showRulesModal() {
+        $("#rulesModal").modal("show");
+    }
+</script>
