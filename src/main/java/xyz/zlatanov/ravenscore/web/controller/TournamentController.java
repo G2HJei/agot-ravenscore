@@ -16,13 +16,14 @@ import xyz.zlatanov.ravenscore.web.service.TournamentDetailsService;
 @RequiredArgsConstructor
 public class TournamentController {
 
+	private static final String				adminCookieName	= "tournament-key-hash";
 	private final TournamentDetailsService	tournamentDetailsService;
 	private final TournamentAdminService	tournamentAdminService;
 
 	@GetMapping("/tournament/{tournamentId}")
 	String tourneyDetails(
 			@PathVariable UUID tournamentId,
-			@CookieValue(name = "tournamentKeyHash", defaultValue = "") String tournamentKeyHash,
+			@CookieValue(name = adminCookieName, defaultValue = "") String tournamentKeyHash,
 			Model model) {
 		model.addAttribute("model", tournamentDetailsService.getTournamentDetails(tournamentId, tournamentKeyHash));
 		model.addAttribute("newStageForm", new StageForm().setTournamentId(tournamentId));
@@ -31,16 +32,16 @@ public class TournamentController {
 	}
 
 	@PostMapping("/tournament/{tournamentId}/stage")
-	String newStage(@PathVariable UUID tournamentId,
-			@CookieValue(name = "tournamentKeyHash", defaultValue = "") String tournamentKeyHash,
+	String stage(@PathVariable UUID tournamentId,
+			@CookieValue(name = adminCookieName) String tournamentKeyHash,
 			@ModelAttribute StageForm stageForm) {
 		tournamentAdminService.createNewStage(tournamentKeyHash, stageForm);
 		return "redirect:/tournament/" + tournamentId;
 	}
 
 	@PostMapping("/tournament/{tournamentId}/player")
-	String tourneyDetails(@PathVariable UUID tournamentId,
-			@CookieValue(name = "tournamentKeyHash", defaultValue = "") String tournamentKeyHash,
+	String player(@PathVariable UUID tournamentId,
+			@CookieValue(name = adminCookieName) String tournamentKeyHash,
 			@ModelAttribute PlayerForm playerForm) {
 		tournamentAdminService.player(tournamentKeyHash, playerForm);
 		return "redirect:/tournament/" + tournamentId;

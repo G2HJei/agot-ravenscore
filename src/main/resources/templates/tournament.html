@@ -5,7 +5,8 @@
       layout:decorate="~{layout/layout}">
 <body>
 <main layout:fragment="content">
-    <h3 class="text-muted ms-3 text-center" th:text="${model.name}">Tourney Name</h3>
+    <h3 id="tournamentRoot" th:data-rs-tour-id="${model.id}"
+        class="text-muted ms-3 text-center" th:text="${model.name}">Tourney Name</h3>
     <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}">(Tournament Admin Mode)</h5>
 
     <!-- NAVIGATION ROW -->
@@ -41,9 +42,9 @@
         </ul>
     </div>
 
-    <div id="tournamentRoot" th:data-rs-tour-id="${model.id}" class="tab-content"
-         th:each="stage, stageIdx : ${model.tournamentStageModelList}">
-        <div th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
+    <div class="tab-content">
+        <div th:each="stage, stageIdx : ${model.tournamentStageModelList}"
+             th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
 
             <!-- STAGE RANKINGS -->
             <h5 class="text-center">Rankings</h5>
