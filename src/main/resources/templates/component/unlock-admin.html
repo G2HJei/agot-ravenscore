@@ -24,34 +24,28 @@
 </div>
 
 <script th:inline="javascript">
+    const COOKIE_NAME = "tournament-key-hash";
+
     function showUnlockModal() {
         $("#unlockAdminModal").modal("show");
     }
 
     function lockAdmin() {
-        document.cookie = `tournamentKeyHash=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        document.cookie = COOKIE_NAME + `=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
         location.reload();
     }
 
     function unlockAdmin() {
         $.ajax({
-            url: "/unlock-tournament",
+            url: window.location.pathname + "/unlock-tournament",
             method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                tournamentId: $("#tournamentRoot").data("rs-tour-id"),
-                tournamentKey: $("#tournamentKey").val()
-            }),
+            contentType: "text/plain",
+            data: $("#tournamentKey").val(),
             success: response => {
-                console.log(response);
-                document.cookie = `tournamentKeyHash=${encodeURIComponent(response)}; path=/`;
+                document.cookie = COOKIE_NAME + `=${encodeURIComponent(response)}; path=/; max-age=1209600`;
                 location.reload();
             },
-            error:
-                () => {
-                    console.log("ERROR!!!");
-                    $("#tournamentKeyError").removeClass("visually-hidden");
-                }
+            error: () => $("#tournamentKeyError").removeClass("visually-hidden")
         })
         ;
     }
