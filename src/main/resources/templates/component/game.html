@@ -61,7 +61,7 @@
     const PARTICIPANT_SELECTION = `<input type="hidden" name="participantIdList" value="{{participant-id}}">`;
 
     function newGame() {
-        refreshStageModal(GAME_MODAL
+        refreshGameModal(GAME_MODAL
             .replaceAll("{{title}}", "New Game")
             .replaceAll("{{delete-button}}", "")
             .replaceAll("{{tour-id}}", getTournamentId())
@@ -83,7 +83,7 @@
         const gameType = $(editBtn).data("rs-game-type");
         const gameName = $(editBtn).data("rs-game-name");
         const gameLink = $(editBtn).data("rs-game-link");
-        refreshStageModal(GAME_MODAL
+        refreshGameModal(GAME_MODAL
             .replaceAll("{{title}}", "New Game")
             .replaceAll("{{delete-button}}", DELETE_GAME_BUTTON)
             .replaceAll("{{tour-id}}", getTournamentId())
@@ -133,7 +133,7 @@
             .length > 0
     }
 
-    function refreshStageModal(playerModalHTML) {
+    function refreshGameModal(playerModalHTML) {
         $("#gameModalContainer").empty().append(playerModalHTML);
         $("#deleteGameButton").tooltip();
         $("#gameModal").modal("show");
