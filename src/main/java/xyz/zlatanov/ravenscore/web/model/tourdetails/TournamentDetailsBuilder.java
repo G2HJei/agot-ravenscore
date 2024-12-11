@@ -59,14 +59,46 @@ public class TournamentDetailsBuilder {
 				.toList();
 	}
 
+	private List<ParticipantModel> getParticipants(TournamentStage stage) {
+		val participantIds = Arrays.stream(stage.participantIdList()).toList();
+		return participantList.stream()
+				.filter(p -> p.replacementParticipantId() == null)
+				.filter(p -> participantIds.contains(p.id()))
+				.map(participant -> {
+					val games = gameList.stream()
+							.filter(game -> Arrays.stream(game.participantIdList()).toList().contains(participant.id()))
+							.toList();
+					val players = playerList.stream()
+							.filter(player -> participant.id().equals(player.participantId()))
+							.toList();
+					val completedGames = games.stream().filter(Game::completed).toList().size();
+					val points = new PlayerPointsCalculator(games, players).calculatePoints();
+					return new ParticipantModel()
+							.id(participant.id().toString())
+							.name(participant.name())
+							.replacedLabel(getReplacedLabel(participant.id()))
+							.profileLinks(Arrays.stream(participant.profileLinks()).map(ProfileLink::new).toList())
+							.games(completedGames + "/" + games.size())
+							.points(points)
+							.penaltyPoints(players.stream().map(Player::penaltyPoints).reduce(Integer::sum).orElse(0))
+							.wins(players.stream().map(Player::rank).filter(r -> r == 1).toList().size())
+							.avgPoints(completedGames == 0 ? null
+									: DECIMAL_FORMATTER
+											.format(BigDecimal.valueOf(points).divide(BigDecimal.valueOf(completedGames), 2, UP)));
+				})
+				.sorted((o1, o2) -> -o1.actualPoints().compareTo(o2.actualPoints()))
+				.toList();
+	}
+
 	private List<GameModel> getGames(UUID stageId) {
 		return gameList.stream()
 				.filter(g -> g.tournamentStageId().equals(stageId))
 				.map(g -> new GameModel()
+						.id(g.id().toString())
 						.name(g.name())
 						.type(g.type())
 						.link(g.link())
-						.round(g.round().toString())
+						.round(g.round())
 						.completed(g.completed())
 						.participantIdList(Arrays.stream(g.participantIdList()).map(UUID::toString).toList())
 						.playersRevealed(playerList.stream()
@@ -100,37 +132,6 @@ public class TournamentDetailsBuilder {
 							.score(player.score())
 							.penaltyPoints(player.penaltyPoints());
 				})
-				.toList();
-	}
-
-	private List<ParticipantModel> getParticipants(TournamentStage stage) {
-		val participantIds = Arrays.stream(stage.participantIdList()).toList();
-		return participantList.stream()
-				.filter(p -> p.replacementParticipantId() == null)
-				.filter(p -> participantIds.contains(p.id()))
-				.map(participant -> {
-					val games = gameList.stream()
-							.filter(game -> Arrays.stream(game.participantIdList()).toList().contains(participant.id()))
-							.toList();
-					val players = playerList.stream()
-							.filter(player -> participant.id().equals(player.participantId()))
-							.toList();
-					val completedGames = games.stream().filter(Game::completed).toList().size();
-					val points = new PlayerPointsCalculator(games, players).calculatePoints();
-					return new ParticipantModel()
-							.id(participant.id().toString())
-							.name(participant.name())
-							.replacedLabel(getReplacedLabel(participant.id()))
-							.profileLinks(Arrays.stream(participant.profileLinks()).map(ProfileLink::new).toList())
-							.games(completedGames + "/" + games.size())
-							.points(points)
-							.penaltyPoints(players.stream().map(Player::penaltyPoints).reduce(Integer::sum).orElse(0))
-							.wins(players.stream().map(Player::rank).filter(r -> r == 1).toList().size())
-							.avgPoints(completedGames == 0 ? null
-									: DECIMAL_FORMATTER
-											.format(BigDecimal.valueOf(points).divide(BigDecimal.valueOf(completedGames), 2, UP)));
-				})
-				.sorted((o1, o2) -> -o1.actualPoints().compareTo(o2.actualPoints()))
 				.toList();
 	}
 

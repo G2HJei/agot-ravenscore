@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.model.tourdetails;
+package xyz.zlatanov.ravenscore.web.model.tourdetails.admin;
 
 import java.util.UUID;
 

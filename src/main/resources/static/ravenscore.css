@@ -100,7 +100,6 @@
 /*---------------
 # Card customization
 -----------------*/
-
 .card {
     box-shadow: 0 6px 10px rgba(0, 0, 0, .08), 0 0 6px rgba(0, 0, 0, .05);
     transition: .3s transform cubic-bezier(.155, 1.105, .295, 1.12), .3s box-shadow, .3s -webkit-transform cubic-bezier(.155, 1.105, .295, 1.12);
@@ -111,8 +110,29 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
 }
 
+/*---------------
+# Modal customization
+-----------------*/
 .btn-close {
     background: transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxNiAxNicgZmlsbD0nI2RhYTUyMCc+PHBhdGggZD0nTS4yOTMuMjkzYTEgMSAwIDAgMSAxLjQxNCAwTDggNi41ODYgMTQuMjkzLjI5M2ExIDEgMCAxIDEgMS40MTQgMS40MTRMOS40MTQgOGw2LjI5MyA2LjI5M2ExIDEgMCAwIDEtMS40MTQgMS40MTRMOCA5LjQxNGwtNi4yOTMgNi4yOTNhMSAxIDAgMCAxLTEuNDE0LTEuNDE0TDYuNTg2IDggLjI5MyAxLjcwN2ExIDEgMCAwIDEgMC0xLjQxNHonLz48L3N2Zz4=") center / 1em auto no-repeat;
+}
+
+.btn-close:focus {
+    border-color: var(--rs-brand-color);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px var(--rs-brand-color);
+}
+
+/*---------------
+# Checkbox customization
+-----------------*/
+.form-check-input:checked {
+    background-color: var(--rs-brand-color);
+    border-color: var(--rs-brand-color);
+}
+
+.form-check-input:focus {
+    border-color: var(--rs-brand-color);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px var(--rs-brand-color);
 }
 
 /*---------------
