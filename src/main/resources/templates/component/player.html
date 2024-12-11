@@ -38,7 +38,9 @@
                         <input type="text" name="profileLinks" class="form-control" placeholder="Enter player alias or link" value="{{profile-link}}">
                         <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg remove-alias" data-bs-toggle="tooltip" data-bs-title="Remove"></button>
                     </div>`;
-    const DELETE_BUTTON = `<a class="btn btn-outline-danger ms-auto" href="/tournament/{{tour-id}}/player/remove/{{remove-from-stage-id}}/{{player-id}}">Delete</a>`
+    const DELETE_BUTTON = `<a id="deletePlayerButton" class="btn btn-outline-danger ms-auto"
+                                data-bs-toggle="tooltip" data-bs-title="Delete player"
+                                href="/tournament/{{tour-id}}/player/remove/{{remove-from-stage-id}}/{{player-id}}">Delete</a>`
 
     function newParticipant() {
         refreshPlayerModal(PLAYER_MODAL
@@ -114,6 +116,7 @@
 
     function refreshPlayerModal(playerModalHTML) {
         $("#playerModalContainer").empty().append(playerModalHTML);
+        $("#deletePlayerButton").tooltip();
         $("#addAlias").tooltip();
         $(".remove-alias").tooltip();
         $("#playerModal").modal("show");
