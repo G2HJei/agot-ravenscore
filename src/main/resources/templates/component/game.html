@@ -1,0 +1,162 @@
+<div id="gameModalContainer"></div>
+
+<script th:inline="javascript">
+    const GAME_MODAL = `
+        <div class="modal modal-lg fade show" id="gameModal" tabindex="-1" aria-labelledby="gameModalLabel" aria-modal="true"
+             role="dialog" style="display: block;">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="gameModalLabel">{{title}}</h1>
+                        <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="gameForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game">
+                            <input type="hidden" name="stageId" value="{{stage-id}}">
+                            <input type="hidden" name="id" value="{{game-id}}">
+                            <div id="participantIdList"></div>
+                            <div class="d-flex justify-content-start align-items-end gap-3 mb-2">
+                                <div style="width: 33%">
+                                    <label for="gameType" class="form-label">Game type</label>
+                                    <select id="gameType" name="type" class="form-select " aria-label="Select scoring">
+                                        <option value="SECOND_EDITION" {{SECOND_EDITION}}>Base Game 2nd Edition</option>
+                                        <option value="A_FEAST_FOR_CROWS" {{A_FEAST_FOR_CROWS}}>A Feast For Crows</option>
+                                        <option value="A_DANCE_WITH_DRAGONS" {{A_DANCE_WITH_DRAGONS}}>A Dance With Dragons</option>
+                                        <option value="MOTHER_OF_DRAGONS" {{MOTHER_OF_DRAGONS}}>Mother of Dragons</option>
+                                    </select>
+                                </div>
+                                <div style="width: 67%">
+                                    <label for="gameName" class="form-label">Name</label>
+                                    <input type="text" required minlength="4" maxlength="100" class="form-control"
+                                           id="gameName" placeholder="Enter game name" name="name" value="{{game-name}}">
+                                </div>
+                            </div>
+                            <div class="w-100 mb-3">
+                                <label for="gameLink" class="form-label">External Link</label>
+                                <input type="text" minlength="8" maxlength="255" class="form-control"
+                                           id="gameLink" placeholder="Enter external game URL" name="link" value="{{game-link}}">
+                            </div>
+                            <h5 class="fw-semibold text-center">Players</h5>
+                            <div class="row mb-3">
+                                {{participant-list}}
+                            </div>
+                            <div class="d-flex justify-content-end align-items-center">
+                                {{delete-button}}
+                                <button type="button" class="btn btn-outline-secondary ms-auto" onclick="submitGame()">Done</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    const PARTICIPANT_CHECK = `
+        <div class="col-4 mb-2 participation-check-container">
+            <input type="checkbox" class="form-check-input participant-check"
+                id="game-participant-{{participant-id}}" data-rs-participant-id="{{participant-id}}"  {{checked}}>
+            <label class="form-check-label" for="game-participant-{{participant-id}}">{{participant-name}}</label>
+        </div>`;
+    const DELETE_GAME_BUTTON = `<a id="deleteGameButton" class="btn btn-outline-danger"
+                                data-bs-toggle="tooltip" data-bs-title="Delete game"
+                                href="/tournament/{{tour-id}}/stage/{{stage-id}}/game/remove/{{game-id}}">Delete</a>`
+    const PARTICIPANT_SELECTION = `<input type="hidden" name="participantIdList" value="{{participant-id}}">`;
+
+    function newGame() {
+        refreshStageModal(GAME_MODAL
+            .replaceAll("{{title}}", "New Game")
+            .replaceAll("{{delete-button}}", "")
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{stage-id}}", getSelectedStageId())
+            .replaceAll("{{game-id}}", "")
+            .replaceAll("{{SECOND_EDITION}}", "")
+            .replaceAll("{{A_FEAST_FOR_CROWS}}", "")
+            .replaceAll("{{A_DANCE_WITH_DRAGONS}}", "")
+            .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
+            .replaceAll("{{game-name}}", "")
+            .replaceAll("{{game-link}}", "")
+            .replaceAll("{{participant-list}}", buildParticipantChecksHtml(null))
+            .replaceAll("{{delete-button}}", "")
+        );
+    }
+
+    function editGame(editBtn) {
+        const gameId = $(editBtn).data("rs-game-id");
+        const gameType = $(editBtn).data("rs-game-type");
+        const gameName = $(editBtn).data("rs-game-name");
+        const gameLink = $(editBtn).data("rs-game-link");
+        refreshStageModal(GAME_MODAL
+            .replaceAll("{{title}}", "New Game")
+            .replaceAll("{{delete-button}}", DELETE_GAME_BUTTON)
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{stage-id}}", getSelectedStageId())
+            .replaceAll("{{game-id}}", gameId)
+            .replaceAll("{{" + gameType + "}}", "selected")
+            .replaceAll("{{SECOND_EDITION}}", "")
+            .replaceAll("{{A_FEAST_FOR_CROWS}}", "")
+            .replaceAll("{{A_DANCE_WITH_DRAGONS}}", "")
+            .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
+            .replaceAll("{{game-name}}", gameName)
+            .replaceAll("{{game-link}}", gameLink)
+            .replaceAll("{{participant-list}}", buildParticipantChecksHtml(gameId))
+        );
+    }
+
+    function buildParticipantChecksHtml(gameId) {
+        // Extract the participants for selected stage and verify their participation status
+        const participants = [];
+        $(".participant-data").each(function () {
+            const participantId = $(this).data("rs-participant-id");
+            const participationChecked =
+                participatesInGame(participantId, gameId)
+                    ? "checked" : ""
+
+            participants.push({
+                id: participantId,
+                name: $(this).text().trim(),
+                checked: participationChecked
+            });
+        });
+
+        return participants
+            .map(participant => PARTICIPANT_CHECK
+                .replaceAll("{{participant-id}}", participant.id)
+                .replaceAll("{{participant-name}}", participant.name)
+                .replaceAll("{{checked}}", participant.checked))
+            .join("");
+    }
+
+    function participatesInGame(participantId, gameId) {
+        if (gameId === null) {
+            return false;
+        }
+        return $("[data-rs-game-id=" + gameId + "]")
+            .find("[data-rs-participant-id=" + participantId + "]")
+            .length > 0
+    }
+
+    function refreshStageModal(playerModalHTML) {
+        $("#gameModalContainer").empty().append(playerModalHTML);
+        $("#deleteGameButton").tooltip();
+        $("#gameModal").modal("show");
+    }
+
+    function submitGame() {
+        //validate and submit form
+        const gameForm = $("#gameForm")[0];
+        if (!gameForm.checkValidity()) {
+            gameForm.reportValidity();
+            return;
+        }
+        // Get all checked participants for a hidden input
+        const participantSelectionHTML = $('.participant-check:checked')
+            .map((_, participant) => PARTICIPANT_SELECTION
+                .replaceAll("{{participant-id}}", $(participant).data("rs-participant-id")))
+            .get()
+            .join("");
+
+        // Update a hidden input to store the selected participants+
+        $("#participantIdList").replaceWith
+        (participantSelectionHTML);
+        $(".participation-check-container").remove();
+        gameForm.submit();
+    }
+</script>

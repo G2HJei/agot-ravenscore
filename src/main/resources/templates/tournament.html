@@ -81,8 +81,8 @@
                             <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
                                                      style="max-height: 2.25rem">&nbsp;-->
                             <div>
-                                <text th:text="${participant.name}" class="player-name"
-                                      th:data-rs-player-id="${participant.id}">
+                                <text th:text="${participant.name}" class="player-name participant-data"
+                                      th:data-rs-participant-id="${participant.id}">
                                     Petyr Baelish
                                 </text>
                                 <i th:if="${model.adminUnlocked}"
@@ -164,7 +164,14 @@
             </div>
 
             <!-- STAGE GAMES -->
-            <h5 class="text-center mt-5">Games</h5>
+            <h5 class="d-flex justify-content-center align-items-center mt-5">
+                <button th:if="${model.adminUnlocked}" type="button"
+                        class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-1 me-auto"
+                        data-bs-toggle="tooltip" data-bs-title="Create new game"
+                        onclick="newGame()"></button>
+                <text>Games</text>
+                <text class="ms-auto"></text>
+            </h5>
             <div th:if="${stage.gameModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">This
                 tournament stage has no games yet. Why not
                 <a href="#" onclick="newGame()"
@@ -172,7 +179,8 @@
                     one</a> now?
             </div>
             <div class="accordion accordion-flush" th:id="${'accordionGames-'+stageIdx.index}">
-                <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
+                <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}"
+                     th:data-rs-game-id="${game.id}">
                     <h6 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
@@ -189,25 +197,43 @@
                          th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
                         <div class="accordion-body ms-3">
                             <div class="d-flex justify-content-start gap-3 w-100">
-                                <div class="card" style="width: 15rem; position: relative; overflow: hidden;">
-                                    <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
-                                         class="card-img-top" alt="Background">
-                                    <div class="card-body">
-                                        <a th:href="${game.link}" class="stretched-link"></a>
-                                        <h5 class="card-title text-center text-brand" th:text="${game.type.longName}">
-                                            Game
-                                            type</h5>
-                                        <text class="d-flex justify-content-center text-muted">Go to game</text>
+                                <div>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button th:if="${model.adminUnlocked}" type="button"
+                                                th:data-rs-game-id="${game.id}"
+                                                th:data-rs-game-name="${game.name}"
+                                                th:data-rs-game-link="${game.link}"
+                                                th:data-rs-game-type="${game.type}"
+                                                class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
+                                                data-bs-toggle="tooltip" data-bs-title="Modify game details"
+                                                onclick="editGame(this)"></button>
+                                        <button th:if="${model.adminUnlocked}" type="button"
+                                                class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
+                                                data-bs-toggle="tooltip" data-bs-title="Update game rankings"
+                                                onclick="scoreGame()"></button>
+                                    </div>
+                                    <div class="card mt-3" style="width: 15rem; position: relative; overflow: hidden;">
+                                        <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
+                                             class="card-img-top" alt="Background">
+                                        <div class="card-body">
+                                            <a th:href="${game.link}" class="stretched-link"></a>
+                                            <h5 class="card-title text-center text-brand"
+                                                th:text="${game.type.longName}">
+                                                Game
+                                                type</h5>
+                                            <text class="d-flex justify-content-center text-muted">Go to game</text>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="w-100">
-                                    <div th:if="${not game.playersRevealed}">
+                                    <div th:class="${game.playersRevealed ? 'visually-hidden' : ''}">
                                         <h6 class="text-center mb-2">Participants</h6>
                                         <div class="row mb-3">
                                             <th:block th:each="participant : ${stage.participantModelList}">
                                                 <th:block th:if="${game.participantIdList.contains(participant.id)}">
                                                     <div class="col-4 mb-3">
-                                                        <span th:text="${participant.name}">Stark</span>
+                                                        <span th:text="${participant.name}"
+                                                              th:data-rs-participant-id="${participant.id}">Stark</span>
                                                         <br/>
                                                         <th:block th:each="link : ${participant.profileLinks}">
                                                         <span th:if="${link.link eq null}"
@@ -298,6 +324,7 @@
     <div th:if="${model.adminUnlocked}">
         <div layout:replace="~{component/stage}"></div>
         <div layout:replace="~{component/player}"></div>
+        <div layout:replace="~{component/game}"></div>
     </div>
 
     <!-- Utility cross-component functions -->

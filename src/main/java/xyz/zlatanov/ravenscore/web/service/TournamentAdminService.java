@@ -12,13 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import xyz.zlatanov.ravenscore.domain.domain.Game;
-import xyz.zlatanov.ravenscore.domain.domain.Participant;
-import xyz.zlatanov.ravenscore.domain.domain.Substitute;
-import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
+import xyz.zlatanov.ravenscore.domain.domain.*;
 import xyz.zlatanov.ravenscore.domain.repository.*;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.PlayerForm;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.StageForm;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.GameForm;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +28,7 @@ public class TournamentAdminService {
 	private final SubstituteRepository		substituteRepository;
 	private final ParticipantRepository		participantRepository;
 	private final GameRepository			gameRepository;
+	private final PlayerRepository			playerRepository;
 
 	@Transactional
 	public void createNewStage(String tournamentKeyHash, @Valid StageForm stageForm) {
@@ -70,6 +69,16 @@ public class TournamentAdminService {
 		// substitutes can always be deleted
 		substituteRepository.findById(playerId).ifPresent(substituteRepository::delete);
 		participantRepository.findById(playerId).ifPresent(participant -> deleteParticipant(stageId, participant));
+	}
+
+	@Transactional
+	public void game(String tournamentKeyHash, UUID tournamentId, @Valid GameForm gameForm) {
+		validateAdminRights(tournamentKeyHash, tournamentId);
+		if (gameForm.getId() == null) {
+			createGame(gameForm);
+		} else {
+			updateGame(gameForm);
+		}
 	}
 
 	private void createStage(@Valid StageForm stageForm) {
@@ -175,8 +184,44 @@ public class TournamentAdminService {
 		participantRepository.delete(participant);
 	}
 
-	private static boolean participatesInGames(UUID participantId, List<Game> games) {
+	private boolean participatesInGames(UUID participantId, List<Game> games) {
 		return games.stream().flatMap(g -> Arrays.stream(g.participantIdList())).anyMatch(pId -> pId.equals(participantId));
+	}
+
+	private void createGame(GameForm gameForm) {
+		val game = gameRepository.save(new Game()
+				.type(gameForm.getType())
+				.name(gameForm.getName())
+				.link(gameForm.getLink())
+				.completed(false)
+				.tournamentStageId(gameForm.getStageId())
+				.participantIdList(gameForm.getParticipantIdList()));
+		val defaultPlayers = gameForm.getType().houses()
+				.stream()
+				.map(house -> new Player()
+						.gameId(game.id())
+						.house(house))
+				.toList();
+		playerRepository.saveAll(defaultPlayers);
+	}
+
+	private void updateGame(GameForm gameForm) {
+		val game = gameRepository.findById(gameForm.getId())
+				.orElseThrow(() -> new RavenscoreException("Invalid game"));
+		gameRepository.save(game
+				.type(gameForm.getType())
+				.name(gameForm.getName())
+				.link(gameForm.getLink())
+				.tournamentStageId(gameForm.getStageId())
+				.participantIdList(gameForm.getParticipantIdList()));
+		// disassociate player from removed participant
+		val players = playerRepository.findByGameIdOrderByRankAscHouseAsc(game.id());
+		val updatedPlayers = players.stream()
+				.filter(p -> p.participantId() != null)
+				.filter(p -> !participatesInGames(p.participantId(), List.of(game)))
+				.map(p -> p.participantId(null))
+				.toList();
+		playerRepository.saveAll(updatedPlayers);
 	}
 
 	private String[] trimEmpty(String[] items) {

@@ -11,10 +11,11 @@ import xyz.zlatanov.ravenscore.domain.domain.GameType;
 @Accessors(fluent = true)
 public class GameModel {
 
+	private String				id;
 	private String				name;
 	private GameType			type;
 	private String				link;
-	private String				round;
+	private Integer				round;
 	private Boolean				completed;
 	private Boolean				playersRevealed;
 	private List<String>		participantIdList;

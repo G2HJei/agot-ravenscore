@@ -12,8 +12,8 @@
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="/tournament/{{tour-id}}/stage">
-                        <input type="hidden" name="stageId" value="{{stage-id}}">
                         <input type="hidden" name="tournamentId" value="{{tour-id}}">
+                        <input type="hidden" name="stageId" value="{{stage-id}}">
                         <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
                             <div style="width: 67%">
                                 <label for="stageName" class="form-label">Name</label>

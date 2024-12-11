@@ -7,8 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.PlayerForm;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.StageForm;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.GameForm;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
 import xyz.zlatanov.ravenscore.web.service.TournamentAdminService;
 import xyz.zlatanov.ravenscore.web.service.TournamentDetailsService;
 
@@ -58,6 +59,14 @@ public class TournamentController {
 	String removeStage(@PathVariable UUID tournamentId, @PathVariable UUID stageId,
 			@CookieValue(name = adminCookieName) String tournamentKeyHash) {
 		tournamentAdminService.removeStage(tournamentKeyHash, tournamentId, stageId);
+		return "redirect:/tournament/" + tournamentId;
+	}
+
+	@PostMapping("/tournament/{tournamentId}/stage/{stageId}/game")
+	String upsertGame(@PathVariable UUID tournamentId, @PathVariable UUID stageId,
+			@CookieValue(name = adminCookieName) String tournamentKeyHash,
+			@ModelAttribute GameForm gameForm) {
+		tournamentAdminService.game(tournamentKeyHash, tournamentId, gameForm);
 		return "redirect:/tournament/" + tournamentId;
 	}
 }
