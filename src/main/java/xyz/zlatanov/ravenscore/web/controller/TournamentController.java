@@ -32,7 +32,7 @@ public class TournamentController {
 	}
 
 	@PostMapping("/tournament/{tournamentId}/stage")
-	String stage(@PathVariable UUID tournamentId,
+	String upsertStage(@PathVariable UUID tournamentId,
 			@CookieValue(name = adminCookieName) String tournamentKeyHash,
 			@ModelAttribute StageForm stageForm) {
 		tournamentAdminService.createNewStage(tournamentKeyHash, stageForm);
@@ -40,10 +40,17 @@ public class TournamentController {
 	}
 
 	@PostMapping("/tournament/{tournamentId}/player")
-	String player(@PathVariable UUID tournamentId,
+	String upsertPlayer(@PathVariable UUID tournamentId,
 			@CookieValue(name = adminCookieName) String tournamentKeyHash,
 			@ModelAttribute PlayerForm playerForm) {
 		tournamentAdminService.player(tournamentKeyHash, playerForm);
+		return "redirect:/tournament/" + tournamentId;
+	}
+
+	@GetMapping("/tournament/{tournamentId}/player/remove/{stageId}/{playerId}")
+	String removePlayer(@PathVariable UUID tournamentId, @PathVariable UUID stageId, @PathVariable UUID playerId,
+			@CookieValue(name = adminCookieName) String tournamentKeyHash) {
+		tournamentAdminService.removePlayer(tournamentKeyHash, tournamentId, stageId, playerId);
 		return "redirect:/tournament/" + tournamentId;
 	}
 }

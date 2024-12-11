@@ -12,13 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import xyz.zlatanov.ravenscore.domain.domain.Game;
 import xyz.zlatanov.ravenscore.domain.domain.Participant;
 import xyz.zlatanov.ravenscore.domain.domain.Substitute;
 import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
-import xyz.zlatanov.ravenscore.domain.repository.ParticipantRepository;
-import xyz.zlatanov.ravenscore.domain.repository.SubstituteRepository;
-import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
-import xyz.zlatanov.ravenscore.domain.repository.TournamentStageRepository;
+import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.PlayerForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.StageForm;
 
@@ -27,9 +25,11 @@ import xyz.zlatanov.ravenscore.web.model.tourdetails.StageForm;
 public class TournamentAdminService {
 
 	private final TournamentRepository		tournamentRepository;
+
 	private final TournamentStageRepository	tournamentStageRepository;
 	private final SubstituteRepository		substituteRepository;
 	private final ParticipantRepository		participantRepository;
+	private final GameRepository			gameRepository;
 
 	@Transactional
 	public void createNewStage(String tournamentKeyHash, @Valid StageForm stageForm) {
@@ -49,6 +49,14 @@ public class TournamentAdminService {
 		} else {
 			substitute(playerForm);
 		}
+	}
+
+	@Transactional
+	public void removePlayer(String tournamentKeyHash, UUID tournamentId, UUID stageId, UUID playerId) {
+		validateAdminRights(tournamentKeyHash, tournamentId);
+		// substitutes can always be deleted
+		substituteRepository.findById(playerId).ifPresent(substituteRepository::delete);
+		participantRepository.findById(playerId).ifPresent(participant -> deleteParticipant(stageId, participant));
 	}
 
 	private void createStage(@Valid StageForm stageForm) {
@@ -123,6 +131,27 @@ public class TournamentAdminService {
 		participantRepository.save(participant
 				.name(playerForm.getName())
 				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
+	}
+
+	private void deleteParticipant(UUID stageId, Participant participant) {
+		if (participant.replacementParticipantId() != null) {
+			throw new RavenscoreException("Cannot remove participant that has been replaced.");
+		}
+		// find tour stages and games manually due to JPA and Postgres limitations on foreign key arrays
+		val stage = tournamentStageRepository.findById(stageId).orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		val games = gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stage.id());
+		if (participatesInGames(participant.id(), games)) {
+			throw new RavenscoreException("Cannot remove participant that is involved in ongoing stage games.");
+		}
+		tournamentStageRepository.save(stage
+				.participantIdList(Arrays.stream(stage.participantIdList())
+						.filter(pId -> !pId.equals(participant.id()))
+						.toArray(UUID[]::new)));
+		participantRepository.delete(participant);
+	}
+
+	private static boolean participatesInGames(UUID participantId, List<Game> games) {
+		return games.stream().flatMap(g -> Arrays.stream(g.participantIdList())).anyMatch(pId -> pId.equals(participantId));
 	}
 
 	private String[] trimEmpty(String[] items) {

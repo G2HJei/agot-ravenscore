@@ -1,6 +1,5 @@
 :root {
     --rs-brand-color: rgba(218, 165, 32, 0.75);
-    --rs-text-color: #6c757d;
 }
 
 /*---------------
@@ -91,7 +90,12 @@
 .btn-outline-secondary {
     --bs-btn-color: var(--rs-brand-color);
     --bs-btn-hover-bg: var(--rs-brand-color);
-    --bs-btn-hover-border-color: var(--rs-text-color);
+    --bs-btn-hover-border-color: var(--rs-brand-color);
+}
+
+.btn-outline-danger {
+    --bs-btn-hover-bg: var(--rs-brand-color);
+    --bs-btn-hover-border-color: var(--rs-brand-color);
 }
 
 /*---------------

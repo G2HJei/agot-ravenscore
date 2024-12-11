@@ -13,15 +13,18 @@
                             <form id="newSubstituteForm" method="POST" action="/tournament/{{tour-id}}/player">
                                 <input type="hidden" name="playerId" value="{{player-id}}">
                                 <input type="hidden" name="tournamentStageId" value="{{stage-id}}">
-                                <div class="mb-3">
-                                    <label for="playerName" class="form-label">Name</label>
-                                    <input type="text" required="" minlength="2" maxlength="64" class="form-control" id="playerName" placeholder="Enter player name" name="name" value="{{player-name}}">
+                                <div class="d-flex justify-content-start align-items-end gap-2 mb-3">
+                                    <div class="w-100">
+                                        <label for="playerName" class="form-label">Name</label>
+                                        <input type="text" required="" minlength="2" maxlength="64" class="form-control" id="playerName" placeholder="Enter player name" name="name" value="{{player-name}}">
+                                    </div>
+                                    {{delete-button}}
                                 </div>
                                 <label for="profileLinks" class="form-label">Profile links & aliases</label>
                                 <div id="profileLinks">
                                 {{profile-links}}
                                 </div>
-                                <div class="d-flex justify-content-end align-items-center mt-3">
+                                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
                                     <button type="button" id="addAlias" data-bs-toggle="tooltip" data-bs-title="Add alias" class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
                                     <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
                                 </div>
@@ -35,15 +38,18 @@
                         <input type="text" name="profileLinks" class="form-control" placeholder="Enter player alias or link" value="{{profile-link}}">
                         <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg remove-alias" data-bs-toggle="tooltip" data-bs-title="Remove"></button>
                     </div>`;
+    const DELETE_BUTTON = `<a class="btn btn-outline-danger ms-auto" href="/tournament/{{tour-id}}/player/remove/{{remove-from-stage-id}}/{{player-id}}">Delete</a>`
 
     function newParticipant() {
         refreshPlayerModal(PLAYER_MODAL
-            .replace("{{title}}", "New Player")
-            .replace("{{player-id}}", "")
-            .replace("{{tour-id}}", getTournamentId())
-            .replace("{{stage-id}}", getSelectedStageId())
-            .replace("{{player-name}}", "")
-            .replace("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
+            .replaceAll("{{title}}", "New Player")
+            .replaceAll("{{delete-button}}", "")
+            .replaceAll("{{player-id}}", "")
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{stage-id}}", getSelectedStageId())
+            .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
+            .replaceAll("{{player-name}}", "")
+            .replaceAll("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
     }
 
     function editParticipant(subElt) {
@@ -58,24 +64,28 @@
 
         const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
         const playerModalHTML = PLAYER_MODAL
-            .replace("{{title}}", "Modify Player")
-            .replace("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
-            .replace("{{tour-id}}", getTournamentId())
-            .replace("{{stage-id}}", getSelectedStageId())
-            .replace("{{player-name}}", actionContainer.find(".player-name").text().trim())
-            .replace("{{profile-links}}", profileLinksHTML);
+            .replaceAll("{{title}}", "Modify Player")
+            .replaceAll("{{delete-button}}", DELETE_BUTTON)
+            .replaceAll("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{stage-id}}", getSelectedStageId())
+            .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
+            .replaceAll("{{player-name}}", actionContainer.find(".player-name").text().trim())
+            .replaceAll("{{profile-links}}", profileLinksHTML);
 
         refreshPlayerModal(playerModalHTML);
     }
 
     function newSubstitute() {
         refreshPlayerModal(PLAYER_MODAL
-            .replace("{{title}}", "New Substitute")
-            .replace("{{player-id}}", "")
-            .replace("{{tour-id}}", getTournamentId())
-            .replace("{{stage-id}}", "")
-            .replace("{{player-name}}", "")
-            .replace("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
+            .replaceAll("{{title}}", "New Substitute")
+            .replaceAll("{{delete-button}}", "")
+            .replaceAll("{{player-id}}", "")
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{stage-id}}", "")
+            .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
+            .replaceAll("{{player-name}}", "")
+            .replaceAll("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
     }
 
     function editSubstitute(subElt) {
@@ -90,12 +100,14 @@
 
         const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
         const playerModalHTML = PLAYER_MODAL
-            .replace("{{title}}", "Modify Substitute")
-            .replace("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
-            .replace("{{tour-id}}", getTournamentId())
-            .replace("{{stage-id}}", "")
-            .replace("{{player-name}}", actionContainer.find(".player-name").text().trim())
-            .replace("{{profile-links}}", profileLinksHTML);
+            .replaceAll("{{title}}", "Modify Substitute")
+            .replaceAll("{{delete-button}}", DELETE_BUTTON)
+            .replaceAll("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{stage-id}}", "")
+            .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
+            .replaceAll("{{player-name}}", actionContainer.find(".player-name").text().trim())
+            .replaceAll("{{profile-links}}", profileLinksHTML);
 
         refreshPlayerModal(playerModalHTML);
     }
