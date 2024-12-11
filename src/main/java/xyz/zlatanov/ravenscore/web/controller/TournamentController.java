@@ -69,4 +69,11 @@ public class TournamentController {
 		tournamentAdminService.game(tournamentKeyHash, tournamentId, gameForm);
 		return "redirect:/tournament/" + tournamentId;
 	}
+
+	@GetMapping("/tournament/{tournamentId}/stage/{stageId}/game/remove/{gameId}")
+	String removeGame(@PathVariable UUID tournamentId, @PathVariable UUID gameId,
+			@CookieValue(name = adminCookieName) String tournamentKeyHash) {
+		tournamentAdminService.removeGame(tournamentKeyHash, tournamentId, gameId);
+		return "redirect:/tournament/" + tournamentId;
+	}
 }

@@ -81,6 +81,12 @@ public class TournamentAdminService {
 		}
 	}
 
+	@Transactional
+	public void removeGame(String tournamentKeyHash, UUID tournamentId, UUID gameId) {
+		validateAdminRights(tournamentKeyHash, tournamentId);
+		gameRepository.deleteById(gameId);
+	}
+
 	private void createStage(@Valid StageForm stageForm) {
 		tournamentStageRepository.save(new TournamentStage()
 				.name(stageForm.getName())
