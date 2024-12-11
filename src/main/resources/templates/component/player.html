@@ -38,7 +38,7 @@
                         <input type="text" name="profileLinks" class="form-control" placeholder="Enter player alias or link" value="{{profile-link}}">
                         <button type="button" class="btn btn-outline-secondary btn-sm bi bi-dash-lg remove-alias" data-bs-toggle="tooltip" data-bs-title="Remove"></button>
                     </div>`;
-    const DELETE_BUTTON = `<a id="deletePlayerButton" class="btn btn-outline-danger ms-auto"
+    const DELETE_PLAYER_BUTTON = `<a id="deletePlayerButton" class="btn btn-outline-danger ms-auto"
                                 data-bs-toggle="tooltip" data-bs-title="Delete player"
                                 href="/tournament/{{tour-id}}/player/remove/{{remove-from-stage-id}}/{{player-id}}">Delete</a>`
 
@@ -67,7 +67,7 @@
         const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
         const playerModalHTML = PLAYER_MODAL
             .replaceAll("{{title}}", "Modify Player")
-            .replaceAll("{{delete-button}}", DELETE_BUTTON)
+            .replaceAll("{{delete-button}}", DELETE_PLAYER_BUTTON)
             .replaceAll("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
@@ -103,7 +103,7 @@
         const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
         const playerModalHTML = PLAYER_MODAL
             .replaceAll("{{title}}", "Modify Substitute")
-            .replaceAll("{{delete-button}}", DELETE_BUTTON)
+            .replaceAll("{{delete-button}}", DELETE_PLAYER_BUTTON)
             .replaceAll("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", "")

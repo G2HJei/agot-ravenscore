@@ -52,6 +52,19 @@ public class TournamentAdminService {
 	}
 
 	@Transactional
+	public void removeStage(String tournamentKeyHash, UUID tournamentId, UUID stageId) {
+		validateAdminRights(tournamentKeyHash, tournamentId);
+		if (!gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stageId).isEmpty()) {
+			throw new RavenscoreException("Cannot delete a stage with games.");
+		}
+		val stage = tournamentStageRepository.findById(stageId)
+				.orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		val participantIds = stage.participantIdList();
+		tournamentStageRepository.delete(stage);
+		deleteOrphanedParticipants(tournamentId, participantIds);
+	}
+
+	@Transactional
 	public void removePlayer(String tournamentKeyHash, UUID tournamentId, UUID stageId, UUID playerId) {
 		validateAdminRights(tournamentKeyHash, tournamentId);
 		// substitutes can always be deleted
@@ -131,6 +144,18 @@ public class TournamentAdminService {
 		participantRepository.save(participant
 				.name(playerForm.getName())
 				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
+	}
+
+	private void deleteOrphanedParticipants(UUID tournamentId, UUID[] participantIdList) {
+		var orphanCandidateIds = Arrays.copyOf(participantIdList, participantIdList.length);
+		val otherStageList = tournamentStageRepository.findByTournamentIdOrderByStartDateDesc(tournamentId);
+		for (val otherStage : otherStageList) {
+			UUID[] osParticipantIds = otherStage.participantIdList();
+			orphanCandidateIds = Arrays.stream(orphanCandidateIds)
+					.filter(pId -> !Arrays.asList(osParticipantIds).contains(pId))
+					.toArray(UUID[]::new);
+		}
+		participantRepository.deleteAllById(Arrays.asList(orphanCandidateIds));
 	}
 
 	private void deleteParticipant(UUID stageId, Participant participant) {
