@@ -27,7 +27,7 @@ public class TourneysSummaryService {
 
 	@Transactional(readOnly = true)
 	public List<TournamentSummaryModel> getPublicTourneys() {
-		val tourneys = tournamentRepository.findByHiddenFalse();
+		val tourneys = tournamentRepository.findByHiddenFalseOrderByStartDateDesc();
 		val tourIds = tourneys.stream().map(Tournament::id).toList();
 		val stages = tournamentStageRepository.findByTournamentIdInOrderByStartDateDesc(tourIds);
 		val participantIds = stages.stream().flatMap(ts -> Arrays.stream(ts.participantIdList())).toList();

@@ -11,5 +11,7 @@ import xyz.zlatanov.ravenscore.domain.domain.Game;
 @Repository
 public interface GameRepository extends JpaRepository<Game, UUID> {
 
+	List<Game> findByTournamentStageIdOrderByTypeAscNameAsc(UUID stageIds);
+
 	List<Game> findByTournamentStageIdInOrderByTypeAscNameAsc(List<UUID> stageIds);
 }
