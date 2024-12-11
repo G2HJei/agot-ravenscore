@@ -111,6 +111,10 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06);
 }
 
+.btn-close {
+    background: transparent url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxNiAxNicgZmlsbD0nI2RhYTUyMCc+PHBhdGggZD0nTS4yOTMuMjkzYTEgMSAwIDAgMSAxLjQxNCAwTDggNi41ODYgMTQuMjkzLjI5M2ExIDEgMCAxIDEgMS40MTQgMS40MTRMOS40MTQgOGw2LjI5MyA2LjI5M2ExIDEgMCAwIDEtMS40MTQgMS40MTRMOCA5LjQxNGwtNi4yOTMgNi4yOTNhMSAxIDAgMCAxLTEuNDE0LTEuNDE0TDYuNTg2IDggLjI5MyAxLjcwN2ExIDEgMCAwIDEgMC0xLjQxNHonLz48L3N2Zz4=") center / 1em auto no-repeat;
+}
+
 /*---------------
 # Other
 -----------------*/
