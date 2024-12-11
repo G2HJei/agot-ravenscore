@@ -94,7 +94,6 @@
 }
 
 .btn-outline-danger {
-    --bs-btn-hover-bg: var(--rs-brand-color);
     --bs-btn-hover-border-color: var(--rs-brand-color);
 }
 

@@ -13,4 +13,5 @@ public interface TournamentStageRepository extends JpaRepository<TournamentStage
 
 	List<TournamentStage> findByTournamentIdInOrderByStartDateDesc(List<UUID> list);
 
+	List<TournamentStage> findByTournamentIdOrderByStartDateDesc(UUID tournamentId);
 }
