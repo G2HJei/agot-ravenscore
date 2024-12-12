@@ -15,6 +15,6 @@ public class RoutingConstants {
 	public static final String	REMOVE_GAME			= UPSERT_GAME + "/remove/{gameId}";
 
 	public static String redirectToTournament(UUID tournamentId) {
-		return "redirect+" + TOURNAMENT_DETAILS.replace("{tournamentId}", tournamentId.toString());
+		return "redirect" + TOURNAMENT_DETAILS.replace("{tournamentId}", tournamentId.toString());
 	}
 }
