@@ -183,38 +183,53 @@
                     one</a> now?
             </div>
             <div class="accordion accordion-flush" th:id="${'accordionGames-'+stageIdx.index}">
-                <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}"
-                     th:data-rs-game-id="${game.id}">
+                <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
                     <h6 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
                                 aria-controls="flush-collapse">
                             <text class="text-muted" th:text="${game.type.shortname}">Type</text>&nbsp;
                             <text th:text="${game.name}">Name</text>&nbsp;
-                            <text th:if="${not game.completed and game.round ne null}" class="text-muted fst-italic"
-                                  th:text="${'(round '+game.round+')'}">Round
+                            <text th:if="${not game.completed}" th:text="${'(round '+game.round+')'}"
+                                  th:class="${'text-muted fst-italic round-label '+(game.round eq null? 'visually-hidden' : '')}">
+                                (Round #)
                             </text>
                             <text th:if="${game.completed}" class="text-muted fst-italic">(Completed)</text>
                         </button>
                     </h6>
                     <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
+                         th:data-rs-game-id="${game.id}"
                          th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
                         <div class="accordion-body ms-3">
                             <div class="d-flex justify-content-start gap-3 w-100">
                                 <div>
-                                    <div class="d-flex justify-content-center gap-2">
-                                        <button th:if="${model.adminUnlocked}" type="button"
-                                                th:data-rs-game-id="${game.id}"
+                                    <div th:if="${not model.adminUnlocked}" class=""></div>
+                                    <div th:if="${model.adminUnlocked}"
+                                         class="d-flex justify-content-center gap-2 position-relative">
+                                        <button type="button"
                                                 th:data-rs-game-name="${game.name}"
                                                 th:data-rs-game-link="${game.link}"
                                                 th:data-rs-game-type="${game.type}"
                                                 class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
                                                 data-bs-toggle="tooltip" data-bs-title="Modify game details"
                                                 onclick="editGame(this)"></button>
-                                        <button th:if="${model.adminUnlocked}" type="button"
+                                        <button type="button"
                                                 class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
                                                 data-bs-toggle="tooltip" data-bs-title="Update game rankings"
                                                 onclick="scoreGame()"></button>
+                                        <select th:id="${'game-round-'+game.id}" name="type" class="form-select"
+                                                aria-label="Select round" onchange="updateRound(this)">
+                                            <option th:selected="${game.round eq null}" value="0">Not started
+                                            </option>
+                                            <option th:each="roundNb : ${#numbers.sequence(1, (game.type.toString() eq 'A_FEAST_FOR_CROWS' ? 6 : 10))}"
+                                                    th:value="${roundNb}" th:text="${'Round '+roundNb}"
+                                                    th:selected="${game.round eq roundNb}">
+                                                Round #1
+                                            </option>
+                                        </select>
+                                        <i th:id="${'round-change-indicator-'+game.id}"
+                                           class="bi bi-check-lg fs-4 text-brand visually-hidden"
+                                           style="position:absolute; left: 103%; "></i>
                                     </div>
                                     <div class="card mt-3" style="width: 15rem; position: relative; overflow: hidden;">
                                         <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
@@ -231,7 +246,7 @@
                                 </div>
                                 <div class="w-100">
                                     <div th:class="${game.playersRevealed ? 'visually-hidden' : ''}">
-                                        <h6 class="text-center mb-2">Participants</h6>
+                                        <h6 class="text-center mt-1 mb-4">Participants</h6>
                                         <div class="row mb-3">
                                             <th:block th:each="participant : ${stage.participantModelList}">
                                                 <th:block th:if="${game.participantIdList.contains(participant.id)}">
@@ -349,6 +364,10 @@
 
         function getSelectedStageId() {
             return $('#stageNav .nav-item .nav-link.active').data('rs-stage-id');
+        }
+
+        function getSelectedGameId() {
+            return $(".accordion-collapse.collapse.show").data('rs-game-id');
         }
     </script>
 </main>

@@ -87,6 +87,14 @@ public class TournamentAdminService {
 		gameRepository.deleteById(gameId);
 	}
 
+	@Transactional
+	public void updateRound(String tournamentKeyHash, UUID tournamentId, UUID gameId, Integer round) {
+		validateAdminRights(tournamentKeyHash, tournamentId);
+		val game = gameRepository.findById(gameId)
+				.orElseThrow(() -> new RavenscoreException("Invalid game"));
+		gameRepository.save(game.round(round));
+	}
+
 	private void createStage(@Valid StageForm stageForm) {
 		tournamentStageRepository.save(new TournamentStage()
 				.name(stageForm.getName())

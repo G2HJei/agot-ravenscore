@@ -12,7 +12,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -38,7 +37,6 @@ public class Game {
 
 	private Boolean		completed;
 
-	@NotEmpty
 	@Type(UUIDArrayType.class)
 	@Column(columnDefinition = "UUID[]")
 	private UUID[]		participantIdList;

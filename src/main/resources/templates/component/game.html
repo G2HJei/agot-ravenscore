@@ -73,30 +73,26 @@
             .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
             .replaceAll("{{game-name}}", "")
             .replaceAll("{{game-link}}", "")
-            .replaceAll("{{participant-list}}", buildParticipantChecksHtml(null))
+            .replaceAll("{{participant-list}}", buildParticipantChecksHtml())
             .replaceAll("{{delete-button}}", "")
         );
     }
 
     function editGame(editBtn) {
-        const gameId = $(editBtn).data("rs-game-id");
-        const gameType = $(editBtn).data("rs-game-type");
-        const gameName = $(editBtn).data("rs-game-name");
-        const gameLink = $(editBtn).data("rs-game-link");
         refreshGameModal(GAME_MODAL
             .replaceAll("{{title}}", "New Game")
             .replaceAll("{{delete-button}}", DELETE_GAME_BUTTON)
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
-            .replaceAll("{{game-id}}", gameId)
-            .replaceAll("{{" + gameType + "}}", "selected")
+            .replaceAll("{{game-id}}", getSelectedGameId())
+            .replaceAll("{{" + $(editBtn).data("rs-game-type") + "}}", "selected")
             .replaceAll("{{SECOND_EDITION}}", "")
             .replaceAll("{{A_FEAST_FOR_CROWS}}", "")
             .replaceAll("{{A_DANCE_WITH_DRAGONS}}", "")
             .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
-            .replaceAll("{{game-name}}", gameName)
-            .replaceAll("{{game-link}}", gameLink)
-            .replaceAll("{{participant-list}}", buildParticipantChecksHtml(gameId))
+            .replaceAll("{{game-name}}", $(editBtn).data("rs-game-name"))
+            .replaceAll("{{game-link}}", $(editBtn).data("rs-game-link"))
+            .replaceAll("{{participant-list}}", buildParticipantChecksHtml(getSelectedGameId()))
         );
     }
 
@@ -125,7 +121,7 @@
     }
 
     function participatesInGame(participantId, gameId) {
-        if (gameId === null) {
+        if (gameId === undefined) {
             return false;
         }
         return $("[data-rs-game-id=" + gameId + "]")
@@ -158,5 +154,34 @@
         (participantSelectionHTML);
         $(".participation-check-container").remove();
         gameForm.submit();
+    }
+
+    function updateRound(elt) {
+        const gameId = getSelectedGameId();
+        const roundNumber = $(elt).val();
+        $.ajax({
+            url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${gameId}/round/${roundNumber}`,
+            type: "GET",
+            success: function () {
+                const successIndicator = $("#round-change-indicator-" + gameId);
+                successIndicator.removeClass('visually-hidden').hide().fadeIn('slow', function () {
+                    setTimeout(function () {
+                        successIndicator.fadeOut('slow', function () {
+                            successIndicator.addClass('visually-hidden').show();
+                        });
+                    }, 3000);
+                });
+                const roundLabel = successIndicator.closest(".accordion-item").find(".round-label");
+                if (roundNumber > 0) {
+                    roundLabel.removeClass("visually-hidden")
+                        .text("(Round " + roundNumber + ")");
+                } else {
+                    roundLabel.addClass("visually-hidden");
+                }
+            },
+            error: function () {
+                console.error("Request failed:", status, error);
+            }
+        });
     }
 </script>
