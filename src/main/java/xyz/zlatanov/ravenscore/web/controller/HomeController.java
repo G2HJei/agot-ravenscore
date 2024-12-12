@@ -1,5 +1,7 @@
 package xyz.zlatanov.ravenscore.web.controller;
 
+import static xyz.zlatanov.ravenscore.web.RoutingConstants.*;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +21,7 @@ public class HomeController {
 	private final TourneysSummaryService	tourneysSummaryService;
 	private final NewTournamentService		newTournamentService;
 
-	@GetMapping("/")
+	@GetMapping(ROOT)
 	String home(Model model) {
 		model.addAttribute("scoringOptions", Scoring.values());
 		model.addAttribute("newTournamentForm", new NewTournamentForm());
@@ -27,8 +29,8 @@ public class HomeController {
 		return "home";
 	}
 
-	@PostMapping("/new-tournament")
+	@PostMapping(NEW_TOURNAMENT)
 	String newTournament(@ModelAttribute NewTournamentForm form) {
-		return "redirect:tournament/" + newTournamentService.newTournament(form);
+		return redirectToTournament(newTournamentService.newTournament(form));
 	}
 }
