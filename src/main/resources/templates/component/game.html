@@ -37,6 +37,7 @@
                                            id="gameLink" placeholder="Enter external game URL" name="link" value="{{game-link}}">
                             </div>
                             <h5 class="fw-semibold text-center">Players</h5>
+                            {{no-players}}
                             <div class="row mb-3">
                                 {{participant-list}}
                             </div>
@@ -59,8 +60,10 @@
                                 data-bs-toggle="tooltip" data-bs-title="Delete game"
                                 href="/tournament/{{tour-id}}/stage/{{stage-id}}/game/remove/{{game-id}}">Delete</a>`
     const PARTICIPANT_SELECTION = `<input type="hidden" name="participantIdList" value="{{participant-id}}">`;
+    const NO_PLAYERS_AVAILABLE = `<div class="align-middle fst-italic fw-lighter text-center">This stage has no players yet.</div>`;
 
     function newGame() {
+        const participantChecksHtml = buildParticipantChecksHtml();
         refreshGameModal(GAME_MODAL
             .replaceAll("{{title}}", "New Game")
             .replaceAll("{{delete-button}}", "")
@@ -73,12 +76,14 @@
             .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
             .replaceAll("{{game-name}}", "")
             .replaceAll("{{game-link}}", "")
+            .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_PLAYERS_AVAILABLE)
             .replaceAll("{{participant-list}}", buildParticipantChecksHtml())
             .replaceAll("{{delete-button}}", "")
         );
     }
 
     function editGame(editBtn) {
+        const participantChecksHtml = buildParticipantChecksHtml(getSelectedGameId());
         refreshGameModal(GAME_MODAL
             .replaceAll("{{title}}", "New Game")
             .replaceAll("{{delete-button}}", DELETE_GAME_BUTTON)
@@ -92,14 +97,15 @@
             .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
             .replaceAll("{{game-name}}", $(editBtn).data("rs-game-name"))
             .replaceAll("{{game-link}}", $(editBtn).data("rs-game-link"))
-            .replaceAll("{{participant-list}}", buildParticipantChecksHtml(getSelectedGameId()))
+            .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_PLAYERS_AVAILABLE)
+            .replaceAll("{{participant-list}}", participantChecksHtml)
         );
     }
 
     function buildParticipantChecksHtml(gameId) {
         // Extract the participants for selected stage and verify their participation status
         const participants = [];
-        $(".participant-data").each(function () {
+        $(".participant-data[data-rs-stage-id=" + getSelectedStageId() + "]").each(function () {
             const participantId = $(this).data("rs-participant-id");
             const participationChecked =
                 participatesInGame(participantId, gameId)
@@ -117,7 +123,8 @@
                 .replaceAll("{{participant-id}}", participant.id)
                 .replaceAll("{{participant-name}}", participant.name)
                 .replaceAll("{{checked}}", participant.checked))
-            .join("");
+            .join("")
+            .trim();
     }
 
     function participatesInGame(participantId, gameId) {

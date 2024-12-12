@@ -19,7 +19,7 @@
                 class="btn btn-sm btn-outline-secondary bi bi-unlock-fill ms-1 me-2"
                 data-bs-toggle="tooltip" data-bs-title="Tournament administration is unlocked. Click to lock it."
                 onclick="lockAdmin()"></button>
-        <button th:if="${not model.adminUnlocked}" type="button"
+        <button th:if="${model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-download ms-1 me-2"
                 data-bs-toggle="tooltip" data-bs-title="To do: Backup tournament to CSV file"
                 onclick="downloadCSV()"></button>
@@ -86,7 +86,7 @@
                                                      style="max-height: 2.25rem">&nbsp;-->
                             <div>
                                 <text th:text="${participant.name}" class="player-name participant-data"
-                                      th:data-rs-participant-id="${participant.id}">
+                                      th:data-rs-stage-id="${stage.id}" th:data-rs-participant-id="${participant.id}">
                                     Petyr Baelish
                                 </text>
                                 <i th:if="${model.adminUnlocked}"
@@ -198,7 +198,7 @@
                         </button>
                     </h6>
                     <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
-                         th:data-rs-game-id="${game.id}"
+                         th:data-rs-game-id="${game.id}" th:data-rs-stage-id="${stage.id}"
                          th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
                         <div class="accordion-body ms-3">
                             <div class="d-flex justify-content-start gap-3 w-100">
@@ -371,7 +371,7 @@
         }
 
         function getSelectedGameId() {
-            return $(".accordion-collapse.collapse.show").data('rs-game-id');
+            return $(".accordion-collapse.collapse.show[data-rs-stage-id=" + getSelectedStageId() + "]").data('rs-game-id');
         }
     </script>
 </main>
