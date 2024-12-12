@@ -24,4 +24,8 @@ public class GameForm {
 	@Size(min = 4, max = 255)
 	private String		link;
 	private UUID[]		participantIdList	= new UUID[] {};
+
+	public String getLink() {
+		return "".equals(link) ? null : link;
+	}
 }

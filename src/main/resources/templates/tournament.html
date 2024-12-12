@@ -218,6 +218,7 @@
                                                 data-bs-toggle="tooltip" data-bs-title="Update game rankings"
                                                 onclick="scoreGame()"></button>
                                         <select th:id="${'game-round-'+game.id}" name="type" class="form-select"
+                                                data-bs-toggle="tooltip" data-bs-title="Change current round"
                                                 aria-label="Select round" onchange="updateRound(this)">
                                             <option th:selected="${game.round eq null}" value="0">Not started
                                             </option>
@@ -235,12 +236,15 @@
                                         <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
                                              class="card-img-top" alt="Background">
                                         <div class="card-body">
-                                            <a th:href="${game.link}" class="stretched-link"></a>
+                                            <a th:if="${game.link ne null}" th:href="${game.link}"
+                                               class="stretched-link"></a>
                                             <h5 class="card-title text-center text-brand"
                                                 th:text="${game.type.longName}">
                                                 Game
                                                 type</h5>
-                                            <text class="d-flex justify-content-center text-muted">Go to game</text>
+                                            <text th:if="${game.link ne null}"
+                                                  class="d-flex justify-content-center text-muted">Go to game
+                                            </text>
                                         </div>
                                     </div>
                                 </div>
