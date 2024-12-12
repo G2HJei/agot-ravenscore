@@ -187,7 +187,7 @@
                                 aria-controls="flush-collapse">
                             <text class="text-muted" th:text="${game.type.shortname}">Type</text>&nbsp;
                             <text th:text="${game.name}">Name</text>&nbsp;
-                            <text th:if="${not game.completed}" class="text-muted fst-italic"
+                            <text th:if="${not game.completed and game.round ne null}" class="text-muted fst-italic"
                                   th:text="${'(round '+game.round+')'}">Round
                             </text>
                             <text th:if="${game.completed}" class="text-muted fst-italic">(Completed)</text>
