@@ -2,8 +2,7 @@ package xyz.zlatanov.ravenscore.web.controller;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.ResponseEntity.*;
-import static xyz.zlatanov.ravenscore.web.RoutingConstants.UPDATE_GAME_RANKINGS;
-import static xyz.zlatanov.ravenscore.web.RoutingConstants.UPSERT_ROUND;
+import static xyz.zlatanov.ravenscore.web.RoutingConstants.*;
 import static xyz.zlatanov.ravenscore.web.controller.RavenscoreController.ADMIN_COOKIE_NAME;
 
 import java.util.UUID;
@@ -24,7 +23,7 @@ public class AdminRestController {
 	private final TournamentRepository		tournamentRepository;
 	private final TournamentAdminService	tournamentAdminService;
 
-	@PostMapping(value = "/tournament/{tournamentId}/unlock-tournament", consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE)
+	@PostMapping(value = UNLOCK_TOURNAMENT, consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> unlock(@PathVariable UUID tournamentId, @RequestBody final String tournamentKey) {
 		return unlockKeyIsValid(tournamentId, tournamentKey)
@@ -32,14 +31,14 @@ public class AdminRestController {
 				: badRequest().build();
 	}
 
-	@GetMapping(value = UPSERT_ROUND)
+	@GetMapping(value = UPDATE_ROUND)
 	public ResponseEntity<Void> updateRound(@PathVariable UUID tournamentId, @PathVariable UUID gameId, @PathVariable Integer round,
 			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
 		tournamentAdminService.updateRound(tournamentKeyHash, tournamentId, gameId, round);
 		return noContent().build();
 	}
 
-	@PostMapping(value = UPDATE_GAME_RANKINGS)
+	@PostMapping(value = UPDATE_GAME_RANKINGS, produces = TEXT_PLAIN_VALUE)
 	public ResponseEntity<Void> updateRankings(@RequestBody RankingsForm rankingsForm,
 			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
 
