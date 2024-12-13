@@ -82,7 +82,8 @@
         );
     }
 
-    function editGame(editBtn) {
+    function editGame() {
+        const gameElement = getSelectedGameElement();
         const participantChecksHtml = buildParticipantChecksHtml(getSelectedGameId());
         refreshGameModal(GAME_MODAL
             .replaceAll("{{title}}", "New Game")
@@ -90,13 +91,13 @@
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
             .replaceAll("{{game-id}}", getSelectedGameId())
-            .replaceAll("{{" + $(editBtn).data("rs-game-type") + "}}", "selected")
+            .replaceAll("{{" + gameElement.data("rs-game-type") + "}}", "selected")
             .replaceAll("{{SECOND_EDITION}}", "")
             .replaceAll("{{A_FEAST_FOR_CROWS}}", "")
             .replaceAll("{{A_DANCE_WITH_DRAGONS}}", "")
             .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
-            .replaceAll("{{game-name}}", $(editBtn).data("rs-game-name"))
-            .replaceAll("{{game-link}}", $(editBtn).data("rs-game-link"))
+            .replaceAll("{{game-name}}", gameElement.data("rs-game-name"))
+            .replaceAll("{{game-link}}", gameElement.data("rs-game-link"))
             .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_PLAYERS_AVAILABLE)
             .replaceAll("{{participant-list}}", participantChecksHtml)
         );

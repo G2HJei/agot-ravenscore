@@ -10,7 +10,7 @@
                             <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="newSubstituteForm" method="POST" action="/tournament/{{tour-id}}/player">
+                            <form method="POST" action="/tournament/{{tour-id}}/player">
                                 <input type="hidden" name="playerId" value="{{player-id}}">
                                 <input type="hidden" name="tournamentStageId" value="{{stage-id}}">
                                 <div class="d-flex justify-content-start align-items-end gap-2 mb-3">

@@ -2,7 +2,7 @@ package xyz.zlatanov.ravenscore.web.controller;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.ResponseEntity.*;
-import static xyz.zlatanov.ravenscore.web.RoutingConstants.UPDATE_ROUND;
+import static xyz.zlatanov.ravenscore.web.RoutingConstants.UPSERT_ROUND;
 import static xyz.zlatanov.ravenscore.web.controller.RavenscoreController.ADMIN_COOKIE_NAME;
 
 import java.util.UUID;
@@ -30,7 +30,7 @@ public class AdminRestController {
 				: badRequest().build();
 	}
 
-	@GetMapping(value = UPDATE_ROUND)
+	@GetMapping(value = UPSERT_ROUND)
 	public ResponseEntity<Void> updateRound(@PathVariable UUID tournamentId, @PathVariable UUID gameId, @PathVariable Integer round,
 			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
 		tournamentAdminService.updateRound(tournamentKeyHash, tournamentId, gameId, round);

@@ -67,8 +67,8 @@
                                 class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
                     </th>
                     <th scope="col" style="width: 40%">Player</th>
+                    <th scope="col" class="text-center">Score</th>
                     <th scope="col" class="text-center">Games</th>
-                    <th scope="col" class="text-center">Points</th>
                     <th scope="col" class="text-center">Wins</th>
                     <th scope="col" class="text-center">Avg. points</th>
                 </tr>
@@ -119,7 +119,6 @@
                             </div>
                         </div>
                     </td>
-                    <td class="align-middle text-center" th:text="${participant.games}">Games</td>
                     <td class="align-middle text-center" th:if="${participant.penaltyPoints() eq 0}"
                         th:text="${participant.points}">
                         Points
@@ -132,6 +131,7 @@
                             Pts with penalties
                         </text>
                     </td>
+                    <td class="align-middle text-center" th:text="${participant.games}">Games</td>
                     <td class="align-middle text-center" th:text="${participant.wins}">Wins</td>
                     <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
                 </tr>
@@ -204,7 +204,12 @@
                         </button>
                     </h6>
                     <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
-                         th:data-rs-game-id="${game.id}" th:data-rs-stage-id="${stage.id}"
+                         th:data-rs-stage-id="${stage.id}"
+                         th:data-rs-game-id="${game.id}"
+                         th:data-rs-game-name="${game.name}"
+                         th:data-rs-game-link="${game.link}"
+                         th:data-rs-game-type="${game.type}"
+                         th:data-rs-game-completed="${game.completed}"
                          th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
                         <div class="accordion-body ms-3">
                             <div class="d-flex justify-content-start gap-3 w-100">
@@ -213,16 +218,13 @@
                                     <div th:if="${model.adminUnlocked}"
                                          class="d-flex justify-content-center gap-2 position-relative">
                                         <button type="button"
-                                                th:data-rs-game-name="${game.name}"
-                                                th:data-rs-game-link="${game.link}"
-                                                th:data-rs-game-type="${game.type}"
                                                 class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
                                                 data-bs-toggle="tooltip" data-bs-title="Modify game details"
-                                                onclick="editGame(this)"></button>
+                                                onclick="editGame()"></button>
                                         <button type="button"
                                                 class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
                                                 data-bs-toggle="tooltip" data-bs-title="Update game rankings"
-                                                onclick="scoreGame()"></button>
+                                                onclick="updateScoring()"></button>
                                         <select th:id="${'game-round-'+game.id}" name="type" class="form-select"
                                                 data-bs-toggle="tooltip" data-bs-title="Change current round"
                                                 aria-label="Select round" onchange="updateRound(this)">
@@ -295,9 +297,9 @@
                                             <tr>
                                                 <th scope="col"></th>
                                                 <th scope="col">Player</th>
-                                                <th scope="col" class="text-center">Points</th>
                                                 <th scope="col" class="text-center">Castles</th>
                                                 <th scope="col" class="text-center">Penalty pts.</th>
+                                                <th scope="col" class="text-center">Score</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -333,10 +335,14 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td class="align-middle text-center" th:text="${player.score}">Pts</td>
-                                                <td class="align-middle text-center" th:text="${player.castles}"></td>
+                                                <td class="align-middle text-center" th:text="${player.castles}">
+                                                    Castles
+                                                </td>
                                                 <td class="align-middle text-center" th:text="${player.penaltyPoints}">
-                                                    score
+                                                    Penalty pts.
+                                                </td>
+                                                <td class="align-middle text-center" th:text="${player.score}">
+                                                    Score
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -359,6 +365,7 @@
         <div layout:replace="~{component/stage}"></div>
         <div layout:replace="~{component/player}"></div>
         <div layout:replace="~{component/game}"></div>
+        <div layout:replace="~{component/scoring}"></div>
     </div>
 
     <!-- Utility cross-component functions -->
@@ -383,6 +390,10 @@
 
         function getSelectedGameId() {
             return $(".accordion-collapse.collapse.show[data-rs-stage-id=" + getSelectedStageId() + "]").data('rs-game-id');
+        }
+
+        function getSelectedGameElement() {
+            return $(".accordion-collapse.collapse.show[data-rs-stage-id=" + getSelectedStageId() + "]");
         }
     </script>
 </main>

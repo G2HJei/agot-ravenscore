@@ -14,7 +14,7 @@ public class ParticipantModel {
 	private String				name;
 	private String				replacedLabel;
 	private List<ProfileLink>	profileLinks	= new ArrayList<>();
-	private String				games;
+	private Integer				games;
 	private Integer				points;
 	private Integer				penaltyPoints;
 	private Integer				wins;

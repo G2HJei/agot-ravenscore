@@ -74,18 +74,20 @@ public class TournamentDetailsBuilder {
 							.toList();
 					val completedGames = games.stream().filter(Game::completed).toList().size();
 					val points = new PlayerPointsCalculator(games, players).calculatePoints();
+					val penaltyPoints = players.stream().map(Player::penaltyPoints).reduce(Integer::sum).orElse(0);
 					return new ParticipantModel()
 							.id(participant.id().toString())
 							.name(participant.name())
 							.replacedLabel(getReplacedLabel(participant.id()))
 							.profileLinks(Arrays.stream(participant.profileLinks()).map(ProfileLink::new).toList())
-							.games(completedGames + "/" + games.size())
+							.games(completedGames)
 							.points(points)
-							.penaltyPoints(players.stream().map(Player::penaltyPoints).reduce(Integer::sum).orElse(0))
+							.penaltyPoints(penaltyPoints)
 							.wins(players.stream().map(Player::rank).filter(r -> r == 1).toList().size())
 							.avgPoints(completedGames == 0 ? null
 									: DECIMAL_FORMATTER
-											.format(BigDecimal.valueOf(points).divide(BigDecimal.valueOf(completedGames), 2, UP)));
+											.format(BigDecimal.valueOf(points - penaltyPoints)
+													.divide(BigDecimal.valueOf(completedGames), 2, UP)));
 				})
 				.sorted((o1, o2) -> -o1.actualPoints().compareTo(o2.actualPoints()))
 				.toList();
