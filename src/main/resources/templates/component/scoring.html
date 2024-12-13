@@ -11,7 +11,7 @@
                 </div>
                 <div class="modal-body">
                     <h5 class="text-muted text-center">{{game-name}}</h5>
-                    <form method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game/{{game-id}}/rankings">
+                    <form id="scoringForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game/{{game-id}}/rankings">
                         <input type="hidden" name="gameId" value="{{game-id}}">
                         <div id="profileLinks">
 
@@ -34,7 +34,7 @@
                                 <input type="hidden" name="completed" value="false">
                                 <label class="form-check-label" for="gameCompleted">Completed</label>
                             </div>
-                            <button type="submit" class="btn btn-outline-secondary">Done</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="submitScoring()">Done</button>
                         </div>
                     </form>
                 </div>
@@ -43,11 +43,12 @@
     </div>`;
     const SCORING_PLAYER_ROW = `
     <tr>
+        <input type="hidden" name="playerId" value="{{player-id}}">
         <td><img src="/icons/{{house}}.png" alt="house icon" style="max-height: 2.25rem"></td>
-        <td class="align-middle"><select class="form-select " aria-label="Select participant">{{participant-options}}</select></td>
-        <td class="align-middle text-center"><input type="number" min=0 max="10" class="form-control text-center" value="{{castles}}"></td>
-        <td class="align-middle text-center"><input type="number" min=0 max="20" class="form-control text-center" value="{{penalty}}"></td>
-        <td class="align-middle text-center"><input type="number" min=0 max="30" class="form-control text-center" value="{{score}}"></td>
+        <td class="align-middle"><select class="form-select " name="participantId" aria-label="Select participant">{{participant-options}}</select></td>
+        <td class="align-middle text-center"><input type="number" name="castles" min=0 max="10" class="form-control text-center" value="{{castles}}"></td>
+        <td class="align-middle text-center"><input type="number" name="penaltyPoints" min=0 max="20" class="form-control text-center" value="{{penalty}}"></td>
+        <td class="align-middle text-center"><input type="number" name="score" min=0 max="30" class="form-control text-center" value="{{score}}"></td>
     </tr>`;
     const PARTICIPANT_OPTION = `<option value="{{participant-id}}" {{selected}}>{{player-name}}</option>`;
 
@@ -87,6 +88,7 @@
 
         return playerList
             .map(player => SCORING_PLAYER_ROW
+                .replaceAll("{{player-id}}", player.id)
                 .replaceAll("{{house}}", player.house)
                 .replaceAll("{{participant-options}}", buildParticipantOptionsHTML(player, participantList))
                 .replaceAll("{{castles}}", player.castles)
@@ -107,5 +109,41 @@
             .trim()
         const defaultOption = `<option value="unknown" ${player.participantId === null ? "selected" : ""}>&nbsp;</option>`
         return defaultOption + participantOptionsHTML;
+    }
+
+    function submitScoring() {
+        const rows = $("#scoringForm tbody tr");
+        const scoringData = [];
+        rows.each(function () {
+            const row = $(this);
+            const rowData = {
+                playerId: row.find("input[name='playerId']").val(),
+                participantId: row.find("select[name='participantId']").val(),
+                castles: row.find("input[name='castles']").val(),
+                penaltyPoints: row.find("input[name='penaltyPoints']").val(),
+                score: row.find("input[name='score']").val()
+            };
+            scoringData.push(rowData);
+        });
+
+        const postData = {
+            gameId: getSelectedGameId(),
+            playerScoringList: scoringData,
+            completed: $("#gameCompleted").is(":checked") ? "true" : "false"
+        };
+
+        $.ajax({
+            url: $("#scoringForm").attr("action"),
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(postData),
+            success: function () {
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error submitting form:", error);
+                alert("An error occurred while updating rankings.");
+            }
+        });
     }
 </script>

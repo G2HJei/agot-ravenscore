@@ -2,6 +2,7 @@ package xyz.zlatanov.ravenscore.web.controller;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.ResponseEntity.*;
+import static xyz.zlatanov.ravenscore.web.RoutingConstants.UPDATE_GAME_RANKINGS;
 import static xyz.zlatanov.ravenscore.web.RoutingConstants.UPSERT_ROUND;
 import static xyz.zlatanov.ravenscore.web.controller.RavenscoreController.ADMIN_COOKIE_NAME;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.RankingsForm;
 import xyz.zlatanov.ravenscore.web.service.TournamentAdminService;
 
 @RestController
@@ -34,6 +36,13 @@ public class AdminRestController {
 	public ResponseEntity<Void> updateRound(@PathVariable UUID tournamentId, @PathVariable UUID gameId, @PathVariable Integer round,
 			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
 		tournamentAdminService.updateRound(tournamentKeyHash, tournamentId, gameId, round);
+		return noContent().build();
+	}
+
+	@PostMapping(value = UPDATE_GAME_RANKINGS)
+	public ResponseEntity<Void> updateRankings(@RequestBody RankingsForm rankingsForm,
+			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
+
 		return noContent().build();
 	}
 
