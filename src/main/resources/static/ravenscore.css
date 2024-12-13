@@ -1,6 +1,6 @@
 :root {
     --rs-brand-color: rgba(218, 165, 32, 1);
-    --rs-brand-color-darker: rgba(218, 165, 32, 0.55);
+    --rs-brand-color-light: rgba(218, 165, 32, 0.55);
 }
 
 /*---------------
@@ -10,6 +10,10 @@
     .container-rs {
         max-width: 960px !important;
     }
+}
+
+th {
+    font-weight: 600 !important;
 }
 
 /*---------------
@@ -62,7 +66,7 @@
 # Input Customization
 -------------------------*/
 .form-control:focus {
-    box-shadow: 0 0 0 0.1rem var(--rs-brand-color);
+    box-shadow: 0 0 0 0.1rem var(--rs-brand-color-light);
     border-color: var(--rs-brand-color);
 }
 
@@ -89,7 +93,7 @@
 -------------------------*/
 
 .form-select:focus {
-    box-shadow: 0 0 0 0.1rem var(--rs-brand-color);
+    box-shadow: 0 0 0 0.1rem var(--rs-brand-color-light);
     border-color: var(--rs-brand-color);
 }
 
@@ -103,7 +107,7 @@
 
 .btn-outline-secondary {
     --bs-btn-color: var(--rs-brand-color);
-    --bs-btn-border-color: var(--rs-brand-color-darker);
+    --bs-btn-border-color: var(--rs-brand-color-light);
     --bs-btn-hover-bg: var(--rs-brand-color);
     --bs-btn-hover-border-color: var(--rs-brand-color);
 }
@@ -134,7 +138,7 @@
 
 .btn-close:focus {
     border-color: var(--rs-brand-color);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px var(--rs-brand-color);
+    box-shadow: none;
 }
 
 /*---------------
@@ -146,7 +150,7 @@
 }
 
 .form-check-input:focus {
-    border-color: var(--rs-brand-color);
+    border-color: var(--rs-brand-color-light);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px var(--rs-brand-color);
 }
 
