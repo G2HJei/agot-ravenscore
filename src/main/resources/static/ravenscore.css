@@ -1,5 +1,6 @@
 :root {
-    --rs-brand-color: rgba(218, 165, 32, 0.75);
+    --rs-brand-color: rgba(218, 165, 32, 1);
+    --rs-brand-color-darker: rgba(218, 165, 32, 0.55);
 }
 
 /*---------------
@@ -9,6 +10,19 @@
     .container-rs {
         max-width: 960px !important;
     }
+}
+
+/*---------------
+# Cookie prompt
+----------------*/
+.cookie-container {
+    z-index: 999;
+    top: 75px;
+}
+
+.cookie-background {
+    border: 1px solid var(--rs-brand-color);
+    border-radius: 8px;
 }
 
 /*-----------------------
@@ -89,6 +103,7 @@
 
 .btn-outline-secondary {
     --bs-btn-color: var(--rs-brand-color);
+    --bs-btn-border-color: var(--rs-brand-color-darker);
     --bs-btn-hover-bg: var(--rs-brand-color);
     --bs-btn-hover-border-color: var(--rs-brand-color);
 }

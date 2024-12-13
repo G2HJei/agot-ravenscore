@@ -1,0 +1,25 @@
+<div id="cookieConsent"
+     class="container-rs cookie-container sticky-top d-flex justify-content-center mt-4 mb-3 visually-hidden">
+    <div class="bg-body-tertiary cookie-background d-flex gap-1 justify-content-center align-items-center p-2">
+        <i class="bi bi-cookie fs-5 me-3"></i>
+        <div class="text-center">We use cookies for tournament administration purposes.</div>
+        <button type="button" class="btn btn-sm btn-outline-secondary ms-3 fw-semibold" data-mdb-dismiss="modal"
+                onclick="acceptCookies()">
+            OK
+        </button>
+    </div>
+</div>
+<script th:inline="javascript">
+    const ACCEPT_COOKIE_NAME = "cookies-accept";
+
+    $(document).ready(function () {
+        if (!localStorage.getItem(ACCEPT_COOKIE_NAME)) {
+            $("#cookieConsent").removeClass("visually-hidden");
+        }
+    })
+
+    function acceptCookies() {
+        localStorage.setItem(ACCEPT_COOKIE_NAME, "true");
+        $("#cookieConsent").addClass("visually-hidden");
+    }
+</script>
