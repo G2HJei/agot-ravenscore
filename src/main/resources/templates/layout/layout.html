@@ -24,6 +24,10 @@
 <script th:inline="javascript">
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    $(document).on('focus', 'input[type=number]', function () {
+        this.select();
+    });
 </script>
 </body>
 </html>

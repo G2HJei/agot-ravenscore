@@ -66,7 +66,7 @@
                                 data-bs-title="Add player" onclick="newParticipant()"
                                 class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
                     </th>
-                    <th scope="col" style="width: 40%">Player</th>
+                    <th scope="col" style="width: 30%">Player</th>
                     <th scope="col" class="text-center">Score</th>
                     <th scope="col" class="text-center">Games</th>
                     <th scope="col" class="text-center">Wins</th>
@@ -260,14 +260,16 @@
                                     <div th:class="${game.playersRevealed ? 'visually-hidden' : ''}">
                                         <h6 class="text-center mt-1 mb-4">Participants</h6>
                                         <div th:if="${game.participantIdList.isEmpty()}"
-                                             class="align-middle fst-italic fw-lighter text-center">There are no known
-                                            participants in this game.
+                                             class="align-middle fst-italic fw-lighter text-center">
+                                            There are no known participants in this game.
                                         </div>
                                         <div class="row mb-3">
                                             <th:block th:each="participant : ${stage.participantModelList}">
                                                 <th:block th:if="${game.participantIdList.contains(participant.id)}">
                                                     <div class="col-4 mb-3">
                                                         <span th:text="${participant.name}"
+                                                              class="game-participant-data"
+                                                              th:data-rs-participant-name="${participant.name}"
                                                               th:data-rs-participant-id="${participant.id}">Stark</span>
                                                         <br/>
                                                         <th:block th:each="link : ${participant.profileLinks}">
@@ -292,7 +294,7 @@
                                     </div>
                                     <div>
                                         <h6 class="text-center">Rankings</h6>
-                                        <table class="table">
+                                        <table class="table table-borderless">
                                             <thead>
                                             <tr>
                                                 <th scope="col"></th>
@@ -303,7 +305,14 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="player, playerIdx: ${game.playerModelList}">
+                                            <tr th:each="player, playerIdx: ${game.playerModelList}" class="player-data"
+                                                th:data-rs-player-id="${player.id}"
+                                                th:data-rs-player-name="${player.name}"
+                                                th:data-rs-player-house="${player.house}"
+                                                th:data-rs-player-castles="${player.castles}"
+                                                th:data-rs-player-score="${player.score}"
+                                                th:data-rs-player-penalty-points="${player.penaltyPoints}"
+                                                th:data-rs-player-participant-id="${player.participantId}">
                                                 <th class="align-middle" scope="row" th:text="${playerIdx.index+1}">#
                                                 </th>
                                                 <td>

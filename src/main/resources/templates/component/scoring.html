@@ -2,39 +2,39 @@
 
 <script th:inline="javascript">
     const SCORING_MODAL = `
-    <div class="modal modal-lg fade show" id="scoringModal" tabindex="-1" aria-labelledby="scoringModalLabel" aria-modal="true" role="dialog" style="display: block;">
+    <div class="modal fade show" id="scoringModal" tabindex="-1" aria-labelledby="scoringModalLabel" aria-modal="true" role="dialog" style="display: block;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="scoringModalLabel">{{game-name}} - Rankings</h1>
+                    <h1 class="modal-title fs-5" id="scoringModalLabel">Rankings</h1>
                     <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <h5 class="text-muted text-center">{{game-name}}</h5>
                     <form method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game/{{game-id}}/rankings">
                         <input type="hidden" name="gameId" value="{{game-id}}">
                         <div id="profileLinks">
 
-                        <table class="table">
+                        <table class="table table-borderless">
                             <thead>
                                 <th scope="col"></th>
-                                <th scope="col" style="width: 60%">Player</th>
-                                <th scope="col" class="text-center" style="width: 10%">Rank</th>
-                                <th scope="col" class="text-center" style="width: 10%">Castles</th>
-                                <th scope="col" class="text-center" style="width: 10%">Penalty</th>
-                                <th scope="col" class="text-center" style="width: 10%">Score</th>
+                                <th scope="col" style="width: 55%">Player</th>
+                                <th scope="col" class="text-center" style="width: 15%">Castles</th>
+                                <th scope="col" class="text-center" style="width: 15%">Penalty</th>
+                                <th scope="col" class="text-center" style="width: 15%">Score</th>
                             </thead>
                             <tbody>
                                 {{scoring-rows}}
                             </tbody>
                         </table>
                         </div>
-                        <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+                        <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="gameCompleted" name="completed" {{completed}}>
                                 <input type="hidden" name="completed" value="false">
                                 <label class="form-check-label" for="gameCompleted">Completed</label>
                             </div>
-                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                            <button type="submit" class="btn btn-outline-secondary">Done</button>
                         </div>
                     </form>
                 </div>
@@ -43,23 +43,69 @@
     </div>`;
     const SCORING_PLAYER_ROW = `
     <tr>
-        <td><img src="/icons/Stark.png" alt="house icon" style="max-height: 2.25rem"></td>
-        <td class="align-middle">Hulk "The Hulkster" Hogan</td>
-        <td class="align-middle text-center">1</td>
-        <td class="align-middle text-center">3</td>
-        <td class="align-middle text-center">2</td>
-        <td class="align-middle text-center">12</td>
+        <td><img src="/icons/{{house}}.png" alt="house icon" style="max-height: 2.25rem"></td>
+        <td class="align-middle"><select class="form-select " aria-label="Select participant">{{participant-options}}</select></td>
+        <td class="align-middle text-center"><input type="number" min=0 max="10" class="form-control text-center" value="{{castles}}"></td>
+        <td class="align-middle text-center"><input type="number" min=0 max="20" class="form-control text-center" value="{{penalty}}"></td>
+        <td class="align-middle text-center"><input type="number" min=0 max="30" class="form-control text-center" value="{{score}}"></td>
     </tr>`;
+    const PARTICIPANT_OPTION = `<option value="{{participant-id}}" {{selected}}>{{player-name}}</option>`;
 
     function updateScoring() {
         const gameElement = getSelectedGameElement();
+
         const modalHTML = SCORING_MODAL
             .replaceAll("{{game-name}}", gameElement.data("rs-game-name"))
             .replaceAll("{{game-id}}", "todo")
-            .replaceAll("{{scoring-rows}}", SCORING_PLAYER_ROW)
+            .replaceAll("{{scoring-rows}}", buildScoringRowsHTML(gameElement))
             .replaceAll("{{completed}}", gameElement.data("rs-game-completed") ? "checked" : "");
 
         $("#scoringModalContainer").empty().append(modalHTML);
         $("#scoringModal").modal("show");
+    }
+
+    function buildScoringRowsHTML(gameElement) {
+        const playerList = [];
+        gameElement.find(".player-data").each(function () {
+            playerList.push({
+                id: $(this).data("rs-player-id"),
+                name: $(this).data("rs-player-name"),
+                house: $(this).data("rs-player-house"),
+                castles: $(this).data("rs-player-castles"),
+                score: $(this).data("rs-player-score"),
+                penaltyPts: $(this).data("rs-player-penalty-points"),
+                participantId: $(this).data("rs-player-participant-id")
+            })
+        });
+        const participantList = [];
+        gameElement.find(".game-participant-data").each(function () {
+            participantList.push({
+                id: $(this).data("rs-participant-id"),
+                name: $(this).data("rs-participant-name")
+            })
+        });
+
+        return playerList
+            .map(player => SCORING_PLAYER_ROW
+                .replaceAll("{{house}}", player.house)
+                .replaceAll("{{participant-options}}", buildParticipantOptionsHTML(player, participantList))
+                .replaceAll("{{castles}}", player.castles)
+                .replaceAll("{{penalty}}", player.penaltyPts)
+                .replaceAll("{{score}}", player.score))
+            .join("")
+            .trim();
+    }
+
+    function buildParticipantOptionsHTML(player, participantList) {
+        const participantOptionsHTML = participantList
+            .map(participant => PARTICIPANT_OPTION
+                .replaceAll("{{participant-id}}", participant.id)
+                .replaceAll("{{selected}}", participant.id === player.participantId ? "selected" : "")
+                .replaceAll("{{player-name}}", participant.name)
+            )
+            .join("")
+            .trim()
+        const defaultOption = `<option value="unknown" ${player.participantId === null ? "selected" : ""}>&nbsp;</option>`
+        return defaultOption + participantOptionsHTML;
     }
 </script>

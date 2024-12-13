@@ -58,14 +58,15 @@
         // Identify the parent container of the clicked element
         const actionContainer = $(subElt).closest(".action-container");
 
-        // Extract the substitute aliases from the clicked container
+        // Extract the player aliases from the clicked container
         const aliases = [];
         actionContainer.find(".player-alias").each(function () {
             aliases.push($(this).text().trim());
         });
 
         const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
-        const playerModalHTML = PLAYER_MODAL
+
+        refreshPlayerModal(PLAYER_MODAL
             .replaceAll("{{title}}", "Modify Player")
             .replaceAll("{{delete-button}}", DELETE_PLAYER_BUTTON)
             .replaceAll("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
@@ -73,9 +74,7 @@
             .replaceAll("{{stage-id}}", getSelectedStageId())
             .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
             .replaceAll("{{player-name}}", actionContainer.find(".player-name").text().trim())
-            .replaceAll("{{profile-links}}", profileLinksHTML);
-
-        refreshPlayerModal(playerModalHTML);
+            .replaceAll("{{profile-links}}", profileLinksHTML));
     }
 
     function newSubstitute() {

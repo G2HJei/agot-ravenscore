@@ -121,6 +121,7 @@ public class TournamentDetailsBuilder {
 									.findFirst()
 									.orElseThrow(() -> new RavenscoreException("Invalid player-participant connection.")));
 					return new PlayerModel()
+							.id(player.id().toString())
 							.name(participant.map(Participant::name).orElse(capitalizeFirstLetter(player.house())))
 							.profileLinks(participant
 									.map(p -> Arrays.stream(p.profileLinks()).toList()
@@ -133,7 +134,8 @@ public class TournamentDetailsBuilder {
 							.house(capitalizeFirstLetter(player.house()))
 							.castles(player.castles())
 							.score(player.score())
-							.penaltyPoints(player.penaltyPoints());
+							.penaltyPoints(player.penaltyPoints())
+							.participantId(Optional.ofNullable(player.participantId()).map(Object::toString).orElse(null));
 				})
 				.toList();
 	}

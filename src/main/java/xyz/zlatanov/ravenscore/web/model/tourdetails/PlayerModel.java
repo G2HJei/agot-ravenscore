@@ -10,10 +10,12 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class PlayerModel {
 
+	private String				id;
 	private String				name;
 	private String				house;
 	private Integer				castles;
 	private Integer				score;
 	private Integer				penaltyPoints;
+	private String				participantId;
 	private List<ProfileLink>	profileLinks	= new ArrayList<>();
 }

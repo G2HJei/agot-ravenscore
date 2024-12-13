@@ -1,6 +1,7 @@
 :root {
     --rs-brand-color: rgba(218, 165, 32, 1);
     --rs-brand-color-light: rgba(218, 165, 32, 0.55);
+    --bs-table-border-color: none !important;
 }
 
 /*---------------
@@ -68,6 +69,16 @@ th {
 .form-control:focus {
     box-shadow: 0 0 0 0.1rem var(--rs-brand-color-light);
     border-color: var(--rs-brand-color);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
 }
 
 /*-----------------------
