@@ -3,7 +3,7 @@ package xyz.zlatanov.ravenscore.web.controller;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.ResponseEntity.*;
 import static xyz.zlatanov.ravenscore.web.RoutingConstants.UPDATE_ROUND;
-import static xyz.zlatanov.ravenscore.web.controller.TournamentController.ADMIN_COOKIE_NAME;
+import static xyz.zlatanov.ravenscore.web.controller.RavenscoreController.ADMIN_COOKIE_NAME;
 
 import java.util.UUID;
 

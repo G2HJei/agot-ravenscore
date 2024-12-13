@@ -5,8 +5,14 @@
       layout:decorate="~{layout/layout}">
 <body>
 <main layout:fragment="content">
-    <h3 id="tournamentRoot" th:data-rs-tour-id="${model.id}"
-        class="text-muted ms-3 text-center" th:text="${model.name}">Tourney Name</h3>
+    <div class="d-flex justify-content-center align-items-center w-100">
+        <h3 id="tournamentRoot" th:data-rs-tour-id="${model.id}" th:data-rs-tour-hidden="${model.hidden}"
+            class="text-muted ms-3 text-center" th:text="${model.name}">Tourney Name</h3>
+        <button th:if="${model.adminUnlocked}" type="button"
+                class="btn btn-sm btn-outline-secondary bi bi-pencil-fill ms-2"
+                data-bs-toggle="tooltip" data-bs-title="Modify tournament details"
+                onclick="editTournament()"></button>
+    </div>
     <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}">(Tournament Admin Mode)</h5>
 
     <!-- NAVIGATION ROW -->
@@ -349,6 +355,7 @@
     <div layout:replace="~{component/rules}"></div>
     <div layout:replace="~{component/unlock-admin}"></div>
     <div th:if="${model.adminUnlocked}">
+        <div layout:replace="~{component/tournament-details}"></div>
         <div layout:replace="~{component/stage}"></div>
         <div layout:replace="~{component/player}"></div>
         <div layout:replace="~{component/game}"></div>

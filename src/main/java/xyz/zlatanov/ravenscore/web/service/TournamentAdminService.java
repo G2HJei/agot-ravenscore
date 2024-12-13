@@ -17,6 +17,7 @@ import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.GameForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
+import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,16 @@ public class TournamentAdminService {
 	private final ParticipantRepository		participantRepository;
 	private final GameRepository			gameRepository;
 	private final PlayerRepository			playerRepository;
+
+	@Transactional
+	public UUID tournament(String tournamentKeyHash, @Valid TournamentForm tournamentForm) {
+		if (tournamentForm.getId() == null) {
+			return createTournament(tournamentForm);
+		} else {
+			validateAdminRights(tournamentKeyHash, tournamentForm.getId());
+			return updateTournament(tournamentForm);
+		}
+	}
 
 	@Transactional
 	public void createNewStage(String tournamentKeyHash, @Valid StageForm stageForm) {
@@ -93,6 +104,27 @@ public class TournamentAdminService {
 		val game = gameRepository.findById(gameId)
 				.orElseThrow(() -> new RavenscoreException("Invalid game"));
 		gameRepository.save(game.round(round));
+	}
+
+	private UUID createTournament(TournamentForm tournamentForm) {
+		val tournament = tournamentRepository.save(new Tournament()
+				.name(tournamentForm.getName())
+				.scoring(tournamentForm.getScoring())
+				.description(tournamentForm.getDescription())
+				.hidden(tournamentForm.getHidden())
+				.tournamentKey(tournamentForm.getTournamentKey()));
+		return tournament.id();
+	}
+
+	private UUID updateTournament(TournamentForm tournamentForm) {
+		val tournament = tournamentRepository.findById(tournamentForm.getId())
+				.orElseThrow(() -> new RavenscoreException("Invalid tournament"));
+		tournamentRepository.save(tournament
+				.name(tournamentForm.getName())
+				.scoring(tournamentForm.getScoring())
+				.description(tournamentForm.getDescription())
+				.hidden(tournamentForm.getHidden()));
+		return tournamentForm.getId();
 	}
 
 	private void createStage(@Valid StageForm stageForm) {

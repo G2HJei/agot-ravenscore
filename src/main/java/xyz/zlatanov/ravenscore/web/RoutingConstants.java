@@ -5,7 +5,7 @@ import java.util.UUID;
 public class RoutingConstants {
 
 	public static final String	ROOT				= "/";
-	public static final String	NEW_TOURNAMENT		= ROOT + "new-tournament";
+	public static final String	TOURNAMENT			= ROOT + "tournament";
 	public static final String	TOURNAMENT_DETAILS	= ROOT + "tournament/{tournamentId}";
 	public static final String	UPSERT_STAGE		= TOURNAMENT_DETAILS + "/stage";
 	public static final String	REMOVE_STAGE		= TOURNAMENT_DETAILS + "/remove/{stageId}";

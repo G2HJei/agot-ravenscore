@@ -27,6 +27,7 @@ public class TournamentDetailsBuilder {
 				.id(tournament.id().toString())
 				.name(tournament.name())
 				.description(tournament.description())
+				.hidden(tournament.hidden())
 				.scoring(tournament.scoring())
 				.startDate(DATE_FORMATTER.format(tournament.startDate()))
 				.adminUnlocked(tournament.validateUnlockHash(adminKeyHash))

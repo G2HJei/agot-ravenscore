@@ -9,20 +9,37 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
+import xyz.zlatanov.ravenscore.domain.domain.Scoring;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.GameForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
+import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
 import xyz.zlatanov.ravenscore.web.service.TournamentAdminService;
 import xyz.zlatanov.ravenscore.web.service.TournamentDetailsService;
+import xyz.zlatanov.ravenscore.web.service.TourneysSummaryService;
 
 @Controller
 @RequiredArgsConstructor
-public class TournamentController {
+public class RavenscoreController {
 
 	public static final String				ADMIN_COOKIE_NAME	= "tournament-key-hash";
 
+	private final TourneysSummaryService	tourneysSummaryService;
 	private final TournamentDetailsService	tournamentDetailsService;
 	private final TournamentAdminService	tournamentAdminService;
+
+	@GetMapping(ROOT)
+	String home(Model model) {
+		model.addAttribute("scoringOptions", Scoring.values());
+		model.addAttribute("tourneysList", tourneysSummaryService.getPublicTourneys());
+		return "home";
+	}
+
+	@PostMapping(TOURNAMENT)
+	String upsertTournament(@CookieValue(name = ADMIN_COOKIE_NAME, defaultValue = "") String tournamentKeyHash,
+			@ModelAttribute TournamentForm tournamentForm) {
+		return redirectToTournament(tournamentAdminService.tournament(tournamentKeyHash, tournamentForm));
+	}
 
 	@GetMapping(TOURNAMENT_DETAILS)
 	String tourneyDetails(

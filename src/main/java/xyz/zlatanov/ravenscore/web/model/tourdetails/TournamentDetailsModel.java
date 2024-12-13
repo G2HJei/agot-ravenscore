@@ -14,6 +14,7 @@ public class TournamentDetailsModel {
 	private String						id;
 	private String						name;
 	private String						description;
+	private Boolean						hidden;
 	private Scoring						scoring;
 	private String						startDate;
 	private Boolean						adminUnlocked				= false;

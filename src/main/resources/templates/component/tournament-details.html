@@ -1,0 +1,99 @@
+<div id="tournamentModalContainer"></div>
+
+<script th:inline="javascript">
+    TOURNAMENT_MODAL = `
+    <div class="modal modal-lg fade show" id="tournamentModal" tabindex="-1" aria-labelledby="tournamentModalLabel" style="display: block;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="tournamentModalLabel">{{title}}</h1>
+                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="/tournament">
+                        <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
+                            <input type="hidden" name="id" value="{{id}}">
+                            <div style="width: 67%">
+                                <label for="tournamentName" class="form-label">Name</label>
+                                <input type="text" required="" minlength="8" maxlength="100" class="form-control" id="tournamentName" placeholder="Enter tournament name" name="name" value="{{name}}">
+                            </div>
+                            <div style="width: 33%">
+                                <div class="d-flex justify-content-start align-items-end gap-2">
+                                    <div class="w-100">
+                                        <label for="scoring" class="form-label">Scoring</label>
+                                        <select id="scoring" class="form-select " aria-label="Select scoring" name="scoring">
+                                            <option value="RANKING_PLUS_CASTLES" {{RANKING_PLUS_CASTLES}}>Ranking + castles</option>
+                                        </select>
+                                    </div>
+                                    <i id="scoringInfo" class="bi bi-question-circle text-muted fs-5 mb-1" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Player score = Castles/points + (Number of players - Player position) + 3 points for victory" data-bs-original-title="Player score = Castles/points + (Number of players - Player position) + 3 points for victory"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tournamentDescription" class="form-label">Rules</label>
+                            <textarea class="form-control" style="height: 100px" id="tournamentDescription" maxlength="2000" placeholder="Enter tournament rules and description" name="description">{{rules}}</textarea>
+                        </div>
+                        <div class="form-check mb-1">
+                            <input type="checkbox" class="form-check-input" id="tournamentHidden" name="hidden" {{hidden}}>
+                            <input type="hidden" name="hidden" value="false">
+                            <label class="form-check-label" for="tournamentHidden">Private tournament</label>
+                        </div>
+                        <div class="text-muted fst-italic mb-3">
+                            If checked, only people with direct link will be able to access the tournament.
+                        </div>
+                        {{key}}
+                        <div class="d-flex justify-content-end align-items-center">
+                            {{delete-button}}
+                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>`;
+    DELETE_TOURNAMENT_BUTTON = `<a id="deleteTournamentButton" class="btn btn-outline-danger"
+                                data-bs-toggle="tooltip" data-bs-title="Delete tournament"
+                                href="/tournament/{{tour-id}}/delete">Delete</a>`
+    TOURNAMENT_KEY = `
+    <div class="w-25 mb-1">
+        <label for="tournamentKey" class="form-label">Key</label>
+        <input type="text" required="" minlength="8" maxlength="32" class="form-control" id="tournamentKey" placeholder="Enter tournament key" name="tournamentKey">
+    </div>
+    <div class="text-muted fst-italic">
+        Cannot be changed. Keep your key safe - you will need it to administer your tournament.
+    </div>`;
+
+    function newTournament() {
+        refreshTournamentModal(TOURNAMENT_MODAL
+            .replaceAll("{{id}}", "")
+            .replaceAll("{{title}}", "Host New Tournament")
+            .replaceAll("{{delete-button}}", "")
+            .replaceAll("{{RANKING_PLUS_CASTLES}}", "selected")
+            .replaceAll("{{name}}", "")
+            .replaceAll("{{rules}}", "")
+            .replaceAll("{{hidden}}", "")
+            .replaceAll("{{key}}", TOURNAMENT_KEY)
+        );
+    }
+
+    function editTournament() {
+        const tourRoot = $("#tournamentRoot");
+        refreshTournamentModal(TOURNAMENT_MODAL
+            .replaceAll("{{id}}", getTournamentId())
+            .replaceAll("{{title}}", "Modify Tournament")
+            .replaceAll("{{delete-button}}", DELETE_TOURNAMENT_BUTTON)
+            .replaceAll("{{RANKING_PLUS_CASTLES}}", "selected")
+            .replaceAll("{{name}}", tourRoot.text())
+            .replaceAll("{{rules}}", $("#rulesDescription").text())
+            .replaceAll("{{hidden}}", tourRoot.data("rs-tour-hidden") ? "checked" : "")
+            .replaceAll("{{key}}", "")
+        );
+    }
+
+    function refreshTournamentModal(tournamentModalHTML) {
+        $("#tournamentModalContainer").empty().append(tournamentModalHTML);
+        $("#deleteTournamentButton").tooltip();
+        $("#scoringInfo").tooltip();
+        $("#tournamentModal").modal("show");
+    }
+</script>

@@ -5,7 +5,7 @@ CREATE TABLE tournament
     name           VARCHAR(255) NOT NULL,
     scoring        VARCHAR(32)  NOT NULL,
     hidden         BOOLEAN      NOT NULL,
-    tournament_KEY VARCHAR(32)  NOT NULL,
+    tournament_key VARCHAR(32)  NOT NULL,
     start_date     TIMESTAMP(6) NOT NULL
 );
 CREATE TABLE substitute
