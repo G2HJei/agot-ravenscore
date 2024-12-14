@@ -96,7 +96,8 @@
                                     Petyr Baelish
                                 </text>
                                 <i th:if="${model.adminUnlocked}"
-                                   class="bi bi-pencil-square visually-hidden action-icon" data-bs-toggle="tooltip"
+                                   class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
+                                   data-bs-toggle="tooltip"
                                    data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
                                 <br/>
                                 <span th:if="${participant.replacedLabel ne null}"
@@ -153,7 +154,8 @@
                 <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
                     <span th:text="${substitute.name}" class="player-name"
                           th:data-rs-player-id="${substitute.id}">Sub Name</span>&nbsp;
-                    <i th:if="${model.adminUnlocked}" class="bi bi-pencil-square visually-hidden action-icon"
+                    <i th:if="${model.adminUnlocked}"
+                       class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
                        data-bs-toggle="tooltip" data-bs-title="Edit/remove" onclick="editSubstitute(this)"></i>
                     <br/>
                     <th:block th:each="link : ${substitute.profileLinks}">
