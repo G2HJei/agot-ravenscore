@@ -92,7 +92,8 @@
                                                      style="max-height: 2.25rem">&nbsp;-->
                             <div>
                                 <text th:text="${participant.name}" class="player-name participant-data"
-                                      th:data-rs-stage-id="${stage.id}" th:data-rs-participant-id="${participant.id}">
+                                      th:data-rs-stage-id="${stage.id}"
+                                      th:data-rs-participant-id="${participant.id}">
                                     Petyr Baelish
                                 </text>
                                 <i th:if="${model.adminUnlocked}"
@@ -101,7 +102,7 @@
                                    data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
                                 <br/>
                                 <span th:if="${participant.replacedLabel ne null}"
-                                      class="badge rounded-pill bi bi-arrow-left-right text-bg-secondary d-inline-block"
+                                      class="badge rounded-pill bi bi-arrow-down-up text-bg-secondary d-inline-block"
                                       data-bs-toggle="tooltip" th:data-bs-title="${participant.replacedLabel}"></span>
                                 <th:block th:each="link : ${participant.profileLinks}">
                                     <span th:if="${link.link eq null}"
@@ -141,19 +142,25 @@
 
             <!-- SUBSTITUTES -->
             <h6 class="fw-semibold">
-                Substitute players
                 <button th:if="${model.adminUnlocked}" type="button"
-                        class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-2"
+                        class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-1"
                         data-bs-toggle="tooltip" data-bs-title="Add substitute player"
                         onclick="newSubstitute()"></button>
+                <button th:if="${model.adminUnlocked}" type="button"
+                        class="btn btn-sm btn-outline-secondary bi bi-arrow-down-up mx-2"
+                        data-bs-toggle="tooltip" data-bs-title="Make substitution"
+                        onclick="showSubstitutionModal()"></button>
+                Substitute players
             </h6>
             <div th:if="${model.substituteModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">
                 The tournament has no substitutes.
             </div>
-            <div class="row">
+            <div class="row stage-substitutes" th:data-rs-stage-id="${stage.id}">
                 <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
-                    <span th:text="${substitute.name}" class="player-name"
-                          th:data-rs-player-id="${substitute.id}">Sub Name</span>&nbsp;
+                    <span th:text="${substitute.name}" class="player-name substitute-data"
+                          th:data-rs-substitute-id="${substitute.id}">
+                        Sub Name
+                    </span>&nbsp;
                     <i th:if="${model.adminUnlocked}"
                        class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
                        data-bs-toggle="tooltip" data-bs-title="Edit/remove" onclick="editSubstitute(this)"></i>
@@ -375,6 +382,7 @@
         <div layout:replace="~{component/tournament-details}"></div>
         <div layout:replace="~{component/stage}"></div>
         <div layout:replace="~{component/player}"></div>
+        <div layout:replace="~{component/substitution}"></div>
         <div layout:replace="~{component/game}"></div>
         <div layout:replace="~{component/ranking}"></div>
     </div>

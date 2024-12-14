@@ -2,7 +2,7 @@ package xyz.zlatanov.ravenscore.web.model.tourdetails.admin;
 
 import java.util.UUID;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -12,10 +12,10 @@ import lombok.experimental.Accessors;
 public class PlayerForm {
 
 	private UUID		playerId;
-	@NotEmpty
+	@NotNull
 	private UUID		tournamentId;
 	private UUID		tournamentStageId;
-	@NotEmpty
+	@NotNull
 	@Size(min = 2, max = 64)
 	private String		name;
 	private String[]	profileLinks	= new String[] {};

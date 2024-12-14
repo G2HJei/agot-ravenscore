@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import xyz.zlatanov.ravenscore.Utils;
 import xyz.zlatanov.ravenscore.domain.domain.*;
 import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.*;
@@ -77,6 +78,38 @@ public class TournamentAdminService {
 		// substitutes can always be deleted
 		substituteRepository.findById(playerId).ifPresent(substituteRepository::delete);
 		participantRepository.findById(playerId).ifPresent(participant -> deleteParticipant(stageId, participant));
+	}
+
+	@Transactional
+	public void substitution(String tournamentKeyHash, UUID tournamentId, UUID stageId, UUID participantId, UUID substituteId) {
+		validateAdminRights(tournamentKeyHash, tournamentId);
+		val oldParticipant = participantRepository.findById(participantId)
+				.orElseThrow(() -> new RavenscoreException("Invalid participant"));
+
+		val substitute = substituteRepository.findById(substituteId).orElseThrow(() -> new RavenscoreException("Invalid substitute"));
+		val newParticipantId = participantRepository.save(new Participant()
+				.name(substitute.name())
+				.profileLinks(substitute.profileLinks()))
+				.id();
+		participantRepository.save(oldParticipant.replacementParticipantId(newParticipantId));
+		substituteRepository.deleteById(substituteId);
+
+		val stage = tournamentStageRepository.findById(stageId).orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		tournamentStageRepository.save(stage.participantIdList(Utils.addToArray(newParticipantId, stage.participantIdList())));
+
+		var games = gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stageId);
+		games = games.stream()
+				.map(game -> game.participantIdList(Utils.replaceInArray(oldParticipant.id(), newParticipantId, game.participantIdList())))
+				.toList();
+		gameRepository.saveAll(games);
+
+		val players = playerRepository.findByGameIdInOrderByPointsDesc(games.stream().map(Game::id).toList())
+				.stream()
+				.filter(p -> Objects.equals(p.participantId(), oldParticipant.id()))
+				.map(p -> p.participantId(newParticipantId))
+				.toList();
+		playerRepository.saveAll(players);
+
 	}
 
 	@Transactional

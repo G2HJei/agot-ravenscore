@@ -14,7 +14,7 @@
                         <form id="gameForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game">
                             <input type="hidden" name="stageId" value="{{stage-id}}">
                             <input type="hidden" name="id" value="{{game-id}}">
-                            <div id="participantIdList"></div>
+                            <input type="hidden" id="participantIdList">
                             <div class="d-flex justify-content-start align-items-end gap-3 mb-2">
                                 <div style="width: 33%">
                                     <label for="gameType" class="form-label">Game type</label>
@@ -158,8 +158,7 @@
             .join("");
 
         // Update a hidden input to store the selected participants+
-        $("#participantIdList").replaceWith
-        (participantSelectionHTML);
+        $("#participantIdList").replaceWith(participantSelectionHTML);
         $(".participation-check-container").remove();
         gameForm.submit();
     }

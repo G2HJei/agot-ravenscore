@@ -1,0 +1,82 @@
+<div id="substitutionModalContainer"></div>
+
+<script th:inline="javascript">
+    const SUBSTITUTION_MODAL = `
+    <div class="modal fade show" id="substitutionModal" tabindex="-1" aria-labelledby="substitutionModalLabel" aria-modal="true"
+         role="dialog" style="display: block;">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="substitutionModalLabel">Substitution</h1>
+                    <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="substitutionForm" method="POST">
+                        <div class="d-flex justify-content-start align-items-end gap-3 mb-2">
+                            <div class="w-50">
+                                <label for="participantToReplace" class="form-label">Player to replace</label>
+                                <select id="participantToReplace" required class="form-select " aria-label="Player to replace">
+                                    <option value="" disabled selected></option>
+                                    {{participant-options}}
+                                </select>
+                            </div>
+                            <div class="w-50 ms-auto">
+                                <label for="substitutingPlayer" class="form-label">Substitution</label>
+                                <select id="substitutingPlayer" required class="form-select " aria-label="Player to replace">
+                                    <option value="" disabled selected></option>
+                                    {{substitution-options}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="text-muted fst-italic text-center mb-3">
+                            The substitution will take the place of the other player in all games in the current stage.
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <button type="button" class="btn btn-outline-secondary ms-auto" onclick="submitSubstitution()">Done</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>`;
+    const PLAYER_OPTION = `<option value="{{player-id}}">{{player-name}}</option>`;
+
+    function showSubstitutionModal() {
+        const participantOptionsHTML = $(".participant-data[data-rs-stage-id=" + getSelectedStageId() + "]")
+            .map((_, participantElt) => PLAYER_OPTION
+                .replaceAll("{{player-id}}", $(participantElt).data("rs-participant-id"))
+                .replaceAll("{{player-name}}", $(participantElt).text()))
+            .get()
+            .join("")
+            .trim();
+
+        const substitutionOptionsHTML = $(".stage-substitutes[data-rs-stage-id='" + getSelectedStageId() + "']")
+            .find(".substitute-data")
+            .map((_, substituteElt) => PLAYER_OPTION
+                .replaceAll("{{player-id}}", $(substituteElt).data("rs-substitute-id"))
+                .replaceAll("{{player-name}}", $(substituteElt).text()))
+            .get()
+            .join("")
+            .trim();
+
+        const substituteModalHTML = SUBSTITUTION_MODAL
+            .replaceAll("{{participant-options}}", participantOptionsHTML)
+            .replaceAll("{{substitution-options}}", substitutionOptionsHTML);
+        $("#substitutionModalContainer").empty().append(substituteModalHTML);
+        $("#substitutionModal").modal("show");
+    }
+
+    function submitSubstitution() {
+        const substitutionForm = $("#substitutionForm")[0];
+        if (!substitutionForm.checkValidity()) {
+            substitutionForm.reportValidity();
+            return;
+        }
+        $(substitutionForm).attr("action",
+            "/tournament/" + getTournamentId() +
+            "/stage/" + getSelectedStageId() +
+            "/participant/" + $("#participantToReplace").val() +
+            "/substitute/" + $("#substitutingPlayer").val())
+        $(substitutionForm).submit();
+    }
+</script>

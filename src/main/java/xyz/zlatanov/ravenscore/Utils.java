@@ -2,6 +2,10 @@ package xyz.zlatanov.ravenscore;
 
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.UUID;
 
 import lombok.val;
 
@@ -15,5 +19,17 @@ public class Utils {
 		val firstLetter = enumName.substring(0, 1).toUpperCase();
 		val restOfString = enumName.substring(1);
 		return firstLetter + restOfString;
+	}
+
+	public static UUID[] addToArray(UUID id, UUID[] array) {
+		val arrayList = new ArrayList<>(Arrays.asList(array));
+		arrayList.add(id);
+		return arrayList.toArray(UUID[]::new);
+	}
+
+	public static UUID[] replaceInArray(UUID idToReplace, UUID replaceWith, UUID[] array) {
+		return Arrays.stream(array)
+				.map(id -> Objects.equals(id, idToReplace) ? replaceWith : id)
+				.toArray(UUID[]::new);
 	}
 }

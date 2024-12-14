@@ -82,6 +82,14 @@ public class RavenscoreController {
 		return redirectToTournament(tournamentId);
 	}
 
+	@PostMapping(SUBSTITUTE_PLAYER)
+	String substitutePlayer(@PathVariable UUID tournamentId, @PathVariable UUID stageId, @PathVariable UUID participantId,
+			@PathVariable UUID substituteId,
+			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
+		tournamentAdminService.substitution(tournamentKeyHash, tournamentId, stageId, participantId, substituteId);
+		return redirectToTournament(tournamentId);
+	}
+
 	@PostMapping(UPSERT_GAME)
 	String upsertGame(@PathVariable UUID tournamentId,
 			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash,

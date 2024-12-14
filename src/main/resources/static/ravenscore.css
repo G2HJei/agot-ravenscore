@@ -50,6 +50,7 @@ th {
     border-color: rgba(0, 0, 0, .125);
 }
 
+/*todo todo todo*/
 .accordion-button:not(.collapsed) {
     color: rgb(44, 44, 44);
     background-color: rgba(227, 227, 227, 0.3);
