@@ -155,10 +155,6 @@ input[type=number] {
 /*---------------
 # Checkbox customization
 -----------------*/
-.form-check-input {
-    border-color: var(--rs-brand-color-light);
-}
-
 .form-check-input:checked {
     border-color: var(--rs-brand-color-light);
     background-color: var(--rs-brand-color);
