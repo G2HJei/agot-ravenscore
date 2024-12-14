@@ -24,11 +24,9 @@ public class Player {
 	@Enumerated(STRING)
 	private House	house;
 
-	private Integer	rank;
+	private Integer	castles			= 0;
 
-	private Integer	castles;
-
-	private Integer	score;
+	private Integer	points			= 0;
 
 	private Integer	penaltyPoints	= 0;
 

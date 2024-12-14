@@ -7,17 +7,21 @@ import static xyz.zlatanov.ravenscore.web.controller.RavenscoreController.ADMIN_
 
 import java.util.UUID;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.RankingsForm;
+import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
 import xyz.zlatanov.ravenscore.web.service.TournamentAdminService;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AdminRestController {
 
 	private final TournamentRepository		tournamentRepository;
@@ -39,9 +43,17 @@ public class AdminRestController {
 	}
 
 	@PostMapping(value = UPDATE_GAME_RANKINGS, produces = TEXT_PLAIN_VALUE)
-	public ResponseEntity<Void> updateRankings(@RequestBody RankingsForm rankingsForm,
+	public ResponseEntity<String> updateRankings(@PathVariable UUID tournamentId,
+			@RequestBody RankingsForm rankingsForm,
 			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
-
+		try {
+			tournamentAdminService.updateRankings(tournamentKeyHash, tournamentId, rankingsForm);
+		} catch (RavenscoreException e) {
+			return badRequest().body(e.getMessage());
+		} catch (Exception e) {
+			log.error(ExceptionUtils.getStackTrace(e));
+			return internalServerError().body("Unknown error occurred.");
+		}
 		return noContent().build();
 	}
 

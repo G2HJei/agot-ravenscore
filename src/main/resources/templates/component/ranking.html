@@ -1,17 +1,17 @@
-<div id="scoringModalContainer"></div>
+<div id="rankingModalContainer"></div>
 
 <script th:inline="javascript">
-    const SCORING_MODAL = `
-    <div class="modal fade show" id="scoringModal" tabindex="-1" aria-labelledby="scoringModalLabel" aria-modal="true" role="dialog" style="display: block;">
+    const RANKING_MODAL = `
+    <div class="modal fade show" id="rankingModal" tabindex="-1" aria-labelledby="rankingModalLabel" aria-modal="true" role="dialog" style="display: block;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="scoringModalLabel">Rankings</h1>
+                    <h1 class="modal-title fs-5" id="rankingModalLabel">Rankings</h1>
                     <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <h5 class="text-muted text-center">{{game-name}}</h5>
-                    <form id="scoringForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game/{{game-id}}/rankings">
+                    <form id="rankingForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game/{{game-id}}/rankings">
                         <input type="hidden" name="gameId" value="{{game-id}}">
                         <div id="profileLinks">
 
@@ -19,53 +19,55 @@
                             <thead>
                                 <th scope="col"></th>
                                 <th scope="col" style="width: 55%">Player</th>
+                                <th scope="col" class="text-center" style="width: 15%">Points</th>
                                 <th scope="col" class="text-center" style="width: 15%">Castles</th>
                                 <th scope="col" class="text-center" style="width: 15%">Penalty</th>
-                                <th scope="col" class="text-center" style="width: 15%">Score</th>
                             </thead>
                             <tbody>
-                                {{scoring-rows}}
+                                {{ranking-rows}}
                             </tbody>
                         </table>
                         </div>
                         <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
+                            <div id="rankingsError" class="text-danger visually-hidden ms-1 me-auto">Error</div>
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="gameCompleted" name="completed" {{completed}}>
                                 <input type="hidden" name="completed" value="false">
                                 <label class="form-check-label" for="gameCompleted">Completed</label>
                             </div>
-                            <button type="button" class="btn btn-outline-secondary" onclick="submitScoring()">Done</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="submitRanking()">Done</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>`;
-    const SCORING_PLAYER_ROW = `
+    const RANKING_PLAYER_ROW = `
     <tr>
         <input type="hidden" name="playerId" value="{{player-id}}">
         <td><img src="/icons/{{house}}.png" alt="house icon" style="max-height: 2.25rem"></td>
         <td class="align-middle"><select class="form-select " name="participantId" aria-label="Select participant">{{participant-options}}</select></td>
-        <td class="align-middle text-center"><input type="number" name="castles" min=0 max="10" class="form-control text-center" value="{{castles}}"></td>
-        <td class="align-middle text-center"><input type="number" name="penaltyPoints" min=0 max="20" class="form-control text-center" value="{{penalty}}"></td>
-        <td class="align-middle text-center"><input type="number" name="score" min=0 max="30" class="form-control text-center" value="{{score}}"></td>
+        <td class="align-middle text-center"><input type="number" name="points" min=0 max="30" class="form-control text-center" value="{{points}}"></td>
+        <td class="align-middle text-center"><input type="number" name="castles" min=0 max="10" class="form-control text-center" value="{{castles}}" onchange="autocompletePoints()"></td>
+        <td class="align-middle text-center"><input type="number" name="penaltyPoints" min=0 max="20" class="form-control text-center" value="{{penalty}}" onchange="autocompletePoints()"></td>
     </tr>`;
     const PARTICIPANT_OPTION = `<option value="{{participant-id}}" {{selected}}>{{player-name}}</option>`;
 
-    function updateScoring() {
+    function updateRanking() {
         const gameElement = getSelectedGameElement();
 
-        const modalHTML = SCORING_MODAL
+        const modalHTML = RANKING_MODAL
             .replaceAll("{{game-name}}", gameElement.data("rs-game-name"))
-            .replaceAll("{{game-id}}", "todo")
-            .replaceAll("{{scoring-rows}}", buildScoringRowsHTML(gameElement))
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{game-id}}", getSelectedGameId)
+            .replaceAll("{{ranking-rows}}", buildRankingRowsHTML(gameElement))
             .replaceAll("{{completed}}", gameElement.data("rs-game-completed") ? "checked" : "");
 
-        $("#scoringModalContainer").empty().append(modalHTML);
-        $("#scoringModal").modal("show");
+        $("#rankingModalContainer").empty().append(modalHTML);
+        $("#rankingModal").modal("show");
     }
 
-    function buildScoringRowsHTML(gameElement) {
+    function buildRankingRowsHTML(gameElement) {
         const playerList = [];
         gameElement.find(".player-data").each(function () {
             playerList.push({
@@ -73,7 +75,7 @@
                 name: $(this).data("rs-player-name"),
                 house: $(this).data("rs-player-house"),
                 castles: $(this).data("rs-player-castles"),
-                score: $(this).data("rs-player-score"),
+                points: $(this).data("rs-player-points"),
                 penaltyPts: $(this).data("rs-player-penalty-points"),
                 participantId: $(this).data("rs-player-participant-id")
             })
@@ -87,13 +89,13 @@
         });
 
         return playerList
-            .map(player => SCORING_PLAYER_ROW
+            .map(player => RANKING_PLAYER_ROW
                 .replaceAll("{{player-id}}", player.id)
                 .replaceAll("{{house}}", player.house)
                 .replaceAll("{{participant-options}}", buildParticipantOptionsHTML(player, participantList))
                 .replaceAll("{{castles}}", player.castles)
                 .replaceAll("{{penalty}}", player.penaltyPts)
-                .replaceAll("{{score}}", player.score))
+                .replaceAll("{{points}}", player.points))
             .join("")
             .trim();
     }
@@ -111,9 +113,14 @@
         return defaultOption + participantOptionsHTML;
     }
 
-    function submitScoring() {
-        const rows = $("#scoringForm tbody tr");
-        const scoringData = [];
+    function submitRanking() {
+        const rankingForm = $("#rankingForm")[0];
+        if (!rankingForm.checkValidity()) {
+            rankingForm.reportValidity();
+            return;
+        }
+        const rows = $("#rankingForm tbody tr");
+        const rankingData = [];
         rows.each(function () {
             const row = $(this);
             const rowData = {
@@ -121,29 +128,45 @@
                 participantId: row.find("select[name='participantId']").val(),
                 castles: row.find("input[name='castles']").val(),
                 penaltyPoints: row.find("input[name='penaltyPoints']").val(),
-                score: row.find("input[name='score']").val()
+                points: row.find("input[name='points']").val()
             };
-            scoringData.push(rowData);
+            rankingData.push(rowData);
         });
 
         const postData = {
             gameId: getSelectedGameId(),
-            playerScoringList: scoringData,
+            playerRankingList: rankingData,
             completed: $("#gameCompleted").is(":checked") ? "true" : "false"
         };
 
         $.ajax({
-            url: $("#scoringForm").attr("action"),
+            url: $("#rankingForm").attr("action"),
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify(postData),
-            success: function () {
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                console.error("Error submitting form:", error);
-                alert("An error occurred while updating rankings.");
-            }
+            success: () => location.reload(),
+            error: xhr => $("#rankingsError").text(xhr.responseText).removeClass("visually-hidden")
+        });
+    }
+
+    function autocompletePoints() {
+        const rows = $("#rankingForm tbody tr");
+        const numberOfPlayers = rows.length;
+        const playersData = [];
+        rows.each(function () {
+            playersData.push({
+                castles: parseInt($(this).find("input[name='castles']").val() || 0),
+                penalty: parseInt($(this).find("input[name='penaltyPoints']").val() || 0),
+                pointsElement: $(this).find("input[name='points']")
+            });
+        });
+        playersData.sort((a, b) => b.castles - a.castles);
+        playersData.forEach(function (player, index) {
+            let points = numberOfPlayers //this formula is valid only for RANKING_PLUS_CASTLES scoring type
+                - (index + 1) //ranking position
+                + player.castles
+                + (index === 0 ? 3 : 0); // winner gets 3 extra points
+            player.pointsElement.val(points);
         });
     }
 </script>

@@ -83,13 +83,13 @@ public class TournamentDetailsBuilder {
 							.games(completedGames)
 							.points(points)
 							.penaltyPoints(penaltyPoints)
-							.wins(players.stream().map(Player::rank).filter(r -> r == 1).toList().size())
+							.wins(calculateWins(participant.id(), gameList))
 							.avgPoints(completedGames == 0 ? null
 									: DECIMAL_FORMATTER
 											.format(BigDecimal.valueOf(points - penaltyPoints)
 													.divide(BigDecimal.valueOf(completedGames), 2, UP)));
 				})
-				.sorted((o1, o2) -> -o1.actualPoints().compareTo(o2.actualPoints()))
+				.sorted((o1, o2) -> -o1.score().compareTo(o2.score()))
 				.toList();
 	}
 
@@ -133,7 +133,7 @@ public class TournamentDetailsBuilder {
 									.orElse(List.of()))
 							.house(capitalizeFirstLetter(player.house()))
 							.castles(player.castles())
-							.score(player.score())
+							.score(player.points())
 							.penaltyPoints(player.penaltyPoints())
 							.participantId(Optional.ofNullable(player.participantId()).map(Object::toString).orElse(null));
 				})
@@ -157,7 +157,7 @@ public class TournamentDetailsBuilder {
 					.filter(p -> gamesMap.containsKey(p.gameId()))
 					// todo this should be in the frontend to autofill score before submitting
 					// (gamesMap.get(p.gameId()).participantIdList().length - p.rank() + p.castles() + (p.rank() == 1 ? 3 : 0))
-					.map(Player::score)
+					.map(Player::points)
 					.reduce(Integer::sum)
 					.orElse(0);
 		}
@@ -171,5 +171,10 @@ public class TournamentDetailsBuilder {
 				.toList();
 		return replacedParticipantsNames.isEmpty() ? null
 				: "Replaced " + String.join(", ", replacedParticipantsNames);
+	}
+
+	private Integer calculateWins(UUID id, List<Game> gameList) {
+		// todo
+		return 0;
 	}
 }

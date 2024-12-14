@@ -36,7 +36,7 @@ public class TournamentDetailsService {
 		val substitutes = substituteRepository.findByTournamentIdInOrderByName(List.of(tourId));
 		val games = gameRepository.findByTournamentStageIdInOrderByTypeAscNameAsc(stageIds);
 		val gameIds = games.stream().map(Game::id).toList();
-		val players = playerRepository.findByGameIdInOrderByRankAscHouseAsc(gameIds);
+		val players = playerRepository.findByGameIdInOrderByPointsDesc(gameIds);
 		return new TournamentDetailsBuilder(tournament, adminKeyHash, tourStages, substitutes, participants, games, players).build();
 	}
 

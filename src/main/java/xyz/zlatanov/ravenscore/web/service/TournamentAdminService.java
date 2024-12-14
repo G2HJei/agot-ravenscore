@@ -1,9 +1,6 @@
 package xyz.zlatanov.ravenscore.web.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -14,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.domain.*;
 import xyz.zlatanov.ravenscore.domain.repository.*;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.GameForm;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.*;
 import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
 
 @Service
@@ -101,9 +96,26 @@ public class TournamentAdminService {
 	@Transactional
 	public void updateRound(String tournamentKeyHash, UUID tournamentId, UUID gameId, Integer round) {
 		validateAdminRights(tournamentKeyHash, tournamentId);
-		val game = gameRepository.findById(gameId)
-				.orElseThrow(() -> new RavenscoreException("Invalid game"));
+		val game = gameRepository.findById(gameId).orElseThrow(() -> new RavenscoreException("Invalid game"));
 		gameRepository.save(game.round(round));
+	}
+
+	@Transactional
+	public void updateRankings(String tournamentKeyHash, UUID tournamentId, RankingsForm rankingsForm) throws RavenscoreException {
+		validateAdminRights(tournamentKeyHash, tournamentId);
+		val game = gameRepository.findById(rankingsForm.getGameId()).orElseThrow(() -> new RavenscoreException("Invalid game"));
+		gameRepository.save(game.completed(rankingsForm.getCompleted()));
+		val playerScoringList = rankingsForm.getPlayerRankingList().stream()
+				.sorted(Comparator.comparing(PlayerRanking::getPoints))
+				.toList();
+		playerScoringList.forEach(ps -> {
+			val player = playerRepository.findById(ps.getPlayerId()).orElseThrow(() -> new RavenscoreException("Invalid player"));
+			playerRepository.save(player
+					.castles(ps.getCastles())
+					.penaltyPoints(ps.getPenaltyPoints())
+					.points(ps.getPoints())
+					.participantId(ps.getParticipantId()));
+		});
 	}
 
 	private UUID createTournament(TournamentForm tournamentForm) {
@@ -261,7 +273,7 @@ public class TournamentAdminService {
 				.tournamentStageId(gameForm.getStageId())
 				.participantIdList(gameForm.getParticipantIdList()));
 		// disassociate player from removed participant
-		val players = playerRepository.findByGameIdOrderByRankAscHouseAsc(game.id());
+		val players = playerRepository.findByGameIdOrderByPointsDesc(game.id());
 		val updatedPlayers = players.stream()
 				.filter(p -> p.participantId() != null)
 				.filter(p -> !participatesInGames(p.participantId(), List.of(game)))

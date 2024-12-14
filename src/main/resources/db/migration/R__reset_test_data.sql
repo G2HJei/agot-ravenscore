@@ -42,22 +42,22 @@ VALUES ('16666666-6666-6666-6666-666666666666'::UUID, '55555555-5555-5555-5555-5
         'https://example.com/games/winterwar2', 'A_FEAST_FOR_CROWS', 'Battle of the South', false);
 
 -- Insert into player table #1
-INSERT INTO player (id, game_id, participant_id, castles, house, penalty_points, rank, score)
+INSERT INTO player (id, game_id, participant_id, castles, house, penalty_points, points)
 VALUES ('77777777-7777-7777-7777-777777777777'::UUID, '66666666-6666-6666-6666-666666666666'::UUID,
-        '22222222-2222-2222-2222-222222222222'::UUID, 3, 'STARK', 2, 1, 7),
+        '22222222-2222-2222-2222-222222222222'::UUID, 3, 'STARK', 2, 7),
        ('37777777-7777-7777-7777-777777777777'::UUID, '66666666-6666-6666-6666-666666666666'::UUID,
-        '72222222-2222-2222-2222-222222222222'::UUID, 1, 'ARRYN', 1, 3, 1),
+        '72222222-2222-2222-2222-222222222222'::UUID, 1, 'ARRYN', 1, 1),
        ('88888888-8888-8888-8888-888888888888', '66666666-6666-6666-6666-666666666666'::UUID,
-        '44444444-4444-4444-4444-444444444444'::UUID, 2, 'TARGARYEN', 0, 2, 5);
+        '44444444-4444-4444-4444-444444444444'::UUID, 2, 'TARGARYEN', 0, 5);
 
 -- Insert into player table #2
-INSERT INTO player (id, game_id, participant_id, castles, house, penalty_points, rank, score)
+INSERT INTO player (id, game_id, participant_id, castles, house, penalty_points, points)
 VALUES ('17777777-7777-7777-7777-777777777777'::UUID, '16666666-6666-6666-6666-666666666666'::UUID,
-        null, 3, 'GREYJOY', 0, 0, 0),
+        null, 3, 'GREYJOY', 0, 0),
        ('27777777-7777-7777-7777-777777777777'::UUID, '16666666-6666-6666-6666-666666666666'::UUID,
-        null, 3, 'ARRYN', 0, 0, 0),
+        null, 3, 'ARRYN', 0, 0),
        ('18888888-8888-8888-8888-888888888888', '16666666-6666-6666-6666-666666666666'::UUID,
-        null, 2, 'LANNISTER', 0, 0, 0);
+        null, 2, 'LANNISTER', 0, 0);
 
 -- Insert into substitute table
 INSERT INTO substitute (id, name, profile_links, tournament_id)

@@ -54,8 +54,7 @@ CREATE TABLE player
     castles        INTEGER,
     house          VARCHAR(16) NOT NULL,
     penalty_points SMALLINT    NOT NULL,
-    RANK           INTEGER,
-    score          INTEGER,
+    points         INTEGER,
     CONSTRAINT fk_game_id FOREIGN KEY (game_id) REFERENCES game (id) ON DELETE cascade,
     CONSTRAINT fk_participant_id FOREIGN KEY (participant_id) REFERENCES participant (id) ON DELETE cascade
 );

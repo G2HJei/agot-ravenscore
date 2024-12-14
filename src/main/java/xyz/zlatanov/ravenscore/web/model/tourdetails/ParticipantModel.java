@@ -20,7 +20,7 @@ public class ParticipantModel {
 	private Integer				wins;
 	private String				avgPoints;
 
-	public Integer actualPoints() {
+	public Integer score() {
 		return points - penaltyPoints;
 	}
 }

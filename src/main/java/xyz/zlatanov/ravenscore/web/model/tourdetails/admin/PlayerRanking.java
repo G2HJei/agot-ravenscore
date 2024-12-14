@@ -2,16 +2,18 @@ package xyz.zlatanov.ravenscore.web.model.tourdetails.admin;
 
 import java.util.UUID;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class PlayerScoring {
+public class PlayerRanking {
 
+	@NotNull
 	private UUID	playerId;
 	private UUID	participantId;
-	private Integer	castles;
-	private Integer	penaltyPoints;
-	private Integer	score;
+	private Integer	points			= 0;
+	private Integer	castles			= 0;
+	private Integer	penaltyPoints	= 0;
 }

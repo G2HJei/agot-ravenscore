@@ -3,6 +3,9 @@ package xyz.zlatanov.ravenscore.web.model.tourdetails.admin;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -10,7 +13,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class RankingsForm {
 
-	private UUID				gameId;
-	private Boolean				completed;
-	private List<PlayerScoring>	playerScoringList;
+	@NotNull
+	private UUID						gameId;
+	@NotNull
+	private Boolean						completed;
+	@NotEmpty
+	private List<@Valid PlayerRanking>	playerRankingList;
 }
