@@ -19,4 +19,5 @@ public class RankingsForm {
 	private Boolean						completed;
 	@NotEmpty
 	private List<@Valid PlayerRanking>	playerRankingList;
+
 }

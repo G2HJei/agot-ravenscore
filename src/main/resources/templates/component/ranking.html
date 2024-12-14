@@ -2,7 +2,7 @@
 
 <script th:inline="javascript">
     const RANKING_MODAL = `
-    <div class="modal fade show" id="rankingModal" tabindex="-1" aria-labelledby="rankingModalLabel" aria-modal="true" role="dialog" style="display: block;">
+    <div class="modal modal-lg fade show" id="rankingModal" tabindex="-1" aria-labelledby="rankingModalLabel" aria-modal="true" role="dialog" style="display: block;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -123,9 +123,10 @@
         const rankingData = [];
         rows.each(function () {
             const row = $(this);
+            const participantIdSelection = row.find("select[name='participantId']").val();
             const rowData = {
                 playerId: row.find("input[name='playerId']").val(),
-                participantId: row.find("select[name='participantId']").val(),
+                participantId: participantIdSelection === "unknown" ? null : participantIdSelection,
                 castles: row.find("input[name='castles']").val(),
                 penaltyPoints: row.find("input[name='penaltyPoints']").val(),
                 points: row.find("input[name='points']").val()

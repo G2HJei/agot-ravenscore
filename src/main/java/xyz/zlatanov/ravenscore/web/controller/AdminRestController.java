@@ -52,7 +52,7 @@ public class AdminRestController {
 			return badRequest().body(e.getMessage());
 		} catch (Exception e) {
 			log.error(ExceptionUtils.getStackTrace(e));
-			return internalServerError().body("Unknown error occurred.");
+			return internalServerError().body("Unexpected error occurred.");
 		}
 		return noContent().build();
 	}

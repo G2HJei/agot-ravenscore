@@ -5,6 +5,7 @@ import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class TournamentAdminService {
 
 	private final TournamentRepository		tournamentRepository;
@@ -101,8 +103,10 @@ public class TournamentAdminService {
 	}
 
 	@Transactional
-	public void updateRankings(String tournamentKeyHash, UUID tournamentId, RankingsForm rankingsForm) throws RavenscoreException {
+	public void updateRankings(String tournamentKeyHash, UUID tournamentId, @Valid RankingsForm rankingsForm) throws RavenscoreException {
 		validateAdminRights(tournamentKeyHash, tournamentId);
+		validateRankingsForm(rankingsForm);
+
 		val game = gameRepository.findById(rankingsForm.getGameId()).orElseThrow(() -> new RavenscoreException("Invalid game"));
 		gameRepository.save(game.completed(rankingsForm.getCompleted()));
 		val playerScoringList = rankingsForm.getPlayerRankingList().stream()
@@ -288,5 +292,29 @@ public class TournamentAdminService {
 				.distinct()
 				.toList();
 		return trimmed.toArray(new String[] {});
+	}
+
+	private void validateRankingsForm(RankingsForm rankingsForm) {
+		if (rankingsForm.getCompleted() && hasUnrevealedPlayers(rankingsForm)) {
+			throw new RavenscoreException("Cannot complete game without revealing all players!");
+		}
+		if (hasDuplicatedParticipants(rankingsForm)) {
+			throw new RavenscoreException("Same player selected for more than one house!");
+		}
+	}
+
+	private boolean hasUnrevealedPlayers(RankingsForm rankingsForm) {
+		return rankingsForm.getPlayerRankingList().stream()
+				.map(PlayerRanking::getParticipantId)
+				.anyMatch(Objects::isNull);
+	}
+
+	private boolean hasDuplicatedParticipants(RankingsForm rankingsForm) {
+		val participantIdList = rankingsForm.getPlayerRankingList().stream()
+				.map(PlayerRanking::getParticipantId)
+				.filter(Objects::nonNull)
+				.toList();
+		val distinctParticipantIdSize = participantIdList.stream().distinct().toList().size();
+		return participantIdList.size() != distinctParticipantIdSize;
 	}
 }
