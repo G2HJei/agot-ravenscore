@@ -57,7 +57,10 @@
                 <div class="card-body">
                     <a th:href="@{${routing.TOURNAMENT_DETAILS.replace('{tournamentId}', tourney.id)}}"
                        class="stretched-link"></a>
-                    <h5 class="card-title text-center text-brand" th:text="${tourney.name}">Tourney name</h5>
+                    <h5 class="card-title text-center">
+                        <i th:if="${tourney.pinned}" class="bi bi-pin-angle fs-4 text-muted"></i>
+                        <text class="text-brand" th:text="${tourney.name}">Tourney name</text>
+                    </h5>
                     <p class="card-text text-muted text-center"
                        th:text="${tourney.numberOfParticipants + ' participants'}">
                         Participants</p>

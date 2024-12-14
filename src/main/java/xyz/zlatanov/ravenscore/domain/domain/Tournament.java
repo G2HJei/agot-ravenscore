@@ -39,6 +39,8 @@ public class Tournament {
 
 	private LocalDate	startDate	= LocalDate.now();
 
+	private boolean		pinned		= false;
+
 	public boolean validateTournamentKey(String keyToValidate) {
 		return validateUnlockHash(keyToValidate.hashCode());
 	}

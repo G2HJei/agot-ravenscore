@@ -12,6 +12,7 @@ public class TournamentSummaryModel {
 	private Integer	numberOfParticipants;
 	private String	statusLabel;
 	private String	statusDate;
+	private boolean	pinned;
 
 	public int backgroundNumber() {
 		return name.length() % 4 + 1;
