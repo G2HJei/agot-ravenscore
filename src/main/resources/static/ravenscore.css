@@ -86,10 +86,6 @@ input[type=number] {
 -------------------------*/
 .nav-underline .nav-link:hover,
 .nav-underline .nav-link.active {
-    /*      text-black      */
-    --bs-text-opacity: 1;
-    color: rgba(var(--bs-black-rgb), var(--bs-text-opacity)) !important;
-
     border-bottom-color: var(--rs-brand-color);
 }
 
@@ -169,13 +165,30 @@ input[type=number] {
 # Other
 -----------------*/
 
+.link-secondary:hover {
+    color: var(--rs-brand-color-light) !important;
+    filter: brightness(1.2);
+}
+
+/*---------------
+# Other
+-----------------*/
 .highlight-primary:hover {
     cursor: pointer;
     filter: brightness(1.2);
 }
 
-.text-brand {
+.highlight-brand:hover {
+    cursor: pointer;
     color: var(--rs-brand-color);
+}
+
+.text-brand {
+    color: var(--rs-brand-color) !important;
+}
+
+.text-brand-light {
+    color: var(--rs-brand-color-light) !important;
 }
 
 .action-icon {

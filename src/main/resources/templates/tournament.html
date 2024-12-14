@@ -79,7 +79,7 @@
                         tournament stage has no participants yet.
                         <th:block th:if="${model.adminUnlocked}">Please
                             <a href="#" onclick="newParticipant()"
-                               class="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add
+                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add
                                 players</a>.
                         </th:block>
                     </th>
@@ -187,7 +187,7 @@
             <div th:if="${stage.gameModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">This
                 tournament stage has no games yet. Why not
                 <a href="#" onclick="newGame()"
-                   class="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
+                   class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
                     one</a> now?
             </div>
             <div class="accordion accordion-flush" th:id="${'accordionGames-'+stageIdx.index}">

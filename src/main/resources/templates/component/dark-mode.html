@@ -1,0 +1,28 @@
+<div class="form-check form-switch ms-auto me-5" data-bs-toggle="tooltip"
+     data-bs-title="Toggle dark mode">
+    <i id="darkModeBtn" class="bi bi-moon-stars-fill highlight-brand fs-5" onclick="toggleDarkMode()">
+    </i>
+</div>
+
+<script th:inline="javascript">
+    
+    function toggleDarkMode() {
+        $("#darkModeBtn").toggleClass("bi-moon-stars-fill bi-sun-fill");
+        const root = $("#rootHtml");
+        const currentDarkMode = root.attr("data-bs-theme");
+        setDarkMode(currentDarkMode !== "dark")
+    }
+
+    function setDarkMode(darkMode) {
+        $("#rootHtml").attr("data-bs-theme", darkMode ? "dark" : "light");
+        localStorage.setItem("darkMode", darkMode);
+    }
+
+    //handle initial state
+    $(document).ready(function () {
+        if (localStorage.getItem("darkMode") === "false") {
+            $("#darkModeBtn").toggleClass("bi-moon-stars-fill bi-sun-fill");
+            setDarkMode(false);
+        }
+    });
+</script>
