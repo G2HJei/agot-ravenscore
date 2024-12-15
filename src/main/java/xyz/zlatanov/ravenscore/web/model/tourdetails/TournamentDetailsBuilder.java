@@ -123,6 +123,7 @@ public class TournamentDetailsBuilder {
 					return new PlayerModel()
 							.id(player.id().toString())
 							.name(participant.map(Participant::name).orElse(capitalizeFirstLetter(player.house())))
+							.replacedLabel(Optional.ofNullable(player.participantId()).map(this::getReplacedLabel).orElse(null))
 							.profileLinks(participant
 									.map(p -> Arrays.stream(p.profileLinks()).toList()
 											.stream()
@@ -165,12 +166,19 @@ public class TournamentDetailsBuilder {
 	}
 
 	private String getReplacedLabel(UUID participantId) {
-		val replacedParticipantsNames = participantList.stream()
-				.filter(p -> Objects.equals(p.replacementParticipantId(), participantId))
-				.map(Participant::name)
-				.toList();
-		return replacedParticipantsNames.isEmpty() ? null
-				: "Replaced " + String.join(", ", replacedParticipantsNames);
+		val replacedNames = findReplacementNames(participantId);
+		return replacedNames.isEmpty() ? null : "Replaced " + String.join(", ", replacedNames);
+	}
+
+	private List<String> findReplacementNames(UUID participantId) {
+		for (val participant : participantList) {
+			if (participantId.equals(participant.replacementParticipantId())) {
+				val names = findReplacementNames(participant.id());
+				names.add(participant.name());
+				return names;
+			}
+		}
+		return new ArrayList<>();
 	}
 
 	private Integer calculateWins(UUID id, List<Game> gameList) {

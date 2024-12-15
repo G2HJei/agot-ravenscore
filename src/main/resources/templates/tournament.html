@@ -281,6 +281,10 @@
                                                               th:data-rs-participant-name="${participant.name}"
                                                               th:data-rs-participant-id="${participant.id}">Stark</span>
                                                         <br/>
+                                                        <span th:if="${participant.replacedLabel ne null}"
+                                                              class="badge rounded-pill bi bi-arrow-down-up text-bg-secondary d-inline-block"
+                                                              data-bs-toggle="tooltip"
+                                                              th:data-bs-title="${participant.replacedLabel}"></span>
                                                         <th:block th:each="link : ${participant.profileLinks}">
                                                         <span th:if="${link.link eq null}"
                                                               class="badge rounded-pill bi bi-person-fill text-bg-secondary"
@@ -335,19 +339,23 @@
                                                                 Lannister
                                                             </text>
                                                             <br/>
+                                                            <span th:if="${player.replacedLabel ne null}"
+                                                                  class="badge rounded-pill bi bi-arrow-down-up text-bg-secondary d-inline-block"
+                                                                  data-bs-toggle="tooltip"
+                                                                  th:data-bs-title="${player.replacedLabel}"></span>
                                                             <th:block th:each="link : ${player.profileLinks}">
-                                                        <span th:if="${link.link eq null}"
-                                                              class="badge rounded-pill bi bi-person-fill text-bg-secondary"
-                                                              data-bs-toggle="tooltip" data-bs-title="Alias"
-                                                              th:text="' ' + ${link.label}">Handle</span>
+                                                                <span th:if="${link.link eq null}"
+                                                                      class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                                                                      data-bs-toggle="tooltip" data-bs-title="Alias"
+                                                                      th:text="' ' + ${link.label}">Handle</span>
                                                                 <a th:if="${link.link ne null}"
                                                                    class="text-decoration-none"
                                                                    th:href="link.link"
                                                                    target="_blank">
-                                                            <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
-                                                                  data-bs-toggle="tooltip"
-                                                                  th:data-bs-title="${'External player profile: '+link.link}"
-                                                                  th:text="'  ' + ${link.label}">Profile</span>
+                                                                <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                                                                      data-bs-toggle="tooltip"
+                                                                      th:data-bs-title="${'External player profile: '+link.link}"
+                                                                      th:text="'  ' + ${link.label}">Profile</span>
                                                                 </a>
                                                             </th:block>
                                                         </div>

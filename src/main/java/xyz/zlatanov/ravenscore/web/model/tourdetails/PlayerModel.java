@@ -12,6 +12,7 @@ public class PlayerModel {
 
 	private String				id;
 	private String				name;
+	private String				replacedLabel;
 	private String				house;
 	private Integer				castles;
 	private Integer				score;
