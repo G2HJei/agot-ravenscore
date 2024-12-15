@@ -59,7 +59,7 @@
                        class="stretched-link"></a>
                     <h5 class="card-title text-center">
                         <i th:if="${tourney.pinned}" class="bi bi-pin-angle fs-4 text-muted"></i>
-                        <text class="text-brand" th:text="${tourney.name}">Tourney name</text>
+                        <span class="text-brand" th:text="${tourney.name}">Tourney name</span>
                     </h5>
                     <p class="card-text text-muted text-center"
                        th:text="${tourney.numberOfParticipants + ' participants'}">

@@ -91,12 +91,13 @@
                             <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
                                                      style="max-height: 2.25rem">&nbsp;-->
                             <div>
-                                <text th:text="${participant.name}" class="participant-data"
+                                <span class="participant-data"
                                       th:data-rs-stage-id="${stage.id}"
                                       th:data-rs-participant-id="${participant.id}"
                                       th:data-rs-participant-name="${participant.name}">
-                                    Petyr Baelish
-                                </text>
+                                    <i class="bi bi-person-fill"></i>
+                                    <span th:text="${participant.name}">Petyr Baelish</span>
+                                </span>
                                 <i th:if="${model.adminUnlocked}"
                                    class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
                                    data-bs-toggle="tooltip"
@@ -127,12 +128,12 @@
                         Points
                     </td>
                     <td class="align-middle text-center" th:if="${participant.penaltyPoints() ne 0}">
-                        <text th:text="${participant.points - participant.penaltyPoints}">Pts</text>&nbsp;
+                        <span th:text="${participant.points - participant.penaltyPoints}">Pts</span>&nbsp;
                         <br/>
-                        <text class="text-muted fst-italic"
+                        <span class="text-muted fst-italic"
                               th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen. pts.)'}">
                             Pts with penalties
-                        </text>
+                        </span>
                     </td>
                     <td class="align-middle text-center" th:text="${participant.games}">Games</td>
                     <td class="align-middle text-center" th:text="${participant.wins}">Wins</td>
@@ -157,11 +158,12 @@
                 The tournament has no substitutes.
             </div>
             <div class="row stage-substitutes" th:data-rs-stage-id="${stage.id}">
-                <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
-                    <span th:text="${substitute.name}" class="substitute-data"
+                <div class="col-4 col-lg-3 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
+                    <span class="substitute-data"
                           th:data-rs-substitute-id="${substitute.id}"
                           th:data-rs-substitute-name="${substitute.name}">
-                        Sub Name
+                        <i class="bi bi-person-fill"></i>
+                        <span th:text="${substitute.name}">Sub Name</span>
                     </span>&nbsp;
                     <i th:if="${model.adminUnlocked}"
                        class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
@@ -190,8 +192,8 @@
                         class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-1 me-auto"
                         data-bs-toggle="tooltip" data-bs-title="Create new game"
                         onclick="newGame()"></button>
-                <text>Games</text>
-                <text class="ms-auto"></text>
+                <span>Games</span>
+                <span class="ms-auto"></span>
             </h5>
             <div th:if="${stage.gameModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">This
                 tournament stage has no games yet. Why not
@@ -205,13 +207,13 @@
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
                                 aria-controls="flush-collapse">
-                            <text class="text-muted" th:text="${game.type.shortname}">Type</text>&nbsp;
-                            <text th:text="${game.name}">Name</text>&nbsp;
-                            <text th:if="${not game.completed}" th:text="${'(round '+game.round+')'}"
+                            <span class="text-muted" th:text="${game.type.shortname}">Type</span>&nbsp;
+                            <span th:text="${game.name}">Name</span>&nbsp;
+                            <span th:if="${not game.completed}" th:text="${'(round '+game.round+')'}"
                                   th:class="${'text-muted fst-italic round-label '+(game.round eq null? 'visually-hidden' : '')}">
                                 (Round #)
-                            </text>
-                            <text th:if="${game.completed}" class="text-muted fst-italic">(Completed)</text>
+                            </span>
+                            <span th:if="${game.completed}" class="text-muted fst-italic">(Completed)</span>
                         </button>
                     </h6>
                     <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
@@ -261,9 +263,9 @@
                                                 th:text="${game.type.longName}">
                                                 Game
                                                 type</h5>
-                                            <text th:if="${game.link ne null}"
+                                            <span th:if="${game.link ne null}"
                                                   class="d-flex justify-content-center text-muted">Go to game
-                                            </text>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -278,10 +280,11 @@
                                             <th:block th:each="participant : ${stage.participantModelList}">
                                                 <th:block th:if="${game.participantIdList.contains(participant.id)}">
                                                     <div class="col-4 mb-3">
-                                                        <span th:text="${participant.name}"
-                                                              class="game-participant-data"
+                                                        <span class="game-participant-data"
                                                               th:data-rs-participant-name="${participant.name}"
-                                                              th:data-rs-participant-id="${participant.id}">Stark</span>
+                                                              th:data-rs-participant-id="${participant.id}">
+                                                            <i class="bi bi-person-fill"></i>
+                                                            <span th:text="${participant.name}">Stark</span></span>
                                                         <br/>
                                                         <span th:if="${participant.replacedLabel ne null}"
                                                               class="badge rounded-pill bi bi-arrow-down-up text-bg-secondary d-inline-block"
@@ -336,10 +339,10 @@
                                                              alt="house icon"
                                                              style="max-height: 2.25rem">&nbsp;
                                                         <div class="ms-3">
-                                                            <text th:text="${player.name}"
+                                                            <span th:text="${player.name}"
                                                                   th:class="${player.profileLinks.isEmpty() ? 'text-muted' : ''}">
                                                                 Lannister
-                                                            </text>
+                                                            </span>
                                                             <br/>
                                                             <span th:if="${player.replacedLabel ne null}"
                                                                   class="badge rounded-pill bi bi-arrow-down-up text-bg-secondary d-inline-block"

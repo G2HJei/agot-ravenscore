@@ -1,5 +1,7 @@
 package xyz.zlatanov.ravenscore.web.model.toursummary;
 
+import static java.lang.Math.abs;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -15,6 +17,6 @@ public class TournamentSummaryModel {
 	private boolean	pinned;
 
 	public int backgroundNumber() {
-		return name.length() % 4 + 1;
+		return abs(name.hashCode()) % 4 + 1;
 	}
 }

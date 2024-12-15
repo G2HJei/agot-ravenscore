@@ -23,4 +23,5 @@ public class ParticipantModel {
 	public Integer score() {
 		return points - penaltyPoints;
 	}
+
 }
