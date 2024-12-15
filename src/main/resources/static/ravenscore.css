@@ -50,10 +50,13 @@ th {
     border-color: rgba(0, 0, 0, .125);
 }
 
-/*todo todo todo*/
 .accordion-button:not(.collapsed) {
-    color: rgb(44, 44, 44);
-    background-color: rgba(227, 227, 227, 0.3);
+    color: var(--bs-accordion-btn-color);
+    background-color: rgba(227, 227, 227, 0.05);
+}
+
+html[data-bs-theme="light"] .accordion-button:not(.collapsed) {
+    border: 1px solid rgba(227, 227, 227, 0.5);
 }
 
 .accordion-button:not(.collapsed)::after {
