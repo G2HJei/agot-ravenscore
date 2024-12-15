@@ -11,17 +11,20 @@
                     <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/tournament/{{tour-id}}/stage">
+                    <form method="POST" action="/tournament/{{tour-id}}/stage" autocomplete="off">
                         <input type="hidden" name="tournamentId" value="{{tour-id}}">
                         <input type="hidden" name="stageId" value="{{stage-id}}">
                         <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
-                            <div style="width: 67%">
+                            <div class="w-75">
                                 <label for="stageName" class="form-label">Name</label>
                                 <input type="text" required="" minlength="4" maxlength="100" class="form-control"
                                        id="stageName" placeholder="Enter stage name" name="name" value="{{stage-name}}">
                             </div>
-                            <div style="width: 33%">
-                                <label for="qualifyCount" class="form-label">Qualifying players</label>
+                            <div>
+                                <label for="qualifyCount" class="form-label">
+                                    Qualifiers
+                                    <i id="qualifiersInfo" class="bi bi-question-circle text-muted fs-5 mb-1" data-bs-toggle="tooltip" data-bs-original-title="Number of players to qualify for a next round."></i>
+                                </label>
                                 <input type="number" required="" min="1" max="64" class="form-control text-center" id="qualifyCount"
                                        name="qualificationCount" value="{{qualification-count}}">
                             </div>
@@ -68,6 +71,7 @@
     function refreshStageModal(playerModalHTML) {
         $("#tournamentStageModalContainer").empty().append(playerModalHTML);
         $("#deleteStageButton").tooltip();
+        $("#qualifiersInfo").tooltip();
         $("#stageModal").modal("show");
     }
 </script>

@@ -11,7 +11,7 @@
                         <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="gameForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game">
+                        <form id="gameForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/game" autocomplete="off">
                             <input type="hidden" name="stageId" value="{{stage-id}}">
                             <input type="hidden" name="id" value="{{game-id}}">
                             <input type="hidden" id="participantIdList">
@@ -86,7 +86,7 @@
         const gameElement = getSelectedGameElement();
         const participantChecksHtml = buildParticipantChecksHtml(getSelectedGameId());
         refreshGameModal(GAME_MODAL
-            .replaceAll("{{title}}", "New Game")
+            .replaceAll("{{title}}", "Modify Game Details")
             .replaceAll("{{delete-button}}", DELETE_GAME_BUTTON)
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
