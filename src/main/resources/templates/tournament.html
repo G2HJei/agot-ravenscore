@@ -91,9 +91,10 @@
                             <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
                                                      style="max-height: 2.25rem">&nbsp;-->
                             <div>
-                                <text th:text="${participant.name}" class="player-name participant-data"
+                                <text th:text="${participant.name}" class="participant-data"
                                       th:data-rs-stage-id="${stage.id}"
-                                      th:data-rs-participant-id="${participant.id}">
+                                      th:data-rs-participant-id="${participant.id}"
+                                      th:data-rs-participant-name="${participant.name}">
                                     Petyr Baelish
                                 </text>
                                 <i th:if="${model.adminUnlocked}"
@@ -157,8 +158,9 @@
             </div>
             <div class="row stage-substitutes" th:data-rs-stage-id="${stage.id}">
                 <div class="col-4 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
-                    <span th:text="${substitute.name}" class="player-name substitute-data"
-                          th:data-rs-substitute-id="${substitute.id}">
+                    <span th:text="${substitute.name}" class="substitute-data"
+                          th:data-rs-substitute-id="${substitute.id}"
+                          th:data-rs-substitute-name="${substitute.name}">
                         Sub Name
                     </span>&nbsp;
                     <i th:if="${model.adminUnlocked}"

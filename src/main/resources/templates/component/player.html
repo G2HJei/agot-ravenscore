@@ -69,11 +69,11 @@
         refreshPlayerModal(PLAYER_MODAL
             .replaceAll("{{title}}", "Modify Player")
             .replaceAll("{{delete-button}}", DELETE_PLAYER_BUTTON)
-            .replaceAll("{{player-id}}", actionContainer.find(".player-name").data("rs-player-id"))
+            .replaceAll("{{player-id}}", actionContainer.find(".participant-data").data("rs-participant-id"))
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
             .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
-            .replaceAll("{{player-name}}", actionContainer.find(".player-name").text().trim())
+            .replaceAll("{{player-name}}", actionContainer.find(".participant-data").data("rs-participant-name"))
             .replaceAll("{{profile-links}}", profileLinksHTML));
     }
 
@@ -103,11 +103,11 @@
         const playerModalHTML = PLAYER_MODAL
             .replaceAll("{{title}}", "Modify Substitute")
             .replaceAll("{{delete-button}}", DELETE_PLAYER_BUTTON)
-            .replaceAll("{{player-id}}", actionContainer.find(".player-name").data("rs-substitute-id"))
+            .replaceAll("{{player-id}}", actionContainer.find(".substitute-data").data("rs-substitute-id"))
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", "")
             .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
-            .replaceAll("{{player-name}}", actionContainer.find(".player-name").text().trim())
+            .replaceAll("{{player-name}}", actionContainer.find(".substitute-data").data("rs-substitute-name"))
             .replaceAll("{{profile-links}}", profileLinksHTML);
 
         refreshPlayerModal(playerModalHTML);
