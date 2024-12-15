@@ -163,7 +163,7 @@ input[type=number] {
 }
 
 /*---------------
-# Other
+# Link customization
 -----------------*/
 
 .link-secondary:hover {
@@ -194,4 +194,8 @@ input[type=number] {
 
 .action-icon {
     color: var(--rs-brand-color);
+}
+
+.border-top-brand {
+    border-top: 2px dashed var(--rs-brand-color-light);
 }

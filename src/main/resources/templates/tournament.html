@@ -84,12 +84,12 @@
                         </th:block>
                     </th>
                 </tr>
-                <tr th:each="participant, participantIdx: ${stage.participantModelList}">
+                <tr th:each="participant, participantIdx: ${stage.participantModelList}"
+                    th:class="${participantIdx.index eq stage.qualificationCount ? 'border-top-brand' : ''}">
                     <th class="align-middle text-center" scope="row" th:text="${participantIdx.index+1}">#</th>
                     <td>
                         <div class="d-flex justify-content-start align-items-center action-container">
-                            <!--  todo put tourney winner icon here                   <img th:src="@{'/icons/'+${player.house}+'.png'}" alt="house icon"
-                                                     style="max-height: 2.25rem">&nbsp;-->
+                            <!--  todo put tourney winner icon here -->
                             <div>
                                 <span class="participant-data"
                                       th:data-rs-stage-id="${stage.id}"
