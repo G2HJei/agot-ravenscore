@@ -389,6 +389,7 @@
     </div>
 
     <!-- Components -->
+    <div layout:replace="~{component/state}"></div>
     <div layout:replace="~{component/rules}"></div>
     <div layout:replace="~{component/unlock-admin}"></div>
     <div th:if="${model.adminUnlocked}">
@@ -403,30 +404,16 @@
     <!-- Utility cross-component functions -->
     <script th:inline="javascript">
         $(document).ready(function () {
-            $(".action-container").hover(function () {
-                    $(this).find('.action-icon').removeClass('visually-hidden');
+            //setup hover icons
+            $(".action-container").hover(
+                function () {
+                    $(this).find(".action-icon").removeClass("visually-hidden");
                 },
                 function () {
-                    $(this).find('.action-icon').addClass('visually-hidden');
+                    $(this).find(".action-icon").addClass("visually-hidden");
                 }
             );
         })
-
-        function getTournamentId() {
-            return $('#tournamentRoot').data('rs-tour-id');
-        }
-
-        function getSelectedStageId() {
-            return $('#stageNav .nav-item .nav-link.active').data('rs-stage-id');
-        }
-
-        function getSelectedGameId() {
-            return $(".accordion-collapse.collapse.show[data-rs-stage-id=" + getSelectedStageId() + "]").data('rs-game-id');
-        }
-
-        function getSelectedGameElement() {
-            return $(".accordion-collapse.collapse.show[data-rs-stage-id=" + getSelectedStageId() + "]");
-        }
     </script>
 </main>
 </body>
