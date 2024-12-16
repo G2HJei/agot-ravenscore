@@ -5,37 +5,53 @@
 
 
         //setup stage selection updates
-        $('#stageNav').on("shown.bs.tab", function (event) {
-            storeSelection()
+        $('#stageNav').on("shown.bs.tab", function () {
+            storeStageSelection();
+            storeGameSelection();
         });
 
         //setup game selection updates
-        $(".accordion").on("shown.bs.collapse", function () {
-            storeSelection();
+        $(".accordion").on("shown.bs.collapse hidden.bs.collapse", function () {
+            if ($(".accordion-collapse.show").length === 0) { //all games collapsed
+                resetGameSelection();
+            } else { //game expanded
+                storeStageSelection();
+                storeGameSelection();
+            }
         });
 
         // Restore previously selected stage
         const selectedStage = getSelectedStageId();
         if (selectedStage != null) {
             $("#stageNav a[data-rs-stage-id='" + selectedStage + "']")
-                .on('shown.bs.tab', function () {
-                    // Restore previously selected game after stage tab is fully shown
-                    const selectedGame = getSelectedGameId();
-                    if (selectedGame != null) {
-                        $(".accordion-collapse[data-rs-game-id='" + selectedGame + "']").collapse("show");
-                    }
-                })
+                .on('shown.bs.tab', restoreGameSelection)
                 .tab("show");
         }
+        restoreGameSelection();
 
         // refresh initial selections
         localStorage.setItem("tourId", $("#tournamentRoot").data("rs-tour-id"));
-        storeSelection();
+        storeStageSelection();
     })
 
-    function storeSelection() {
-        localStorage.setItem("stageId", $("#stageNav .nav-item .nav-link.active").data("rs-stage-id"))
-        localStorage.setItem("gameId", $(".accordion-collapse.collapse.show[data-rs-stage-id='" + getSelectedStageId() + "']").data("rs-game-id"))
+    function storeStageSelection() {
+        localStorage.setItem("stageId", $("#stageNav .nav-item .nav-link.active").data("rs-stage-id"));
+    }
+
+    function storeGameSelection() {
+        localStorage.setItem("gameId", $(".accordion-collapse.collapse.show[data-rs-stage-id='" + getSelectedStageId() + "']").data("rs-game-id"));
+    }
+
+    function restoreGameSelection() {
+        // Restore previously selected game after stage tab is fully shown
+        const selectedGame = getSelectedGameId();
+        if (selectedGame != null) {
+            $(".accordion-collapse[data-rs-game-id='" + selectedGame + "']").collapse("show");
+        }
+    }
+
+    function resetGameSelection() {
+        localStorage.removeItem("gameId");
     }
 
     function getTournamentId() {
