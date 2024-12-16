@@ -30,9 +30,10 @@
                 class="btn btn-sm btn-outline-secondary bi bi-unlock-fill ms-1 me-2"
                 data-bs-toggle="tooltip" data-bs-title="Tournament administration is unlocked. Click to lock it."
                 onclick="lockAdmin()"></button>
+        <!-- todo -->
         <button th:if="${model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-download ms-1 me-2"
-                data-bs-toggle="tooltip" data-bs-title="To do: Backup tournament to CSV file"
+                class="btn btn-sm btn-outline-secondary bi bi-download ms-1 me-2 visually-hidden"
+                data-bs-toggle="tooltip" data-bs-title="Download tournament data"
                 onclick="downloadCSV()"></button>
         <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-2"
                 data-bs-toggle="tooltip" data-bs-title="Show tournament rules & details"

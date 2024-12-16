@@ -6,7 +6,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
@@ -20,7 +19,7 @@ public class ErrorHandlerController {
 	private final TourInfoService tourInfoService;
 
 	@ExceptionHandler(Exception.class)
-	public String unknownException(HttpServletRequest request, Exception e) {
+	public String unknownException(Exception e) {
 		if (e instanceof RavenscoreException) {
 			return redirectToTournament(tourInfoService.getTournamentId(), e.getMessage());
 		}

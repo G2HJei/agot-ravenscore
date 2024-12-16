@@ -260,7 +260,7 @@ public class TournamentAdminService {
 		val stage = tournamentStageRepository.findById(stageId).orElseThrow(() -> new RavenscoreException("Invalid stage"));
 		val games = gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stage.id());
 		if (participatesInGames(participant.id(), games)) {
-			throw new RavenscoreException("Cannot remove participant involved in ongoing stage games.");
+			throw new RavenscoreException("Cannot remove participant already involved in games.");
 		}
 		tournamentStageRepository.save(stage
 				.participantIdList(Arrays.stream(stage.participantIdList())
