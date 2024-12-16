@@ -179,6 +179,36 @@ public class TournamentAdminService {
 		});
 	}
 
+	@Transactional
+	@TourAdminOperation
+	public void importParticipants(@Valid UUID tournamentId, @Valid ImportParticipantsForm importParticipantsForm) {
+		val stage = tournamentStageRepository.findById(importParticipantsForm.getStageId())
+				.orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		val stageParticipants = participantRepository.findByIdInOrderByName(Arrays.asList(stage.participantIdList()));
+		val stageParticipantsNames = stageParticipants.stream().map(Participant::name).toList();
+		val selectedParticipants = participantRepository
+				.findByIdInOrderByName(Arrays.asList(importParticipantsForm.getParticipantIdList()));
+		val selectedParticipantsNames = selectedParticipants.stream().map(Participant::name).toList();
+		val commonNames = stageParticipantsNames.stream()
+				.filter(selectedParticipantsNames::contains)
+				.toList();
+		if (!commonNames.isEmpty()) {
+			throw new RavenscoreException(String.format("Participant(s) already in present stage: %s", String.join(", ", commonNames)));
+		}
+
+		// todo make stage complete
+		// todo do not show existing participants in import modal
+
+		val clonedParticipants = participantRepository.saveAll(selectedParticipants.stream()
+				.map(Participant::clone)
+				.toList());
+		var newStageParticipantIds = stage.participantIdList();
+		for (val cloned : clonedParticipants) {
+			newStageParticipantIds = Utils.addToArray(cloned.id(), newStageParticipantIds);
+		}
+		tournamentStageRepository.save(stage.participantIdList(newStageParticipantIds));
+	}
+
 	private void createStage(@Valid StageForm stageForm) {
 		tournamentStageRepository.save(new TournamentStage()
 				.name(stageForm.getName())

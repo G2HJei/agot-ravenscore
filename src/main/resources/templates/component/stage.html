@@ -11,7 +11,7 @@
                     <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/tournament/{{tour-id}}/stage" autocomplete="off">
+                    <form id="stageForm" method="POST" action="/tournament/{{tour-id}}/stage" autocomplete="off">
                         <input type="hidden" name="tournamentId" value="{{tour-id}}">
                         <input type="hidden" name="stageId" value="{{stage-id}}">
                         <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
@@ -34,7 +34,7 @@
                         </div>
                         <div class="d-flex justify-content-end align-items-center">
                             {{delete-button}}
-                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                            <button type="button" class="btn btn-outline-secondary ms-auto" onclick="submitStage()">Done</button>
                         </div>
                     </form>
                 </div>
@@ -73,5 +73,16 @@
         $("#deleteStageButton").tooltip();
         $("#qualifiersInfo").tooltip();
         $("#stageModal").modal("show");
+    }
+
+    function submitStage() {
+        const stageForm = $("#stageForm")[0];
+        if (!stageForm.checkValidity()) {
+            stageForm.reportValidity();
+            return;
+        }
+        resetStageSelection();
+        resetGameSelection();
+        stageForm.submit();
     }
 </script>

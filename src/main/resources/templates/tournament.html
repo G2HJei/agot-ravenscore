@@ -91,8 +91,11 @@
                         tournament stage has no participants yet.
                         <th:block th:if="${model.adminUnlocked}">Please
                             <a href="#" onclick="newParticipant()"
-                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add
-                                players</a>.
+                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add</a>
+                            or
+                            <a href="#" onclick="importParticipants()"
+                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">import</a>
+                            players.
                         </th:block>
                     </th>
                 </tr>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.GameForm;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.ImportParticipantsForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
 import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
@@ -64,7 +65,9 @@ public class RavenscoreController {
 	}
 
 	@PostMapping(IMPORT_PARTICIPANTS)
-	String importParticipants(@PathVariable(TOURNAMENT_ID) UUID tournamentId) {
+	String importParticipants(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
+			@ModelAttribute ImportParticipantsForm importParticipantsForm) {
+		tournamentAdminService.importParticipants(tournamentId, importParticipantsForm);
 		return redirectToTournament(tournamentId);
 	}
 

@@ -13,8 +13,9 @@
                     <div class="modal-body">
                         <form id="importParticipantsForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/import-participants" autocomplete="off">
                             <input type="hidden" name="stageId" value="{{stage-id}}">
-                            <input type="hidden" id="participantIdList">
+                            <input type="hidden" id="importParticipantIdList">
                             <h5 class="fw-semibold text-center">Players</h5>
+                            {{import-info}}
                             {{no-players}}
                             <div class="row mb-3">
                                 {{participant-list}}
@@ -28,10 +29,12 @@
             </div>
         </div>`
     const IMPORT_PARTICIPANT_CHECK = `
-        <div class="col-4 mb-2 participation-check-container">
-            <input type="checkbox" class="form-check-input participant-check" id="import-participant-{{participant-id}}" data-rs-participant-id="{{participant-id}}">
+        <div class="col-3 mb-2 participation-check-container">
+            <input type="checkbox" class="form-check-input import-participant-check" id="import-participant-{{participant-id}}" data-rs-participant-id="{{participant-id}}">
             <label class="form-check-label {{qualifier-class}}" for="import-participant-{{participant-id}}">{{participant-name}}</label>
         </div>`;
+    const IMPORT_PARTICIPANT_SELECTION = `<input type="hidden" name="participantIdList" value="{{participant-id}}">`;
+    const IMPORT_PARTICIPANTS_INFO = `<div class="align-middle fst-italic fw-lighter text-center mb-3">Qualifiers from previous stages are highlighted.</div>`;
     const NO_QUALIFYING_PARTICIPANTS_AVAILABLE = `<div class="align-middle fst-italic fw-lighter text-center">No qualifiers available. All games for at least one previous stage must be completed.</div>`;
 
     function importParticipants() {
@@ -39,6 +42,7 @@
         refreshImportParticipantsModal(IMPORT_PARTICIPANTS_MODAL
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
+            .replaceAll("{{import-info}}", participantChecksHtml.length > 0 ? IMPORT_PARTICIPANTS_INFO : "")
             .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_QUALIFYING_PARTICIPANTS_AVAILABLE)
             .replaceAll("{{participant-list}}", participantChecksHtml)
         );
@@ -46,7 +50,7 @@
 
     function buildImportParticipantsChecksHTML() {
         // Extract the participants for non-selected stages
-        const uniqueNames = new Set(); // Set to track unique names
+        const uniqueNames = new Set();
         const participants = [];
 
         $(".participant-data:not([data-rs-stage-id='" + getSelectedStageId() + "'])") // Participants in other stages
@@ -92,6 +96,16 @@
             importForm.reportValidity();
             return;
         }
+        // Get all checked participants for a hidden input
+        const participantSelectionHTML = $('.import-participant-check:checked')
+            .map((_, participant) => IMPORT_PARTICIPANT_SELECTION
+                .replaceAll("{{participant-id}}", $(participant).data("rs-participant-id")))
+            .get()
+            .join("");
+
+        // Update a hidden input to store the selected participants
+        $("#importParticipantIdList").replaceWith(participantSelectionHTML);
+        $(".participation-check-container").remove();
         importForm.submit();
     }
 </script>
