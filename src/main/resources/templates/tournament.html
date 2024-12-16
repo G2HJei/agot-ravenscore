@@ -59,7 +59,8 @@
     </div>
 
     <div class="tab-content">
-        <div th:each="stage, stageIdx : ${model.tournamentStageModelList}"
+        <!-- TODO : set stage-completed properly -->
+        <div th:each="stage, stageIdx : ${model.tournamentStageModelList}" data-rs-stage-completed='true'
              th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
 
             <!-- STAGE RANKINGS -->
@@ -96,7 +97,8 @@
                     </th>
                 </tr>
                 <tr th:each="participant, participantIdx: ${stage.participantModelList}"
-                    th:class="${participantIdx.index eq stage.qualificationCount ? 'border-top-brand' : ''}">
+                    th:with="isQualifier = ${participantIdx.index eq stage.qualificationCount}"
+                    th:class="${isQualifier ? 'border-top-brand' : ''}">
                     <th class="align-middle text-center" scope="row" th:text="${participantIdx.index+1}">#</th>
                     <td>
                         <div class="d-flex justify-content-start align-items-center action-container">
@@ -105,6 +107,7 @@
                                 <span class="participant-data"
                                       th:data-rs-stage-id="${stage.id}"
                                       th:data-rs-participant-id="${participant.id}"
+                                      th:data-rs-is-qualifier="${isQualifier}"
                                       th:data-rs-participant-name="${participant.name}">
                                     <i class="bi bi-person-fill"></i>
                                     <span th:text="${participant.name}">Petyr Baelish</span>

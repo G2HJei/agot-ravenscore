@@ -29,20 +29,56 @@
         </div>`
     const IMPORT_PARTICIPANT_CHECK = `
         <div class="col-4 mb-2 participation-check-container">
-            <input type="checkbox" class="form-check-input participant-check"
-                id="game-participant-{{participant-id}}" data-rs-participant-id="{{participant-id}}" checked>
-            <label class="form-check-label" for="game-participant-{{participant-id}}">{{participant-name}}</label>
+            <input type="checkbox" class="form-check-input participant-check" id="import-participant-{{participant-id}}" data-rs-participant-id="{{participant-id}}">
+            <label class="form-check-label {{qualifier-class}}" for="import-participant-{{participant-id}}">{{participant-name}}</label>
         </div>`;
     const NO_QUALIFYING_PARTICIPANTS_AVAILABLE = `<div class="align-middle fst-italic fw-lighter text-center">No qualifiers available. All games for at least one previous stage must be completed.</div>`;
 
     function importParticipants() {
-        const participantChecksHtml = [];
+        const participantChecksHtml = buildImportParticipantsChecksHTML();
         refreshImportParticipantsModal(IMPORT_PARTICIPANTS_MODAL
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
             .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_QUALIFYING_PARTICIPANTS_AVAILABLE)
-            .replaceAll("{{participant-list}}", "todo")
+            .replaceAll("{{participant-list}}", participantChecksHtml)
         );
+    }
+
+    function buildImportParticipantsChecksHTML() {
+        // Extract the participants for non-selected stages
+        const uniqueNames = new Set(); // Set to track unique names
+        const participants = [];
+
+        $(".participant-data:not([data-rs-stage-id='" + getSelectedStageId() + "'])") // Participants in other stages
+            .filter(function () {
+                return $(this).closest("[data-rs-stage-completed='true']").length > 0; // Only completed stages
+            })
+            .each(function () {
+                const name = $(this).text().trim();
+                if (!uniqueNames.has(name)) { // Check if the name is not already in the Set
+                    uniqueNames.add(name);
+                    participants.push({
+                        id: $(this).data("rs-participant-id"),
+                        name: name,
+                        qualifier: $(this).data("rs-is-qualifier")
+                    });
+                }
+            });
+
+        participants.sort((a, b) => {
+            if (a.qualifier !== b.qualifier) {
+                return a.qualifier === true ? -1 : 1;
+            }
+            return a.name.localeCompare(b.name);
+        });
+
+        return participants
+            .map(participant => IMPORT_PARTICIPANT_CHECK
+                .replaceAll("{{participant-id}}", participant.id)
+                .replaceAll("{{participant-name}}", participant.name)
+                .replaceAll("{{qualifier-class}}", participant.qualifier ? "text-brand" : ""))
+            .join("")
+            .trim();
     }
 
     function refreshImportParticipantsModal(playerModalHTML) {
