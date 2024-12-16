@@ -18,6 +18,7 @@ public class TournamentDetailsModel {
 	private Scoring						scoring;
 	private String						startDate;
 	private Boolean						adminUnlocked				= false;
+	private String						tournamentKey;
 	private List<SubstituteModel>		substituteModelList			= new ArrayList<>();
 	private List<TournamentStageModel>	tournamentStageModelList	= new ArrayList<>();
 }

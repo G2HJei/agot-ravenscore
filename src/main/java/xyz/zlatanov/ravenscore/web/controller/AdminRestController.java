@@ -2,8 +2,7 @@ package xyz.zlatanov.ravenscore.web.controller;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.ResponseEntity.*;
-import static xyz.zlatanov.ravenscore.web.RoutingConstants.*;
-import static xyz.zlatanov.ravenscore.web.controller.RavenscoreController.ADMIN_COOKIE_NAME;
+import static xyz.zlatanov.ravenscore.web.ControllerConstants.*;
 
 import java.util.UUID;
 
@@ -29,25 +28,23 @@ public class AdminRestController {
 
 	@PostMapping(value = UNLOCK_TOURNAMENT, consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> unlock(@PathVariable UUID tournamentId, @RequestBody final String tournamentKey) {
+	public ResponseEntity<String> unlock(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @RequestBody final String tournamentKey) {
 		return unlockKeyIsValid(tournamentId, tournamentKey)
 				? ok(String.valueOf(tournamentKey.hashCode()))
 				: badRequest().build();
 	}
 
 	@GetMapping(value = UPDATE_ROUND)
-	public ResponseEntity<Void> updateRound(@PathVariable UUID tournamentId, @PathVariable UUID gameId, @PathVariable Integer round,
-			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
-		tournamentAdminService.updateRound(tournamentKeyHash, tournamentId, gameId, round);
+	public ResponseEntity<Void> updateRound(@PathVariable(GAME_ID) UUID gameId, @PathVariable(ROUND) Integer round) {
+		tournamentAdminService.updateRound(gameId, round);
 		return noContent().build();
 	}
 
 	@PostMapping(value = UPDATE_GAME_RANKINGS, produces = TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> updateRankings(@PathVariable UUID tournamentId,
-			@RequestBody RankingsForm rankingsForm,
-			@CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
+	public ResponseEntity<String> updateRankings(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
+			@RequestBody RankingsForm rankingsForm, @CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
 		try {
-			tournamentAdminService.updateRankings(tournamentKeyHash, tournamentId, rankingsForm);
+			tournamentAdminService.updateRankings(rankingsForm);
 		} catch (RavenscoreException e) {
 			return badRequest().body(e.getMessage());
 		} catch (Exception e) {

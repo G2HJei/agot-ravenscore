@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <body>
-<main layout:fragment="content" th:with="routing = ${T(xyz.zlatanov.ravenscore.web.RoutingConstants)}">
+<main layout:fragment="content" th:with="routing = ${T(xyz.zlatanov.ravenscore.web.ControllerConstants)}">
     <div class="d-flex justify-content-start align-items-center mt-5">
         <img th:src="@{'/logo.png'}" style="max-width: 50%; height: 24rem" alt="Logo"
              class="d-inline-block align-text-top">
@@ -75,6 +75,11 @@
     </div>
     <!-- Component(s)-->
     <div layout:replace="~{component/tournament-details}"></div>
+    <script th:inline="javascript">
+        $(document).ready(function resetTournamentId() {
+            document.cookie = `tournament-id=; path=/; max-age=1209600`;
+        });
+    </script>
 </main>
 </body>
 </html>

@@ -1,5 +1,9 @@
 <script th:inline="javascript">
     $(document).ready(function () {
+        //store tournament-id cookie
+        document.cookie = `tournament-id=${getTournamentId()}; path=/; max-age=1209600`;
+
+
         //setup stage selection updates
         $('#stageNav').on("shown.bs.tab", function (event) {
             storeSelection()

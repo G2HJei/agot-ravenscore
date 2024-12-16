@@ -31,6 +31,7 @@ public class TournamentDetailsBuilder {
 				.scoring(tournament.scoring())
 				.startDate(DATE_FORMATTER.format(tournament.startDate()))
 				.adminUnlocked(tournament.validateUnlockHash(adminKeyHash))
+				.tournamentKey(tournament.tournamentKey())
 				.substituteModelList(getSubstitutes())
 				.tournamentStageModelList(getTournamentStages());
 	}

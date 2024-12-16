@@ -41,7 +41,13 @@
                         <div class="text-muted fst-italic mb-3">
                             If checked, only people with direct link will be able to access the tournament.
                         </div>
-                        {{key}}
+                        <div class="w-25 mb-1">
+                            <label for="tournamentKey" class="form-label">Key</label>
+                            <input type="text" required="" minlength="8" maxlength="32" class="form-control" id="tournamentKey" placeholder="Enter tournament key" name="tournamentKey" value="{{key}}">
+                        </div>
+                        <div class="text-muted fst-italic">
+                            Keep your key safe - you will need it to administer your tournament.
+                        </div>
                         <div class="d-flex justify-content-end align-items-center">
                             {{delete-button}}
                             <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
@@ -54,14 +60,6 @@
     DELETE_TOURNAMENT_BUTTON = `<a id="deleteTournamentButton" class="btn btn-outline-danger"
                                 data-bs-toggle="tooltip" data-bs-title="Delete tournament"
                                 href="/tournament/{{tour-id}}/delete">Delete</a>`
-    TOURNAMENT_KEY = `
-    <div class="w-25 mb-1">
-        <label for="tournamentKey" class="form-label">Key</label>
-        <input type="text" required="" minlength="8" maxlength="32" class="form-control" id="tournamentKey" placeholder="Enter tournament key" name="tournamentKey">
-    </div>
-    <div class="text-muted fst-italic">
-        Cannot be changed. Keep your key safe - you will need it to administer your tournament.
-    </div>`;
 
     function newTournament() {
         refreshTournamentModal(TOURNAMENT_MODAL
@@ -72,7 +70,7 @@
             .replaceAll("{{name}}", "")
             .replaceAll("{{rules}}", "")
             .replaceAll("{{hidden}}", "")
-            .replaceAll("{{key}}", TOURNAMENT_KEY)
+            .replaceAll("{{key}}", "")
         );
     }
 
@@ -86,7 +84,7 @@
             .replaceAll("{{name}}", tourRoot.text())
             .replaceAll("{{rules}}", $("#rulesDescription").text())
             .replaceAll("{{hidden}}", tourRoot.data("rs-tour-hidden") ? "checked" : "")
-            .replaceAll("{{key}}", "")
+            .replaceAll("{{key}}", tourRoot.data("rs-tour-key"))
         );
     }
 

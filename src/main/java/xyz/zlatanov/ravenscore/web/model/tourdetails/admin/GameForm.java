@@ -21,7 +21,7 @@ public class GameForm {
 	@NotEmpty
 	@Size(min = 4, max = 255)
 	private String		name;
-	@Size(min = 4, max = 255)
+	@Size(max = 255)
 	private String		link;
 	private UUID[]		participantIdList	= new UUID[] {};
 

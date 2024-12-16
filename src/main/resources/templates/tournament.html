@@ -6,8 +6,10 @@
 <body>
 <main layout:fragment="content">
     <div class="d-flex justify-content-center align-items-center w-100">
-        <h3 id="tournamentRoot" th:data-rs-tour-id="${model.id}" th:data-rs-tour-hidden="${model.hidden}"
-            class="text-muted ms-3 text-center" th:text="${model.name}">Tourney Name</h3>
+        <h3 id="tournamentRoot" class="text-muted ms-3 text-center" th:text="${model.name}"
+            th:data-rs-tour-id="${model.id}"
+            th:data-rs-tour-hidden="${model.hidden}"
+            th:data-rs-tour-key="${model.adminUnlocked ? model.tournamentKey : ''}">Tourney Name</h3>
         <button th:if="${model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-pencil-fill ms-2"
                 data-bs-toggle="tooltip" data-bs-title="Modify tournament details"

@@ -15,6 +15,7 @@ import xyz.zlatanov.ravenscore.domain.domain.*;
 import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.*;
 import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
+import xyz.zlatanov.ravenscore.web.service.security.TourAdminOperation;
 
 @Service
 @RequiredArgsConstructor
@@ -30,18 +31,32 @@ public class TournamentAdminService {
 	private final PlayerRepository			playerRepository;
 
 	@Transactional
-	public UUID tournament(String tournamentKeyHash, @Valid TournamentForm tournamentForm) {
-		if (tournamentForm.getId() == null) {
-			return createTournament(tournamentForm);
-		} else {
-			validateAdminRights(tournamentKeyHash, tournamentForm.getId());
-			return updateTournament(tournamentForm);
-		}
+	public UUID createTournament(TournamentForm tournamentForm) {
+		val tournament = tournamentRepository.save(new Tournament()
+				.name(tournamentForm.getName())
+				.scoring(tournamentForm.getScoring())
+				.description(tournamentForm.getDescription())
+				.hidden(tournamentForm.getHidden())
+				.tournamentKey(tournamentForm.getTournamentKey()));
+		return tournament.id();
 	}
 
 	@Transactional
-	public void createNewStage(String tournamentKeyHash, @Valid StageForm stageForm) {
-		validateAdminRights(tournamentKeyHash, stageForm.getTournamentId());
+	@TourAdminOperation
+	public UUID updateTournament(TournamentForm tournamentForm) {
+		val tournament = tournamentRepository.findById(tournamentForm.getId())
+				.orElseThrow(() -> new RavenscoreException("Invalid tournament"));
+		tournamentRepository.save(tournament
+				.name(tournamentForm.getName())
+				.scoring(tournamentForm.getScoring())
+				.description(tournamentForm.getDescription())
+				.hidden(tournamentForm.getHidden()));
+		return tournamentForm.getId();
+	}
+
+	@Transactional
+	@TourAdminOperation
+	public void createNewStage(@Valid StageForm stageForm) {
 		if (stageForm.getStageId() == null) {
 			createStage(stageForm);
 		} else {
@@ -50,8 +65,8 @@ public class TournamentAdminService {
 	}
 
 	@Transactional
-	public void player(String tournamentKeyHash, @Valid PlayerForm playerForm) {
-		validateAdminRights(tournamentKeyHash, playerForm.getTournamentId());
+	@TourAdminOperation
+	public void player(@Valid PlayerForm playerForm) {
 		if (playerForm.getTournamentStageId() != null) {
 			participant(playerForm);
 		} else {
@@ -60,8 +75,8 @@ public class TournamentAdminService {
 	}
 
 	@Transactional
-	public void removeStage(String tournamentKeyHash, UUID tournamentId, UUID stageId) {
-		validateAdminRights(tournamentKeyHash, tournamentId);
+	@TourAdminOperation
+	public void removeStage(UUID tournamentId, UUID stageId) {
 		if (!gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stageId).isEmpty()) {
 			throw new RavenscoreException("Cannot delete a stage with games.");
 		}
@@ -73,16 +88,16 @@ public class TournamentAdminService {
 	}
 
 	@Transactional
-	public void removePlayer(String tournamentKeyHash, UUID tournamentId, UUID stageId, UUID playerId) {
-		validateAdminRights(tournamentKeyHash, tournamentId);
+	@TourAdminOperation
+	public void removePlayer(UUID stageId, UUID playerId) {
 		// substitutes can always be deleted
 		substituteRepository.findById(playerId).ifPresent(substituteRepository::delete);
 		participantRepository.findById(playerId).ifPresent(participant -> deleteParticipant(stageId, participant));
 	}
 
 	@Transactional
-	public void substitution(String tournamentKeyHash, UUID tournamentId, UUID stageId, UUID participantId, UUID substituteId) {
-		validateAdminRights(tournamentKeyHash, tournamentId);
+	@TourAdminOperation
+	public void substitution(UUID stageId, UUID participantId, UUID substituteId) {
 		val oldParticipant = participantRepository.findById(participantId)
 				.orElseThrow(() -> new RavenscoreException("Invalid participant"));
 
@@ -113,8 +128,8 @@ public class TournamentAdminService {
 	}
 
 	@Transactional
-	public void game(String tournamentKeyHash, UUID tournamentId, @Valid GameForm gameForm) {
-		validateAdminRights(tournamentKeyHash, tournamentId);
+	@TourAdminOperation
+	public void game(@Valid GameForm gameForm) {
 		if (gameForm.getId() == null) {
 			createGame(gameForm);
 		} else {
@@ -123,21 +138,21 @@ public class TournamentAdminService {
 	}
 
 	@Transactional
-	public void removeGame(String tournamentKeyHash, UUID tournamentId, UUID gameId) {
-		validateAdminRights(tournamentKeyHash, tournamentId);
+	@TourAdminOperation
+	public void removeGame(UUID gameId) {
 		gameRepository.deleteById(gameId);
 	}
 
 	@Transactional
-	public void updateRound(String tournamentKeyHash, UUID tournamentId, UUID gameId, Integer round) {
-		validateAdminRights(tournamentKeyHash, tournamentId);
+	@TourAdminOperation
+	public void updateRound(UUID gameId, Integer round) {
 		val game = gameRepository.findById(gameId).orElseThrow(() -> new RavenscoreException("Invalid game"));
 		gameRepository.save(game.round(round));
 	}
 
 	@Transactional
-	public void updateRankings(String tournamentKeyHash, UUID tournamentId, @Valid RankingsForm rankingsForm) throws RavenscoreException {
-		validateAdminRights(tournamentKeyHash, tournamentId);
+	@TourAdminOperation
+	public void updateRankings(@Valid RankingsForm rankingsForm) throws RavenscoreException {
 		validateRankingsForm(rankingsForm);
 
 		val game = gameRepository.findById(rankingsForm.getGameId()).orElseThrow(() -> new RavenscoreException("Invalid game"));
@@ -155,27 +170,6 @@ public class TournamentAdminService {
 		});
 	}
 
-	private UUID createTournament(TournamentForm tournamentForm) {
-		val tournament = tournamentRepository.save(new Tournament()
-				.name(tournamentForm.getName())
-				.scoring(tournamentForm.getScoring())
-				.description(tournamentForm.getDescription())
-				.hidden(tournamentForm.getHidden())
-				.tournamentKey(tournamentForm.getTournamentKey()));
-		return tournament.id();
-	}
-
-	private UUID updateTournament(TournamentForm tournamentForm) {
-		val tournament = tournamentRepository.findById(tournamentForm.getId())
-				.orElseThrow(() -> new RavenscoreException("Invalid tournament"));
-		tournamentRepository.save(tournament
-				.name(tournamentForm.getName())
-				.scoring(tournamentForm.getScoring())
-				.description(tournamentForm.getDescription())
-				.hidden(tournamentForm.getHidden()));
-		return tournamentForm.getId();
-	}
-
 	private void createStage(@Valid StageForm stageForm) {
 		tournamentStageRepository.save(new TournamentStage()
 				.name(stageForm.getName())
@@ -189,14 +183,6 @@ public class TournamentAdminService {
 		tournamentStageRepository.save(stage
 				.name(stageForm.getName())
 				.qualificationCount(stageForm.getQualificationCount()));
-	}
-
-	private void validateAdminRights(String tournamentKeyHash, UUID tournamentId) {
-		val tournament = tournamentRepository.findById(tournamentId)
-				.orElseThrow(() -> new RavenscoreException("Tournament not found."));
-		if (!tournament.validateUnlockHash(tournamentKeyHash)) {
-			throw new RavenscoreException("Tournament administration locked.");
-		}
 	}
 
 	private void substitute(PlayerForm playerForm) {
