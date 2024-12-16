@@ -35,8 +35,9 @@ public class AdminRestController {
 	}
 
 	@GetMapping(value = UPDATE_ROUND)
-	public ResponseEntity<Void> updateRound(@PathVariable(GAME_ID) UUID gameId, @PathVariable(ROUND) Integer round) {
-		tournamentAdminService.updateRound(gameId, round);
+	public ResponseEntity<Void> updateRound(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(GAME_ID) UUID gameId,
+			@PathVariable(ROUND) Integer round) {
+		tournamentAdminService.updateRound(tournamentId, gameId, round);
 		return noContent().build();
 	}
 
@@ -44,7 +45,7 @@ public class AdminRestController {
 	public ResponseEntity<String> updateRankings(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
 			@RequestBody RankingsForm rankingsForm, @CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
 		try {
-			tournamentAdminService.updateRankings(rankingsForm);
+			tournamentAdminService.updateRankings(tournamentId, rankingsForm);
 		} catch (RavenscoreException e) {
 			return badRequest().body(e.getMessage());
 		} catch (Exception e) {

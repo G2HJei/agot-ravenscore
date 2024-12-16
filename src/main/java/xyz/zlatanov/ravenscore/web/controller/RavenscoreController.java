@@ -70,26 +70,26 @@ public class RavenscoreController {
 	@GetMapping(REMOVE_PLAYER)
 	String removePlayer(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
 			@PathVariable(PLAYER_ID) UUID playerId) {
-		tournamentAdminService.removePlayer(stageId, playerId);
+		tournamentAdminService.removePlayer(tournamentId, stageId, playerId);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(SUBSTITUTE_PLAYER)
 	String substitutePlayer(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
 			@PathVariable(PARTICIPANT_ID) UUID participantId, @PathVariable(SUBSTITUTE_ID) UUID substituteId) {
-		tournamentAdminService.substitution(stageId, participantId, substituteId);
+		tournamentAdminService.substitution(tournamentId, stageId, participantId, substituteId);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(UPSERT_GAME)
 	String upsertGame(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @ModelAttribute GameForm gameForm) {
-		tournamentAdminService.game(gameForm);
+		tournamentAdminService.game(tournamentId, gameForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@GetMapping(REMOVE_GAME)
 	String removeGame(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(GAME_ID) UUID gameId) {
-		tournamentAdminService.removeGame(gameId);
+		tournamentAdminService.removeGame(tournamentId, gameId);
 		return redirectToTournament(tournamentId);
 	}
 

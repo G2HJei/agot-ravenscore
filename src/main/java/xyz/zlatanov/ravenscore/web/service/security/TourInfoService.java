@@ -14,7 +14,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
@@ -23,24 +22,23 @@ import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class AdminRightsValidationAspect {
+public class TourInfoService {
 
 	private final TournamentRepository tournamentRepository;
 
 	@Before("@annotation(xyz.zlatanov.ravenscore.web.service.security.TourAdminOperation)")
 	public void tournamentIsUnlocked() {
-		val request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		val tournamentId = getTournamentId(request);
-		val adminCookie = getAdminCookie(request);
-		val tournamentIsUnlocked = tournamentRepository.findById(tournamentId)
-				.map(t -> validateUnlockHash(t.tournamentKey(), adminCookie))
+		val tournamentIsUnlocked = tournamentRepository.findById(getTournamentId())
+				.map(t -> validateUnlockHash(t.tournamentKey(), getAdminCookie()))
 				.orElse(false);
 		if (!tournamentIsUnlocked) {
 			throw new RavenscoreException("Tournament administration locked.");
 		}
 	}
 
-	private UUID getTournamentId(HttpServletRequest request) {
+	// retrieve the tournament id based on the selection to ensure no cross-unlocking and HTML manipulation is possible
+	public UUID getTournamentId() {
+		val request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		return Optional.ofNullable(request.getCookies())
 				.flatMap(cookies -> Arrays.stream(cookies)
 						.filter(c -> TOURNAMENT_ID_COOKIE_NAME.equals(c.getName()))
@@ -50,7 +48,8 @@ public class AdminRightsValidationAspect {
 				.orElse(null);
 	}
 
-	private Integer getAdminCookie(HttpServletRequest request) {
+	private Integer getAdminCookie() {
+		val request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		return Optional.ofNullable(request.getCookies())
 				.flatMap(cookies -> Arrays.stream(cookies)
 						.filter(c -> ADMIN_COOKIE_NAME.equals(c.getName()))

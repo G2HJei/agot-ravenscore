@@ -10,12 +10,14 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import xyz.zlatanov.ravenscore.domain.domain.Scoring;
+import xyz.zlatanov.ravenscore.web.service.security.TournamentId;
 
 @Data
 @Accessors(chain = true)
 public class TournamentForm {
 
-	UUID			id;
+	@TournamentId
+	private UUID	id;
 	@NotEmpty
 	@Size(min = 8, max = 100)
 	private String	name;

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import xyz.zlatanov.ravenscore.web.service.security.TournamentId;
 
 @Data
 @Accessors(chain = true)
@@ -16,6 +17,7 @@ public class StageForm {
 	private UUID	stageId;
 
 	@NotNull
+	@TournamentId
 	private UUID	tournamentId;
 
 	@NotEmpty
