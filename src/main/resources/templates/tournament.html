@@ -15,6 +15,9 @@
                 data-bs-toggle="tooltip" data-bs-title="Modify tournament details"
                 onclick="editTournament()"></button>
     </div>
+    <div th:if="${error ne null}" class="alert alert-danger text-center" role="alert" th:text="${error}">
+        Error message
+    </div>
     <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}">(Tournament Admin Mode)</h5>
 
     <!-- NAVIGATION ROW -->

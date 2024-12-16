@@ -43,9 +43,11 @@ public class RavenscoreController {
 	@GetMapping(TOURNAMENT_DETAILS)
 	String tourneyDetails(
 			@PathVariable(TOURNAMENT_ID) UUID tournamentId,
+			@RequestParam(required = false) String error,
 			@CookieValue(name = ADMIN_COOKIE_NAME, defaultValue = "") String tournamentKeyHash,
 			Model model) {
 		model.addAttribute("model", tournamentDetailsService.getTournamentDetails(tournamentId, tournamentKeyHash));
+		model.addAttribute("error", error);
 		return "tournament";
 	}
 
