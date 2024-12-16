@@ -71,6 +71,7 @@ public class TournamentAdminService {
 	@Transactional
 	@TourAdminOperation
 	public void player(@Valid PlayerForm playerForm) {
+		validatePlayerName(playerForm.getName().trim(), playerForm.getTournamentId());
 		if (playerForm.getTournamentStageId() != null) {
 			participant(playerForm);
 		} else {
@@ -82,7 +83,7 @@ public class TournamentAdminService {
 	@TourAdminOperation
 	public void removeStage(@TournamentId UUID tournamentId, UUID stageId) {
 		if (!gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stageId).isEmpty()) {
-			throw new RavenscoreException("Cannot delete a stage with games.");
+			throw new RavenscoreException("Cannot delete a stage with existing games.");
 		}
 		val stage = tournamentStageRepository.findById(stageId)
 				.orElseThrow(() -> new RavenscoreException("Invalid stage"));
@@ -144,6 +145,10 @@ public class TournamentAdminService {
 	@Transactional
 	@TourAdminOperation
 	public void removeGame(@TournamentId UUID tournamentId, UUID gameId) {
+		val game = gameRepository.findById(gameId).orElseThrow(() -> new RavenscoreException("Invalid game"));
+		if (game.completed()) {
+			throw new RavenscoreException("Cannot delete a completed game.");
+		}
 		gameRepository.deleteById(gameId);
 	}
 
@@ -189,6 +194,25 @@ public class TournamentAdminService {
 				.qualificationCount(stageForm.getQualificationCount()));
 	}
 
+	private void validatePlayerName(String name, UUID tournamentId) {
+		val participantIds = tournamentStageRepository.findByTournamentIdOrderByStartDateDesc(tournamentId).stream()
+				.map(TournamentStage::participantIdList)
+				.flatMap(Arrays::stream)
+				.toList();
+		val participantNames = participantRepository.findByIdInOrderByName(participantIds).stream()
+				.map(Participant::name)
+				.toList();
+		val substituteNames = substituteRepository.findByTournamentIdOrderByName(tournamentId).stream()
+				.map(Substitute::name)
+				.toList();
+		if (participantNames.contains(name)) {
+			throw new RavenscoreException(String.format("Participant with the name \"%s\" already exists.", name));
+		}
+		if (substituteNames.contains(name)) {
+			throw new RavenscoreException(String.format("Substitute with the name \"%s\" already exists.", name));
+		}
+	}
+
 	private void substitute(PlayerForm playerForm) {
 		if (playerForm.getPlayerId() == null) {
 			createSubstitute(playerForm);
@@ -199,7 +223,7 @@ public class TournamentAdminService {
 
 	private void createSubstitute(PlayerForm playerForm) {
 		substituteRepository.save(new Substitute()
-				.name(playerForm.getName())
+				.name(playerForm.getName().trim())
 				.tournamentId(playerForm.getTournamentId())
 				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
 	}
@@ -208,7 +232,7 @@ public class TournamentAdminService {
 		val substitute = substituteRepository.findById(playerForm.getPlayerId())
 				.orElseThrow(() -> new RavenscoreException("Invalid substitute"));
 		substituteRepository.save(substitute
-				.name(playerForm.getName())
+				.name(playerForm.getName().trim())
 				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
 	}
 
@@ -223,7 +247,7 @@ public class TournamentAdminService {
 	private void createParticipant(PlayerForm playerForm) {
 		val participant = participantRepository.save(
 				new Participant()
-						.name(playerForm.getName())
+						.name(playerForm.getName().trim())
 						.profileLinks(trimEmpty(playerForm.getProfileLinks())));
 		val stage = tournamentStageRepository.findById(playerForm.getTournamentStageId())
 				.orElseThrow(() -> new RavenscoreException("Invalid tournament stage."));
@@ -236,7 +260,7 @@ public class TournamentAdminService {
 		val participant = participantRepository.findById(playerForm.getPlayerId())
 				.orElseThrow(() -> new RavenscoreException("Invalid participant"));
 		participantRepository.save(participant
-				.name(playerForm.getName())
+				.name(playerForm.getName().trim())
 				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
 	}
 
