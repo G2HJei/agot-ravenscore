@@ -63,15 +63,20 @@
              th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
 
             <!-- STAGE RANKINGS -->
-            <h5 class="text-center">Stage Rankings</h5>
+            <div class="d-flex justify-content-center align-items-center">
+                <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                        data-bs-title="Add player" onclick="newParticipant()"
+                        class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-2"></button>
+                <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                        data-bs-title="Import players qualifying from previous stages" onclick="importParticipants()"
+                        class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down me-auto"></button>
+                <h5 class="text-center">Stage Rankings</h5>
+                <div class="ms-auto"></div>
+            </div>
             <table class="table mb-4">
                 <thead>
                 <tr>
-                    <th scope="col" style="width: 5%">
-                        <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
-                                data-bs-title="Add player" onclick="newParticipant()"
-                                class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
-                    </th>
+                    <th scope="col" style="width: 5%"></th>
                     <th scope="col" style="width: 30%">Player</th>
                     <th scope="col" class="text-center">Score</th>
                     <th scope="col" class="text-center">Games</th>
@@ -402,6 +407,7 @@
         <div layout:replace="~{component/tournament-details}"></div>
         <div layout:replace="~{component/stage}"></div>
         <div layout:replace="~{component/player}"></div>
+        <div layout:replace="~{component/import-participants}"></div>
         <div layout:replace="~{component/substitution}"></div>
         <div layout:replace="~{component/game}"></div>
         <div layout:replace="~{component/ranking}"></div>

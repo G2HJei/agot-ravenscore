@@ -26,6 +26,7 @@ public class ControllerConstants {
 	public static final String	TOURNAMENT_DETAILS			= ROOT + "tournament/{" + TOURNAMENT_ID + "}";
 	public static final String	UPSERT_STAGE				= TOURNAMENT_DETAILS + "/stage";
 	public static final String	REMOVE_STAGE				= UPSERT_STAGE + "/remove/{" + STAGE_ID + "}";
+	public static final String	IMPORT_PARTICIPANTS			= TOURNAMENT_DETAILS + "/stage/{" + STAGE_ID + "}/import-participants";
 	public static final String	SUBSTITUTE_PLAYER			= //
 			UPSERT_STAGE + "/{" + STAGE_ID + "}/participant/{" + PARTICIPANT_ID + "}/substitute/{" + SUBSTITUTE_ID + "}";
 	public static final String	UPSERT_PLAYER				= TOURNAMENT_DETAILS + "/player";

@@ -1,0 +1,61 @@
+<div id="importParticipantsModalContainer"></div>
+
+<script th:inline="javascript">
+    const IMPORT_PARTICIPANTS_MODAL = `
+        <div class="modal modal-lg fade show" id="importParticipantsModal" tabindex="-1" aria-labelledby="importParticipantsModalLabel" aria-modal="true"
+             role="dialog" style="display: block;">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="importParticipantsModalLabel">Import Qualifying Players</h1>
+                        <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="importParticipantsForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/import-participants" autocomplete="off">
+                            <input type="hidden" name="stageId" value="{{stage-id}}">
+                            <input type="hidden" id="participantIdList">
+                            <h5 class="fw-semibold text-center">Players</h5>
+                            {{no-players}}
+                            <div class="row mb-3">
+                                {{participant-list}}
+                            </div>
+                            <div class="d-flex justify-content-end align-items-center">
+                                <button type="button" class="btn btn-outline-secondary ms-auto" onclick="submitImportedParticipants()">Done</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>`
+    const IMPORT_PARTICIPANT_CHECK = `
+        <div class="col-4 mb-2 participation-check-container">
+            <input type="checkbox" class="form-check-input participant-check"
+                id="game-participant-{{participant-id}}" data-rs-participant-id="{{participant-id}}" checked>
+            <label class="form-check-label" for="game-participant-{{participant-id}}">{{participant-name}}</label>
+        </div>`;
+    const NO_QUALIFYING_PARTICIPANTS_AVAILABLE = `<div class="align-middle fst-italic fw-lighter text-center">No qualifiers available. All games for at least one previous stage must be completed.</div>`;
+
+    function importParticipants() {
+        const participantChecksHtml = [];
+        refreshImportParticipantsModal(IMPORT_PARTICIPANTS_MODAL
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{stage-id}}", getSelectedStageId())
+            .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_QUALIFYING_PARTICIPANTS_AVAILABLE)
+            .replaceAll("{{participant-list}}", "todo")
+        );
+    }
+
+    function refreshImportParticipantsModal(playerModalHTML) {
+        $("#importParticipantsModalContainer").empty().append(playerModalHTML);
+        $("#importParticipantsModal").modal("show");
+    }
+
+    function submitImportedParticipants() {
+        const importForm = $("#importParticipantsForm")[0];
+        if (!importForm.checkValidity()) {
+            importForm.reportValidity();
+            return;
+        }
+        importForm.submit();
+    }
+</script>

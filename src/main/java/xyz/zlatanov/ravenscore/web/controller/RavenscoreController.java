@@ -63,6 +63,11 @@ public class RavenscoreController {
 		return redirectToTournament(tournamentId);
 	}
 
+	@PostMapping(IMPORT_PARTICIPANTS)
+	String importParticipants(@PathVariable(TOURNAMENT_ID) UUID tournamentId) {
+		return redirectToTournament(tournamentId);
+	}
+
 	@PostMapping(UPSERT_PLAYER)
 	String upsertPlayer(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @ModelAttribute PlayerForm playerForm) {
 		tournamentAdminService.player(playerForm);
