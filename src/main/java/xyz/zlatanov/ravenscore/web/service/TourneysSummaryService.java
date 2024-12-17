@@ -76,7 +76,7 @@ public class TourneysSummaryService {
 	}
 
 	private String getStatusLabel(Optional<TournamentStage> lastStage) {
-		return lastStage.map(TournamentStage::name).orElse("Started");
+		return lastStage.map(TournamentStage::name).orElse("");
 	}
 
 	private static String getStatusDate(Tournament tour, Optional<TournamentStage> lastStage) {

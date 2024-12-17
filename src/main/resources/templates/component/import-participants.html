@@ -51,8 +51,12 @@
     function buildImportParticipantsChecksHTML() {
         // Extract the participants for non-selected stages
         const uniqueNames = new Set();
-        const participants = [];
+        $(".participant-data[data-rs-stage-id='" + getSelectedStageId() + "']") // Participants in selected stage
+            .each(function () {
+                uniqueNames.add($(this).text().trim());
+            });
 
+        const participants = [];
         $(".participant-data:not([data-rs-stage-id='" + getSelectedStageId() + "'])") // Participants in other stages
             .filter(function () {
                 return $(this).closest("[data-rs-stage-completed='true']").length > 0; // Only completed stages

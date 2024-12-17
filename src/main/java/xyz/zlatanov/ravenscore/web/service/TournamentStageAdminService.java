@@ -70,8 +70,7 @@ public class TournamentStageAdminService {
 					String.format("Players(s) are already in present this tournament stage: %s", String.join(", ", commonNames)));
 		}
 
-		// todo make stage complete
-		// todo do not show existing participants in import modal
+		// todo track stage complete/updated
 
 		val clonedParticipants = participantRepository.saveAll(selectedParticipants.stream()
 				.map(Participant::clone)

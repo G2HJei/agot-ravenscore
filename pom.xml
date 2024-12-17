@@ -12,7 +12,7 @@
     <artifactId>ravenscore</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Ravenscore</name>
-    <description>Send me a raven</description>
+    <description>Game of Thrones - Board Game 2nd Edition Tournament Tracker</description>
     <properties>
         <java.version>21</java.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
