@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.val;
 
 public class Utils {
@@ -31,5 +33,13 @@ public class Utils {
 		return Arrays.stream(array)
 				.map(id -> Objects.equals(id, idToReplace) ? replaceWith : id)
 				.toArray(UUID[]::new);
+	}
+
+	public static String[] trimEmpty(String[] items) {
+		val trimmed = Arrays.stream(items)
+				.filter(StringUtils::isNotEmpty)
+				.distinct()
+				.toList();
+		return trimmed.toArray(new String[] {});
 	}
 }

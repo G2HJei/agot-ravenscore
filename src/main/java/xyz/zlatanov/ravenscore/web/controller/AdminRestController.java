@@ -17,6 +17,7 @@ import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.RankingsForm;
 import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
 import xyz.zlatanov.ravenscore.web.service.TournamentAdminService;
+import xyz.zlatanov.ravenscore.web.service.security.TournamentId;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,24 +29,26 @@ public class AdminRestController {
 
 	@PostMapping(value = UNLOCK_TOURNAMENT, consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> unlock(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @RequestBody final String tournamentKey) {
+	public ResponseEntity<String> unlock(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
+			@RequestBody final String tournamentKey) {
 		return unlockKeyIsValid(tournamentId, tournamentKey)
 				? ok(String.valueOf(tournamentKey.hashCode()))
 				: badRequest().build();
 	}
 
 	@GetMapping(value = UPDATE_ROUND)
-	public ResponseEntity<Void> updateRound(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(GAME_ID) UUID gameId,
+	public ResponseEntity<Void> updateRound(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
+			@PathVariable(GAME_ID) UUID gameId,
 			@PathVariable(ROUND) Integer round) {
-		tournamentAdminService.updateRound(tournamentId, gameId, round);
+		tournamentAdminService.updateRound(gameId, round);
 		return noContent().build();
 	}
 
 	@PostMapping(value = UPDATE_GAME_RANKINGS, produces = TEXT_PLAIN_VALUE)
-	public ResponseEntity<String> updateRankings(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
-			@RequestBody RankingsForm rankingsForm, @CookieValue(name = ADMIN_COOKIE_NAME) String tournamentKeyHash) {
+	public ResponseEntity<String> updateRankings(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
+			@RequestBody RankingsForm rankingsForm) {
 		try {
-			tournamentAdminService.updateRankings(tournamentId, rankingsForm);
+			tournamentAdminService.updateRankings(rankingsForm);
 		} catch (RavenscoreException e) {
 			return badRequest().body(e.getMessage());
 		} catch (Exception e) {

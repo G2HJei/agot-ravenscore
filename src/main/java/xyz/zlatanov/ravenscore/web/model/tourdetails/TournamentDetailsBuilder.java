@@ -14,8 +14,8 @@ import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
 @RequiredArgsConstructor
 public class TournamentDetailsBuilder {
 
+	private final boolean				adminUnlocked;
 	private final Tournament			tournament;
-	private final String				adminKeyHash;
 	private final List<TournamentStage>	tournamentStageList;
 	private final List<Substitute>		substituteList;
 	private final List<Participant>		participantList;
@@ -30,7 +30,7 @@ public class TournamentDetailsBuilder {
 				.hidden(tournament.hidden())
 				.scoring(tournament.scoring())
 				.startDate(DATE_FORMATTER.format(tournament.startDate()))
-				.adminUnlocked(tournament.validateUnlockHash(adminKeyHash))
+				.adminUnlocked(adminUnlocked)
 				.tournamentKey(tournament.tournamentKey())
 				.substituteModelList(getSubstitutes())
 				.tournamentStageModelList(getTournamentStages());

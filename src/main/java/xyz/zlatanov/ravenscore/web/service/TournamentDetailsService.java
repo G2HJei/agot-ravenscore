@@ -14,11 +14,13 @@ import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.TournamentDetailsBuilder;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.TournamentDetailsModel;
+import xyz.zlatanov.ravenscore.web.service.security.TourInfoService;
 
 @Service
 @RequiredArgsConstructor
 public class TournamentDetailsService {
 
+	private final TourInfoService			tourInfoService;
 	private final TournamentRepository		tournamentRepository;
 	private final ParticipantRepository		participantRepository;
 	private final SubstituteRepository		substituteRepository;
@@ -27,17 +29,18 @@ public class TournamentDetailsService {
 	private final PlayerRepository			playerRepository;
 
 	@Transactional(readOnly = true)
-	public TournamentDetailsModel getTournamentDetails(UUID tourId, String adminKeyHash) {
-		val tournament = tournamentRepository.findById(tourId).orElseThrow(() -> new RavenscoreException("Tournament not found."));
+	public TournamentDetailsModel getTournamentDetails(UUID tournamentId) {
+		val tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new RavenscoreException("Tournament not found."));
 		val tourStages = tournamentStageRepository.findByTournamentIdInOrderByStartDateDesc(List.of(tournament.id()));
 		val stageIds = tourStages.stream().map(TournamentStage::id).toList();
 		val participantIds = tourStages.stream().flatMap(ts -> Arrays.stream(ts.participantIdList())).toList();
 		val participants = participantRepository.findByIdInOrderByName(participantIds);
-		val substitutes = substituteRepository.findByTournamentIdInOrderByName(List.of(tourId));
+		val substitutes = substituteRepository.findByTournamentIdInOrderByName(List.of(tournamentId));
 		val games = gameRepository.findByTournamentStageIdInOrderByTypeAscNameAsc(stageIds);
 		val gameIds = games.stream().map(Game::id).toList();
 		val players = playerRepository.findByGameIdInOrderByPointsDesc(gameIds);
-		return new TournamentDetailsBuilder(tournament, adminKeyHash, tourStages, substitutes, participants, games, players).build();
+		return new TournamentDetailsBuilder(tourInfoService.tournamentIsUnlocked(), tournament, tourStages, substitutes, participants,
+				games, players).build();
 	}
 
 }

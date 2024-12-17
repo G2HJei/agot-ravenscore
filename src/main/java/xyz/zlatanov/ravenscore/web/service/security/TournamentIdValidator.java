@@ -18,7 +18,7 @@ public class TournamentIdValidator implements ConstraintValidator<TournamentId, 
 	@Override
 	public boolean isValid(UUID value, ConstraintValidatorContext context) {
 		return Optional.ofNullable(value)
-				.map(v -> v.equals(tourInfoService.getTournamentId()))
-				.orElse(true);
+				.map(v -> v.equals(tourInfoService.getTournamentId())) // tournament id matches open tournament
+				.orElse(true); // tournament is being created
 	}
 }

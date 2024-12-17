@@ -18,6 +18,7 @@ import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
 import xyz.zlatanov.ravenscore.web.service.TournamentAdminService;
 import xyz.zlatanov.ravenscore.web.service.TournamentDetailsService;
 import xyz.zlatanov.ravenscore.web.service.TourneysSummaryService;
+import xyz.zlatanov.ravenscore.web.service.security.TournamentId;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,64 +43,61 @@ public class RavenscoreController {
 	}
 
 	@GetMapping(TOURNAMENT_DETAILS)
-	String tourneyDetails(
-			@PathVariable(TOURNAMENT_ID) UUID tournamentId,
-			@RequestParam(required = false) String error,
-			@CookieValue(name = ADMIN_COOKIE_NAME, defaultValue = "") String tournamentKeyHash,
-			Model model) {
-		model.addAttribute("model", tournamentDetailsService.getTournamentDetails(tournamentId, tournamentKeyHash));
+	String tourneyDetails(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
+			@RequestParam(required = false) String error, Model model) {
+		model.addAttribute("model", tournamentDetailsService.getTournamentDetails(tournamentId));
 		model.addAttribute("error", error);
 		return "tournament";
 	}
 
 	@PostMapping(UPSERT_STAGE)
-	String upsertStage(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @ModelAttribute StageForm stageForm) {
+	String upsertStage(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @ModelAttribute StageForm stageForm) {
 		tournamentAdminService.createNewStage(stageForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@GetMapping(REMOVE_STAGE)
-	String removeStage(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId) {
+	String removeStage(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId) {
 		tournamentAdminService.removeStage(tournamentId, stageId);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(IMPORT_PARTICIPANTS)
-	String importParticipants(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
+	String importParticipants(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
 			@ModelAttribute ImportParticipantsForm importParticipantsForm) {
-		tournamentAdminService.importParticipants(tournamentId, importParticipantsForm);
+		tournamentAdminService.importParticipants(importParticipantsForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(UPSERT_PLAYER)
-	String upsertPlayer(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @ModelAttribute PlayerForm playerForm) {
+	String upsertPlayer(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @ModelAttribute PlayerForm playerForm) {
 		tournamentAdminService.player(playerForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@GetMapping(REMOVE_PLAYER)
-	String removePlayer(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
+	String removePlayer(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
 			@PathVariable(PLAYER_ID) UUID playerId) {
-		tournamentAdminService.removePlayer(tournamentId, stageId, playerId);
+		tournamentAdminService.removePlayer(stageId, playerId);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(SUBSTITUTE_PLAYER)
-	String substitutePlayer(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
+	String substitutePlayer(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
 			@PathVariable(PARTICIPANT_ID) UUID participantId, @PathVariable(SUBSTITUTE_ID) UUID substituteId) {
-		tournamentAdminService.substitution(tournamentId, stageId, participantId, substituteId);
+		tournamentAdminService.substitution(stageId, participantId, substituteId);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(UPSERT_GAME)
-	String upsertGame(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @ModelAttribute GameForm gameForm) {
-		tournamentAdminService.game(tournamentId, gameForm);
+	String upsertGame(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @ModelAttribute GameForm gameForm) {
+		tournamentAdminService.game(gameForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@GetMapping(REMOVE_GAME)
-	String removeGame(@PathVariable(TOURNAMENT_ID) UUID tournamentId, @PathVariable(GAME_ID) UUID gameId) {
-		tournamentAdminService.removeGame(tournamentId, gameId);
+	String removeGame(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(GAME_ID) UUID gameId) {
+		tournamentAdminService.removeGame(gameId);
 		return redirectToTournament(tournamentId);
 	}
 

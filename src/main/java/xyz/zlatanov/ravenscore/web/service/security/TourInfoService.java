@@ -26,14 +26,16 @@ public class TourInfoService {
 
 	private final TournamentRepository tournamentRepository;
 
-	@Before("@annotation(xyz.zlatanov.ravenscore.web.service.security.TourAdminOperation)")
-	public void tournamentIsUnlocked() {
+	// AOP ensures the selected tournament is unlocked while performing an administrative operation
+	@Before("@annotation(xyz.zlatanov.ravenscore.web.service.security.TournamentAdminOperation)")
+	public boolean tournamentIsUnlocked() {
 		val tournamentIsUnlocked = tournamentRepository.findById(getTournamentId())
 				.map(t -> validateUnlockHash(t.tournamentKey(), getAdminCookie()))
 				.orElse(false);
 		if (!tournamentIsUnlocked) {
 			throw new RavenscoreException("Tournament administration locked.");
 		}
+		return true;
 	}
 
 	// retrieve the tournament id based on the selection to ensure no cross-unlocking and HTML manipulation is possible
