@@ -43,6 +43,7 @@
     </div>`
     const DELETE_STAGE_BUTTON = `<a id="deleteStageButton" class="btn btn-outline-danger"
                                 data-bs-toggle="tooltip" data-bs-title="Delete stage"
+                                onclick="return confirm('Are you sure you want to delete this tournament stage?');"
                                 href="/tournament/{{tour-id}}/stage/remove/{{stage-id}}">Delete</a>`
 
     function newTournamentStage() {

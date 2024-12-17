@@ -51,6 +51,12 @@ public class RavenscoreController {
 		return "tournament";
 	}
 
+	@GetMapping(DELETE_TOURNAMENT)
+	String deleteTourney(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId) {
+		tournamentAdminService.deleteTournament(tournamentId);
+		return "redirect:/";
+	}
+
 	@PostMapping(UPSERT_STAGE)
 	String upsertStage(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @ModelAttribute StageForm stageForm) {
 		tournamentStageAdminService.createNewStage(stageForm);

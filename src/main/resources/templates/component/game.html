@@ -58,6 +58,7 @@
         </div>`;
     const DELETE_GAME_BUTTON = `<a id="deleteGameButton" class="btn btn-outline-danger"
                                 data-bs-toggle="tooltip" data-bs-title="Delete game"
+                                onclick="return confirm('Are you sure you want to delete this game?');"
                                 href="/tournament/{{tour-id}}/stage/{{stage-id}}/game/remove/{{game-id}}">Delete</a>`
     const PARTICIPANT_SELECTION = `<input type="hidden" name="participantIdList" value="{{participant-id}}">`;
     const NO_PLAYERS_AVAILABLE = `<div class="align-middle fst-italic fw-lighter text-center">This stage has no players yet.</div>`;

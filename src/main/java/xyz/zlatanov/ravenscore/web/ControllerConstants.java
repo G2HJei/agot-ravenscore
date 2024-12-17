@@ -24,6 +24,7 @@ public class ControllerConstants {
 	public static final String	ROOT						= "/";
 	public static final String	TOURNAMENT					= ROOT + "tournament";
 	public static final String	TOURNAMENT_DETAILS			= ROOT + "tournament/{" + TOURNAMENT_ID + "}";
+	public static final String	DELETE_TOURNAMENT			= TOURNAMENT_DETAILS + "/delete";
 	public static final String	UPSERT_STAGE				= TOURNAMENT_DETAILS + "/stage";
 	public static final String	REMOVE_STAGE				= UPSERT_STAGE + "/remove/{" + STAGE_ID + "}";
 	public static final String	IMPORT_PARTICIPANTS			= TOURNAMENT_DETAILS + "/stage/{" + STAGE_ID + "}/import-participants";

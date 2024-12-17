@@ -47,4 +47,10 @@ public class TournamentAdminService {
 				.hidden(tournamentForm.getHidden()));
 		return tournamentForm.getId();
 	}
+
+	@Transactional
+	@TournamentAdminOperation
+	public void deleteTournament(UUID tournamentId) {
+		tournamentRepository.deleteById(tournamentId);
+	}
 }
