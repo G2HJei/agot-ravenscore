@@ -355,7 +355,15 @@
                                                 th:data-rs-player-points="${player.score}"
                                                 th:data-rs-player-penalty-points="${player.penaltyPoints}"
                                                 th:data-rs-player-participant-id="${player.participantId}">
-                                                <th class="align-middle" scope="row" th:text="${playerIdx.index+1}">#
+                                                <th th:if="${not game.completed or playerIdx.index gt 0}"
+                                                    class="align-middle text-center" scope="row"
+                                                    th:text="${playerIdx.index+1}">
+                                                    #
+                                                </th>
+                                                <th th:if="${game.completed and playerIdx.index eq 0}"
+                                                    class="align-middle text-center" scope="row">
+                                                    <img th:src="@{'/winner.png'}" alt="winner" class="pb-2" height="32"
+                                                         data-bs-toggle="tooltip" data-bs-title="Winner">
                                                 </th>
                                                 <td>
                                                     <div class="d-flex justify-content-start align-items-center">
