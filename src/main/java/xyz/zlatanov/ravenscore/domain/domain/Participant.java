@@ -35,11 +35,11 @@ public class Participant implements Cloneable {
 	@Override
 	@SneakyThrows
 	public Participant clone() {
-		// omit id to act as new one
 		val clone = (Participant) super.clone();
+		clone.id = null;
 		clone.name = name;
 		clone.profileLinks = Arrays.copyOf(profileLinks, profileLinks.length);
-		// omit replacement participant id because replacement happens only for one participant
+		clone.replacementParticipantId = null;// do not copy replacement because it happens only for one participant
 		return clone;
 	}
 }
