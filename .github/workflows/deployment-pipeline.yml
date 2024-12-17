@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # COMMIT STAGE
-      ##############
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -28,8 +26,6 @@ jobs:
       - name: Commit Stage Tests + Package
         run: mvn -B package
 
-      # ACCEPTANCE STAGE
-      ##################
       - name: DockerHub > login
         uses: docker/login-action@v3
         with:
