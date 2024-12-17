@@ -104,10 +104,15 @@
                 <tr th:each="participant, participantIdx: ${stage.participantModelList}"
                     th:with="isQualifier = ${participantIdx.index eq stage.qualificationCount}"
                     th:class="${isQualifier ? 'border-top-brand' : ''}">
-                    <th class="align-middle text-center" scope="row" th:text="${participantIdx.index+1}">#</th>
+                    <th th:if="${participant.id ne model.winnerParticipantId}" class="align-middle text-center"
+                        scope="row" th:text="${participantIdx.index+1}">#
+                    </th>
+                    <th th:if="${participant.id eq model.winnerParticipantId}" class="align-middle text-center"
+                        scope="row">
+                        <img th:src="@{'/winner.png'}" alt="winner" class="pb-2" data-bs-toggle="tooltip"
+                             data-bs-title="Tournament winner"></th>
                     <td>
                         <div class="d-flex justify-content-start align-items-center action-container">
-                            <!--  todo put tourney winner icon here -->
                             <div>
                                 <span class="participant-data"
                                       th:data-rs-stage-id="${stage.id}"
@@ -354,7 +359,7 @@
                                                 </th>
                                                 <td>
                                                     <div class="d-flex justify-content-start align-items-center">
-                                                        <img th:src="@{'/icons/'+${player.house}+'.png'}"
+                                                        <img th:src="@{'/houses/'+${player.house}+'.png'}"
                                                              alt="house icon"
                                                              style="max-height: 2.25rem">&nbsp;
                                                         <div class="ms-3">

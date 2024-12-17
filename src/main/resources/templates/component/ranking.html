@@ -49,7 +49,7 @@
     const RANKING_PLAYER_ROW = `
     <tr>
         <input type="hidden" name="playerId" value="{{player-id}}">
-        <td><img src="/icons/{{house}}.png" alt="house icon" style="max-height: 2.25rem"></td>
+        <td><img src="/houses/{{house}}.png" alt="house icon" style="max-height: 2.25rem"></td>
         <td class="align-middle"><select class="form-select " name="participantId" aria-label="Select participant">{{participant-options}}</select></td>
         <td class="align-middle text-center"><input type="number" name="points" min=0 max="30" class="form-control text-center" value="{{points}}" disabled></td>
         <td class="align-middle text-center"><input type="number" name="castles" min=0 max="10" class="form-control text-center" value="{{castles}}" onchange="autocompletePoints()"></td>

@@ -24,6 +24,7 @@ public class TournamentDetailsBuilder {
 	private final List<Player>			playerList;
 
 	public TournamentDetailsModel build() {
+		val tournamentStageModelList = getTournamentStages();
 		return new TournamentDetailsModel()
 				.id(tournament.id().toString())
 				.name(tournament.name())
@@ -33,8 +34,9 @@ public class TournamentDetailsBuilder {
 				.startDate(DATE_FORMATTER.format(tournament.startDate()))
 				.adminUnlocked(adminUnlocked)
 				.tournamentKey(tournament.tournamentKey())
+				.winnerParticipantId(getWinnerId(tournamentStageModelList))
 				.substituteModelList(getSubstitutes())
-				.tournamentStageModelList(getTournamentStages());
+				.tournamentStageModelList(tournamentStageModelList);
 	}
 
 	private List<SubstituteModel> getSubstitutes() {
@@ -198,5 +200,16 @@ public class TournamentDetailsBuilder {
 				.map(winner -> winner ? 1 : 0)
 				.reduce(Integer::sum)
 				.orElse(0);
+	}
+
+	private String getWinnerId(List<TournamentStageModel> tournamentStageModelList) {
+		if (tournamentStageList.isEmpty() || tournamentStageModelList.stream().anyMatch(s -> !s.completed())) {
+			return null;
+		}
+		val lastStage = tournamentStageModelList.getFirst();
+		if (lastStage.qualificationCount() != 1) {
+			return null;
+		}
+		return lastStage.participantModelList().getFirst().id();
 	}
 }
