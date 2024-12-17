@@ -193,7 +193,8 @@ public class TournamentAdminService {
 				.filter(selectedParticipantsNames::contains)
 				.toList();
 		if (!commonNames.isEmpty()) {
-			throw new RavenscoreException(String.format("Participant(s) already in present stage: %s", String.join(", ", commonNames)));
+			throw new RavenscoreException(
+					String.format("Players(s) are already in present this tournament stage: %s", String.join(", ", commonNames)));
 		}
 
 		// todo make stage complete
@@ -236,7 +237,7 @@ public class TournamentAdminService {
 				.map(Substitute::name)
 				.toList();
 		if (participantNames.contains(name)) {
-			throw new RavenscoreException(String.format("Participant with the name \"%s\" already exists.", name));
+			throw new RavenscoreException(String.format("Player with the name \"%s\" is already in this tournament stage.", name));
 		}
 		if (substituteNames.contains(name)) {
 			throw new RavenscoreException(String.format("Substitute with the name \"%s\" already exists.", name));
