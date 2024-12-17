@@ -8,6 +8,7 @@ import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import xyz.zlatanov.ravenscore.Utils;
 import xyz.zlatanov.ravenscore.domain.domain.*;
 import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
 
@@ -180,8 +181,18 @@ public class TournamentDetailsBuilder {
 		return new ArrayList<>();
 	}
 
-	private Integer calculateWins(UUID id, List<Game> gameList) {
-		// todo
-		return 0;
+	private Integer calculateWins(UUID participantId, List<Game> gameList) {
+		return gameList.stream()
+				.filter(Game::completed)
+				.map(game -> {
+					val players = playerList.stream()
+							.filter(p -> Utils.contains(game.participantIdList(), p.participantId()))
+							.sorted((o1, o2) -> -o1.points().compareTo(o2.points()))
+							.toList();
+					return !players.isEmpty() && players.getFirst().participantId().equals(participantId);
+				})
+				.map(winner -> winner ? 1 : 0)
+				.reduce(Integer::sum)
+				.orElse(0);
 	}
 }

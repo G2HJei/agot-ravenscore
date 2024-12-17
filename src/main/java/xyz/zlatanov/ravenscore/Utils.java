@@ -42,4 +42,8 @@ public class Utils {
 				.toList();
 		return trimmed.toArray(new String[] {});
 	}
+
+	public static <T> boolean contains(T[] array, T value) {
+		return Arrays.stream(array).toList().contains(value);
+	}
 }
