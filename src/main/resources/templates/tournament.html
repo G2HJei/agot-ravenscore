@@ -50,17 +50,19 @@
                 <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : '')}" href="#"
                    th:data-rs-stage-id="${stage.id}"
                    th:data-rs-stage-qualification-count="${stage.qualificationCount}"
-                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}"
-                   th:text="${stage.name}">
-                    Stage
+                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}">
+                    <i th:if="${stage.completed}" class="bi bi-check"></i>
+                    <span th:text="${stage.name}">
+                        Stage
+                    </span>
                 </a>
             </li>
         </ul>
     </div>
 
     <div class="tab-content">
-        <!-- TODO : set stage-completed properly -->
-        <div th:each="stage, stageIdx : ${model.tournamentStageModelList}" data-rs-stage-completed='true'
+        <div th:each="stage, stageIdx : ${model.tournamentStageModelList}"
+             th:data-rs-stage-completed="${stage.completed}"
              th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
 
             <!-- STAGE RANKINGS -->

@@ -52,13 +52,17 @@ public class TournamentDetailsBuilder {
 	private List<TournamentStageModel> getTournamentStages() {
 		return tournamentStageList.stream()
 				.filter(stage -> stage.tournamentId().equals(tournament.id()))
-				.map(stage -> new TournamentStageModel()
-						.id(stage.id().toString())
-						.name(stage.name())
-						.qualificationCount(stage.qualificationCount())
-						.startDate(DATE_FORMATTER.format(stage.startDate()))
-						.participantModelList(getParticipants(stage))
-						.gameModelList(getGames(stage.id())))
+				.map(stage -> {
+					val gameModelList = getGames(stage.id());
+					return new TournamentStageModel()
+							.id(stage.id().toString())
+							.name(stage.name())
+							.qualificationCount(stage.qualificationCount())
+							.startDate(DATE_FORMATTER.format(stage.startDate()))
+							.completed(!gameModelList.isEmpty() && gameModelList.stream().allMatch(GameModel::completed))
+							.participantModelList(getParticipants(stage))
+							.gameModelList(gameModelList);
+				})
 				.toList();
 	}
 
