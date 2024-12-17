@@ -39,8 +39,8 @@ public class TournamentDetailsService {
 		val games = gameRepository.findByTournamentStageIdInOrderByTypeAscNameAsc(stageIds);
 		val gameIds = games.stream().map(Game::id).toList();
 		val players = playerRepository.findByGameIdInOrderByPointsDesc(gameIds);
-		return new TournamentDetailsBuilder(tourInfoService.tournamentIsUnlocked(), tournament, tourStages, substitutes, participants,
-				games, players).build();
+		return new TournamentDetailsBuilder(tourInfoService.tournamentIsUnlocked(tournamentId), tournament, tourStages, substitutes,
+				participants, games, players).build();
 	}
 
 }

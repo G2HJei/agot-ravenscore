@@ -10,7 +10,7 @@
                     <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/tournament" autocomplete="off">
+                    <form id="tournamentForm" method="POST" action="/tournament" autocomplete="off">
                         <div class="d-flex justify-content-start align-items-end gap-3 mb-1">
                             <input type="hidden" name="id" value="{{id}}">
                             <div style="width: 67%">
@@ -50,7 +50,7 @@
                         </div>
                         <div class="d-flex justify-content-end align-items-center">
                             {{delete-button}}
-                            <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                            <button type="button" class="btn btn-outline-secondary ms-auto" onclick="submitTournament()">Done</button>
                         </div>
                     </form>
                 </div>
@@ -76,10 +76,12 @@
 
     function editTournament() {
         const tourRoot = $("#tournamentRoot");
+        const tourId = getTournamentId();
         refreshTournamentModal(TOURNAMENT_MODAL
-            .replaceAll("{{id}}", getTournamentId())
+            .replaceAll("{{id}}", tourId)
             .replaceAll("{{title}}", "Modify Tournament")
             .replaceAll("{{delete-button}}", DELETE_TOURNAMENT_BUTTON)
+            .replaceAll("{{tour-id}}", tourId)
             .replaceAll("{{RANKING_PLUS_CASTLES}}", "selected")
             .replaceAll("{{name}}", tourRoot.text())
             .replaceAll("{{rules}}", $("#rulesDescription").text())
@@ -93,5 +95,14 @@
         $("#deleteTournamentButton").tooltip();
         $("#scoringInfo").tooltip();
         $("#tournamentModal").modal("show");
+    }
+
+    function submitTournament() {
+        const tournamentForm = $("#tournamentForm")[0];
+        if (!tournamentForm.checkValidity()) {
+            tournamentForm.reportValidity();
+            return;
+        }
+        tournamentForm.submit();
     }
 </script>

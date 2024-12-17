@@ -157,8 +157,6 @@ public class TournamentDetailsBuilder {
 					.forEach(g -> gamesMap.put(g.id(), g));
 			return players.stream()
 					.filter(p -> gamesMap.containsKey(p.gameId()))
-					// todo this should be in the frontend to autofill score before submitting
-					// (gamesMap.get(p.gameId()).participantIdList().length - p.rank() + p.castles() + (p.rank() == 1 ? 3 : 0))
 					.map(Player::points)
 					.reduce(Integer::sum)
 					.orElse(0);

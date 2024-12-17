@@ -10,7 +10,10 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <input type="email" class="form-control" id="tournamentKey" placeholder="Administration key">
+                    <form id="unlockForm">
+                        <input type="text" minlength="8" maxlength="32" class="form-control" id="tournamentKey"
+                               placeholder="Administration key" required>
+                    </form>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <div id="tournamentKeyError" class="text-danger visually-hidden ms-1 me-auto">
@@ -36,6 +39,11 @@
     }
 
     function unlockAdmin() {
+        const unlockForm = $("#unlockForm")[0];
+        if (!unlockForm.checkValidity()) {
+            unlockForm.reportValidity();
+            return;
+        }
         $.ajax({
             url: window.location.pathname + "/unlock-tournament",
             method: "POST",
@@ -47,6 +55,5 @@
             },
             error: () => $("#tournamentKeyError").removeClass("visually-hidden")
         })
-        ;
     }
 </script>

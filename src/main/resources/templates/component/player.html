@@ -10,7 +10,7 @@
                             <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form method="POST" action="/tournament/{{tour-id}}/player" autocomplete="off">
+                            <form id="playerForm" method="POST" action="/tournament/{{tour-id}}/player" autocomplete="off">
                                 <input type="hidden" name="playerId" value="{{player-id}}">
                                 <input type="hidden" name="tournamentStageId" value="{{stage-id}}">
                                 <div class="d-flex justify-content-start align-items-end gap-2 mb-3">
@@ -26,7 +26,7 @@
                                 </div>
                                 <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
                                     <button type="button" id="addAlias" data-bs-toggle="tooltip" data-bs-title="Add alias" class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-auto"></button>
-                                    <button type="submit" class="btn btn-outline-secondary ms-auto">Done</button>
+                                    <button type="button" class="btn btn-outline-secondary ms-auto" onclick="submitPlayer()">Done</button>
                                 </div>
                             </form>
                         </div>
@@ -132,4 +132,12 @@
             $(this).closest('.input-group').remove();
         });
     });
+
+    function submitPlayer() {
+        const playerForm = $("#playerForm")[0];
+        if (!playerForm.checkValidity()) {
+            playerForm.reportValidity();
+            return;
+        }
+    }
 </script>

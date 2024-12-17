@@ -44,7 +44,7 @@ public class RavenscoreController {
 	}
 
 	@GetMapping(TOURNAMENT_DETAILS)
-	String tourneyDetails(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
+	String tourneyDetails(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
 			@RequestParam(required = false) String error, Model model) {
 		model.addAttribute("model", tournamentDetailsService.getTournamentDetails(tournamentId));
 		model.addAttribute("error", error);

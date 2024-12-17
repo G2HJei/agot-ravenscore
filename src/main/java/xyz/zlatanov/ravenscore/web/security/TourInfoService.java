@@ -28,14 +28,18 @@ public class TourInfoService {
 
 	// AOP ensures the selected tournament is unlocked while performing an administrative operation
 	@Before("@annotation(xyz.zlatanov.ravenscore.web.security.TournamentAdminOperation)")
-	public boolean tournamentIsUnlocked() {
+	public void tournamentIsUnlocked() {
 		val tournamentIsUnlocked = tournamentRepository.findById(getTournamentId())
 				.map(t -> validateUnlockHash(t.tournamentKey(), getAdminCookie()))
 				.orElse(false);
 		if (!tournamentIsUnlocked) {
 			throw new RavenscoreException("Tournament administration locked.");
 		}
-		return true;
+	}
+
+	public boolean tournamentIsUnlocked(UUID tournamentId) {
+		val tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new RavenscoreException("Invalid tournament"));
+		return validateUnlockHash(tournament.tournamentKey(), getAdminCookie());
 	}
 
 	// retrieve the tournament id based on the selection to ensure no cross-unlocking and HTML manipulation is possible
@@ -62,7 +66,7 @@ public class TourInfoService {
 	}
 
 	public boolean validateUnlockHash(String tournamentKey, Integer checkHash) {
-		return tournamentKey.hashCode() == checkHash;
+		return checkHash != null && tournamentKey.hashCode() == checkHash;
 	}
 
 }
