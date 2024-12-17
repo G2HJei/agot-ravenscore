@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import xyz.zlatanov.ravenscore.web.security.TourInfoService;
 import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
-import xyz.zlatanov.ravenscore.web.service.security.TourInfoService;
 
 @ControllerAdvice
 @RequiredArgsConstructor

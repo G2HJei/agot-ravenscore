@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.service.security;
+package xyz.zlatanov.ravenscore.web.security;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;

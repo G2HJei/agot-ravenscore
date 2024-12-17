@@ -15,17 +15,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.RankingsForm;
+import xyz.zlatanov.ravenscore.web.security.TournamentId;
+import xyz.zlatanov.ravenscore.web.service.GameAdminService;
 import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
-import xyz.zlatanov.ravenscore.web.service.TournamentAdminService;
-import xyz.zlatanov.ravenscore.web.service.security.TournamentId;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class AdminRestController {
 
-	private final TournamentRepository		tournamentRepository;
-	private final TournamentAdminService	tournamentAdminService;
+	private final TournamentRepository	tournamentRepository;
+	private final GameAdminService		gameAdminService;
 
 	@PostMapping(value = UNLOCK_TOURNAMENT, consumes = TEXT_PLAIN_VALUE, produces = TEXT_PLAIN_VALUE)
 	@Transactional(readOnly = true)
@@ -40,7 +40,7 @@ public class AdminRestController {
 	public ResponseEntity<Void> updateRound(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
 			@PathVariable(GAME_ID) UUID gameId,
 			@PathVariable(ROUND) Integer round) {
-		tournamentAdminService.updateRound(gameId, round);
+		gameAdminService.updateRound(gameId, round);
 		return noContent().build();
 	}
 
@@ -48,7 +48,7 @@ public class AdminRestController {
 	public ResponseEntity<String> updateRankings(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
 			@RequestBody RankingsForm rankingsForm) {
 		try {
-			tournamentAdminService.updateRankings(rankingsForm);
+			gameAdminService.updateRankings(rankingsForm);
 		} catch (RavenscoreException e) {
 			return badRequest().body(e.getMessage());
 		} catch (Exception e) {

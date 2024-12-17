@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.service.security;
+package xyz.zlatanov.ravenscore.web.security;
 
 import static xyz.zlatanov.ravenscore.web.ControllerConstants.ADMIN_COOKIE_NAME;
 import static xyz.zlatanov.ravenscore.web.ControllerConstants.TOURNAMENT_ID_COOKIE_NAME;
@@ -27,7 +27,7 @@ public class TourInfoService {
 	private final TournamentRepository tournamentRepository;
 
 	// AOP ensures the selected tournament is unlocked while performing an administrative operation
-	@Before("@annotation(xyz.zlatanov.ravenscore.web.service.security.TournamentAdminOperation)")
+	@Before("@annotation(xyz.zlatanov.ravenscore.web.security.TournamentAdminOperation)")
 	public boolean tournamentIsUnlocked() {
 		val tournamentIsUnlocked = tournamentRepository.findById(getTournamentId())
 				.map(t -> validateUnlockHash(t.tournamentKey(), getAdminCookie()))

@@ -15,18 +15,19 @@ import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.ImportParticipantsFor
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
 import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
-import xyz.zlatanov.ravenscore.web.service.TournamentAdminService;
-import xyz.zlatanov.ravenscore.web.service.TournamentDetailsService;
-import xyz.zlatanov.ravenscore.web.service.TourneysSummaryService;
-import xyz.zlatanov.ravenscore.web.service.security.TournamentId;
+import xyz.zlatanov.ravenscore.web.security.TournamentId;
+import xyz.zlatanov.ravenscore.web.service.*;
 
 @Controller
 @RequiredArgsConstructor
 public class RavenscoreController {
 
-	private final TourneysSummaryService	tourneysSummaryService;
-	private final TournamentDetailsService	tournamentDetailsService;
-	private final TournamentAdminService	tournamentAdminService;
+	private final TourneysSummaryService		tourneysSummaryService;
+	private final TournamentDetailsService		tournamentDetailsService;
+	private final TournamentAdminService		tournamentAdminService;
+	private final TournamentStageAdminService	tournamentStageAdminService;
+	private final PlayerAdminService			playerAdminService;
+	private final GameAdminService				gameAdminService;
 
 	@GetMapping(ROOT)
 	String home(Model model) {
@@ -52,52 +53,52 @@ public class RavenscoreController {
 
 	@PostMapping(UPSERT_STAGE)
 	String upsertStage(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @ModelAttribute StageForm stageForm) {
-		tournamentAdminService.createNewStage(stageForm);
+		tournamentStageAdminService.createNewStage(stageForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@GetMapping(REMOVE_STAGE)
 	String removeStage(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId) {
-		tournamentAdminService.removeStage(tournamentId, stageId);
+		tournamentStageAdminService.removeStage(tournamentId, stageId);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(IMPORT_PARTICIPANTS)
 	String importParticipants(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
 			@ModelAttribute ImportParticipantsForm importParticipantsForm) {
-		tournamentAdminService.importParticipants(importParticipantsForm);
+		tournamentStageAdminService.importParticipants(importParticipantsForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(UPSERT_PLAYER)
 	String upsertPlayer(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @ModelAttribute PlayerForm playerForm) {
-		tournamentAdminService.player(playerForm);
+		playerAdminService.player(playerForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@GetMapping(REMOVE_PLAYER)
 	String removePlayer(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
 			@PathVariable(PLAYER_ID) UUID playerId) {
-		tournamentAdminService.removePlayer(stageId, playerId);
+		playerAdminService.removePlayer(stageId, playerId);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(SUBSTITUTE_PLAYER)
 	String substitutePlayer(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
 			@PathVariable(PARTICIPANT_ID) UUID participantId, @PathVariable(SUBSTITUTE_ID) UUID substituteId) {
-		tournamentAdminService.substitution(stageId, participantId, substituteId);
+		playerAdminService.substitution(stageId, participantId, substituteId);
 		return redirectToTournament(tournamentId);
 	}
 
 	@PostMapping(UPSERT_GAME)
 	String upsertGame(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @ModelAttribute GameForm gameForm) {
-		tournamentAdminService.game(gameForm);
+		gameAdminService.game(gameForm);
 		return redirectToTournament(tournamentId);
 	}
 
 	@GetMapping(REMOVE_GAME)
 	String removeGame(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(GAME_ID) UUID gameId) {
-		tournamentAdminService.removeGame(gameId);
+		gameAdminService.removeGame(gameId);
 		return redirectToTournament(tournamentId);
 	}
 

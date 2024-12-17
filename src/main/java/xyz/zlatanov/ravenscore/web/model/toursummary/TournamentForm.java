@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import xyz.zlatanov.ravenscore.domain.domain.Scoring;
-import xyz.zlatanov.ravenscore.web.service.security.TournamentId;
+import xyz.zlatanov.ravenscore.web.security.TournamentId;
 
 @Data
 @Accessors(chain = true)

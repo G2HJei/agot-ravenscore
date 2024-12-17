@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.service.security;
+package xyz.zlatanov.ravenscore.web.security;
 
 import java.util.Optional;
 import java.util.UUID;
