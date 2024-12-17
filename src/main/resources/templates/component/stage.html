@@ -64,8 +64,8 @@
             .replaceAll("{{delete-button}}", DELETE_STAGE_BUTTON)
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
-            .replaceAll("{{stage-name}}", selectedStage.text())
-            .replaceAll("{{qualification-count}}", selectedStage.data('rs-stage-qualification-count'))
+            .replaceAll("{{stage-name}}", selectedStage.data("rs-stage-name"))
+            .replaceAll("{{qualification-count}}", selectedStage.data("rs-stage-qualification-count"))
         );
     }
 

@@ -49,6 +49,7 @@
             <li class="nav-item" role="presentation" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
                 <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : '')}" href="#"
                    th:data-rs-stage-id="${stage.id}"
+                   th:data-rs-stage-name="${stage.name}"
                    th:data-rs-stage-qualification-count="${stage.qualificationCount}"
                    data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}">
                     <i th:if="${stage.completed}" class="bi bi-check"></i>
@@ -109,7 +110,7 @@
                     </th>
                     <th th:if="${participant.id eq model.winnerParticipantId}" class="align-middle text-center"
                         scope="row">
-                        <img th:src="@{'/winner.png'}" alt="winner" class="pb-2" data-bs-toggle="tooltip"
+                        <img th:src="@{'/crown-golden.png'}" alt="winner" class="pb-2" data-bs-toggle="tooltip"
                              data-bs-title="Tournament winner"></th>
                     <td>
                         <div class="d-flex justify-content-start align-items-center action-container">
@@ -362,7 +363,7 @@
                                                 </th>
                                                 <th th:if="${game.completed and playerIdx.index eq 0}"
                                                     class="align-middle text-center" scope="row">
-                                                    <img th:src="@{'/winner.png'}" alt="winner" class="pb-2" height="32"
+                                                    <img th:src="@{'/crown.png'}" alt="winner" class="pb-2"
                                                          data-bs-toggle="tooltip" data-bs-title="Winner">
                                                 </th>
                                                 <td>

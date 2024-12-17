@@ -53,9 +53,8 @@ public class TourneysSummaryService {
 				.id(tour.id().toString())
 				.name(tour.name())
 				.numberOfParticipants(getNumberOfParticipants(tour.id(), stages, participants))
-				.statusLabel(lastStage.map(TournamentStage::name).orElse(""))
-				.statusDate(lastStage.map(TournamentStage::startDate).map(DATE_FORMATTER::format)
-						.orElseGet(() -> DATE_FORMATTER.format(tour.startDate())))
+				.statusLabel(getStatusLabel(lastStage))
+				.statusDate(getStatusDate(tour, lastStage))
 				.pinned(tour.pinned());
 	}
 
@@ -74,5 +73,15 @@ public class TourneysSummaryService {
 		return stages.stream()
 				.filter(s -> s.tournamentId().equals(tourId))
 				.max(Comparator.comparing(TournamentStage::startDate));
+	}
+
+	private String getStatusLabel(Optional<TournamentStage> lastStage) {
+		return lastStage.map(TournamentStage::name).orElse("Started");
+	}
+
+	private static String getStatusDate(Tournament tour, Optional<TournamentStage> lastStage) {
+		// todo last updated date
+		return lastStage.map(TournamentStage::startDate).map(DATE_FORMATTER::format)
+				.orElseGet(() -> DATE_FORMATTER.format(tour.startDate()));
 	}
 }
