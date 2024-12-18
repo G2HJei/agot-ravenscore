@@ -86,14 +86,26 @@
             <div class="d-flex justify-content-center align-items-center">
                 <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
                         data-bs-title="Add player" onclick="newParticipant()"
-                        class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-2"></button>
+                        class="btn btn-outline-secondary btn-sm bi bi-plus-lg ms-1 me-2"></button>
                 <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
                         data-bs-title="Import players qualifying from previous stages" onclick="importParticipants()"
                         class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down me-auto"></button>
                 <h5 class="text-center">Stage Rankings</h5>
                 <div class="ms-auto"></div>
             </div>
-            <table class="table table-borderless table-hover mb-4">
+            <div th:if="${stage.participantModelList.isEmpty()}"
+                 class="align-middle fst-italic fw-lighter text-center mb-5">
+                This tournament stage has no participants yet.
+                <th:block th:if="${model.adminUnlocked}">Please
+                    <a href="#" onclick="newParticipant()"
+                       class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add</a>
+                    or
+                    <a href="#" onclick="importParticipants()"
+                       class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">import</a>
+                    players.
+                </th:block>
+            </div>
+            <table class="table table-borderless table-hover mb-4" th:if="${not stage.participantModelList.isEmpty()}">
                 <thead>
                 <tr>
                     <th scope="col" style="width: 5%"></th>
@@ -105,19 +117,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${stage.participantModelList.isEmpty()}">
-                    <th class="align-middle fst-italic fw-lighter text-center" scope="col" colspan="6">This
-                        tournament stage has no participants yet.
-                        <th:block th:if="${model.adminUnlocked}">Please
-                            <a href="#" onclick="newParticipant()"
-                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add</a>
-                            or
-                            <a href="#" onclick="importParticipants()"
-                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">import</a>
-                            players.
-                        </th:block>
-                    </th>
-                </tr>
                 <tr th:each="participant, participantIdx: ${stage.participantModelList}"
                     th:with="isQualifier = ${participantIdx.index eq stage.qualificationCount}"
                     th:class="${isQualifier ? 'border-top-brand' : ''}">
