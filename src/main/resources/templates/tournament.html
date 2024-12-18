@@ -139,27 +139,27 @@
                                     <i class="bi bi-person-fill"></i>
                                     <span th:text="${participant.name}">Petyr Baelish</span>
                                 </span>
-                                <i th:if="${model.adminUnlocked}"
-                                   class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
                                 <span th:if="${participant.replacedLabel ne null}"
-                                      class="badge rounded-pill bi bi-arrow-down-up text-bg-secondary d-inline-block"
+                                      class="badge rounded-pill border border-secondary text-secondary bi bi-arrow-down-up d-inline-block"
                                       data-bs-toggle="tooltip" th:data-bs-title="${participant.replacedLabel}"></span>
                                 <th:block th:each="link : ${participant.profileLinks}">
                                     <span th:if="${link.link eq null}"
-                                          class="badge rounded-pill bi bi-person-fill text-bg-secondary player-alias"
+                                          class="badge rounded-pill border border-secondary text-secondary bi bi-person-fill player-alias"
                                           data-bs-toggle="tooltip" data-bs-title="Alias"
                                           th:text="' ' + ${link.label}">Handle</span>
                                     <a th:if="${link.link ne null}" class="text-decoration-none"
                                        th:href="link.link"
                                        target="_blank">
-                                        <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary player-alias"
+                                        <span class="badge rounded-pill border border-secondary text-secondary bi bi-box-arrow-up-right player-alias"
                                               data-bs-toggle="tooltip"
                                               th:data-bs-title="${'External player profile: '+link.link}"
                                               th:text="'  ' + ${link.label}">Profile</span>
                                     </a>
                                 </th:block>
+                                <i th:if="${model.adminUnlocked}"
+                                   class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
+                                   data-bs-toggle="tooltip"
+                                   data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
                             </div>
                         </div>
                     </td>
@@ -211,13 +211,13 @@
                     <br/>
                     <th:block th:each="link : ${substitute.profileLinks}">
                         <span th:if="${link.link eq null}"
-                              class="badge rounded-pill bi bi-person-fill text-bg-secondary player-alias"
+                              class="badge rounded-pill border border-secondary text-secondary bi bi-person-fill player-alias"
                               data-bs-toggle="tooltip" data-bs-title="Alias"
                               th:text="' ' + ${link.label}">Handle</span>
                         <a th:if="${link.link ne null}" class="text-decoration-none"
                            th:href="link.link"
                            target="_blank">
-                         <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary player-alias"
+                         <span class="badge rounded-pill border border-secondary text-secondary bi bi-box-arrow-up-right player-alias"
                                data-bs-toggle="tooltip"
                                th:data-bs-title="${'External player profile: '+link.link}"
                                th:text="'  ' + ${link.label}">Profile</span>
@@ -330,19 +330,19 @@
                                                             <span th:text="${participant.name}">Stark</span></span>
                                                         <br/>
                                                         <span th:if="${participant.replacedLabel ne null}"
-                                                              class="badge rounded-pill bi bi-arrow-down-up text-bg-secondary d-inline-block"
+                                                              class="badge rounded-pill border border-secondary text-secondary bi bi-arrow-down-up d-inline-block"
                                                               data-bs-toggle="tooltip"
                                                               th:data-bs-title="${participant.replacedLabel}"></span>
                                                         <th:block th:each="link : ${participant.profileLinks}">
                                                         <span th:if="${link.link eq null}"
-                                                              class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                                                              class="badge rounded-pill border border-secondary text-secondary bi bi-person-fill"
                                                               data-bs-toggle="tooltip"
                                                               data-bs-title="Alias"
                                                               th:text="' ' + ${link.label}">Handle</span>
                                                             <a th:if="${link.link ne null}" class="text-decoration-none"
                                                                th:href="link.link"
                                                                target="_blank">
-                                                        <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                                                        <span class="badge rounded-pill border border-secondary text-secondary bi bi-box-arrow-up-right"
                                                               data-bs-toggle="tooltip"
                                                               th:data-bs-title="${'External player profile: '+link.link}"
                                                               th:text="'  ' + ${link.label}">Profile</span>
@@ -395,19 +395,19 @@
                                                             </span>
                                                             <br/>
                                                             <span th:if="${player.replacedLabel ne null}"
-                                                                  class="badge rounded-pill bi bi-arrow-down-up text-bg-secondary d-inline-block"
+                                                                  class="badge rounded-pill border border-secondary text-secondary bi bi-arrow-down-up d-inline-block"
                                                                   data-bs-toggle="tooltip"
                                                                   th:data-bs-title="${player.replacedLabel}"></span>
                                                             <th:block th:each="link : ${player.profileLinks}">
                                                                 <span th:if="${link.link eq null}"
-                                                                      class="badge rounded-pill bi bi-person-fill text-bg-secondary"
+                                                                      class="badge rounded-pill border border-secondary text-secondary bi bi-person-fill"
                                                                       data-bs-toggle="tooltip" data-bs-title="Alias"
                                                                       th:text="' ' + ${link.label}">Handle</span>
                                                                 <a th:if="${link.link ne null}"
                                                                    class="text-decoration-none"
                                                                    th:href="link.link"
                                                                    target="_blank">
-                                                                <span class="badge rounded-pill bi bi-box-arrow-up-right text-bg-secondary"
+                                                                <span class="badge rounded-pill border border-secondary text-secondary bi bi-box-arrow-up-right"
                                                                       data-bs-toggle="tooltip"
                                                                       th:data-bs-title="${'External player profile: '+link.link}"
                                                                       th:text="'  ' + ${link.label}">Profile</span>
