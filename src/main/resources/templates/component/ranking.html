@@ -96,7 +96,7 @@
         return playerList
             .map(player => RANKING_PLAYER_ROW
                 .replaceAll("{{player-id}}", player.id)
-                .replaceAll("{{house}}", player.house)
+                .replaceAll("{{house}}", (gameElement.data("rs-game-type") === "A_DANCE_WITH_DRAGONS" && player.house === "Stark") ? "Bolton" : player.house)
                 .replaceAll("{{participant-options}}", buildParticipantOptionsHTML(player, participantList))
                 .replaceAll("{{castles}}", player.castles)
                 .replaceAll("{{penalty}}", player.penaltyPts)

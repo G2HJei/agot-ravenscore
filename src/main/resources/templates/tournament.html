@@ -386,9 +386,8 @@
                                                 </th>
                                                 <td>
                                                     <div class="d-flex justify-content-start align-items-center">
-                                                        <img th:src="@{'/houses/'+${player.house}+'.png'}"
-                                                             alt="house icon"
-                                                             style="max-height: 2.25rem">&nbsp;
+                                                        <img th:src="@{'/houses/'+${(player.house eq 'Stark' and game.type.toString() eq 'A_DANCE_WITH_DRAGONS' ? 'Bolton' : player.house)}+'.png'}"
+                                                             alt="house icon" style="max-height: 2.25rem">&nbsp;
                                                         <div class="ms-3">
                                                             <span th:text="${player.name}"
                                                                   th:class="${player.profileLinks.isEmpty() ? 'text-muted' : ''}">
