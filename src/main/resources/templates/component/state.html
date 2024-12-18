@@ -1,9 +1,5 @@
 <script th:inline="javascript">
     $(document).ready(function () {
-        //store tournament-id cookie
-        document.cookie = `tournament-id=${getTournamentId()}; path=/; max-age=1209600`;
-
-
         //setup stage selection updates
         $('#stageNav').on("shown.bs.tab", function () {
             storeStageSelection();
@@ -30,7 +26,9 @@
         restoreGameSelection();
 
         // refresh initial selections
-        localStorage.setItem("tourId", $("#tournamentRoot").data("rs-tour-id"));
+        const tourId = $("#tournamentRoot").data("rs-tour-id");
+        localStorage.setItem("tourId", tourId);
+        document.cookie = `tournament-id=${tourId}; path=/; max-age=1209600`;
         storeStageSelection();
     })
 
