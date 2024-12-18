@@ -1,0 +1,46 @@
+<script th:inline="javascript">
+    const FILTERS = `
+    <div class="d-flex justify-content-center align-items-center ms-1 gap-3">
+        <div>
+            {{player-select}}
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input filter-game-completed" type="checkbox" role="switch" id="filterGameCompleted" onchange="applyGameFilters()">
+          <label class="form-check-label" for="filterGameCompleted">Hide completed</label>
+        </div>
+    </div>`;
+    const FILTERS_PLAYER_OPTION = ``;
+
+    $(document).ready(function () {
+        $(".filters-container").append(FILTERS
+            .replaceAll("{{player-select}}", "")); //todo
+    })
+
+    function toggleFilters() {
+        $("#showFiltersButton-" + getSelectedStageId()).toggleClass("bi-funnel bi-funnel-fill");
+        $("#" + getFiltersContainerId()).toggleClass("visually-hidden");
+        applyGameFilters();
+    }
+
+    function getFiltersContainerId() {
+        return "filters-" + getSelectedStageId();
+    }
+
+    function applyGameFilters() {
+        const filterForCompleted = $(".stage-games[data-rs-stage-id='" + getSelectedStageId() + "']")
+            .find(".filter-game-completed")
+            .first()
+            .prop("checked");
+        if (filterForCompleted === true) {
+            $(".stage-games[data-rs-stage-id='" + getSelectedStageId() + "']")
+                .find("[data-rs-game-completed='true']")
+                .parent()
+                .addClass("visually-hidden");
+        } else {
+            $(".stage-games[data-rs-stage-id='" + getSelectedStageId() + "']")
+                .find("[data-rs-game-completed]")
+                .parent()
+                .removeClass("visually-hidden");
+        }
+    }
+</script>

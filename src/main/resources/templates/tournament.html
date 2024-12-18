@@ -85,13 +85,15 @@
                 <div class="col-12 col-xxl-6">
                     <!-- STAGE RANKINGS -->
                     <div class="d-flex justify-content-center align-items-center">
-                        <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
-                                data-bs-title="Add player" onclick="newParticipant()"
-                                class="btn btn-outline-secondary btn-sm bi bi-plus-lg ms-1 me-2"></button>
-                        <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
-                                data-bs-title="Import players qualifying from previous stages"
-                                onclick="importParticipants()"
-                                class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down me-auto"></button>
+                        <div class="ms-1 me-auto">
+                            <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                                    data-bs-title="Add player" onclick="newParticipant()"
+                                    class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-2"></button>
+                            <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                                    data-bs-title="Import players qualifying from previous stages"
+                                    onclick="importParticipants()"
+                                    class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down"></button>
+                        </div>
                         <h5 class="text-center">Stage Rankings</h5>
                         <div class="ms-auto"></div>
                     </div>
@@ -122,7 +124,8 @@
                         <tbody>
                         <tr th:each="participant, participantIdx: ${stage.participantModelList}"
                             th:class="${participantIdx.index eq stage.qualificationCount ? 'border-top-brand' : ''}">
-                            <th th:if="${participant.id ne model.winnerParticipantId}" class="align-middle text-center"
+                            <th th:if="${participant.id ne model.winnerParticipantId}"
+                                class="align-middle text-center text-muted"
                                 scope="row" th:text="${participantIdx.index+1}">#
                             </th>
                             <th th:if="${participant.id eq model.winnerParticipantId}" class="align-middle text-center"
@@ -137,7 +140,7 @@
                                       th:data-rs-participant-id="${participant.id}"
                                       th:data-rs-is-qualifier="${participantIdx.index lt stage.qualificationCount}"
                                       th:data-rs-participant-name="${participant.name}">
-                                    <i class="bi bi-person-fill"></i>
+                                    <i class="bi bi-person-fill text-muted"></i>
                                     <span th:text="${participant.name}">Petyr Baelish</span>
                                 </span>
                                         <span th:if="${participant.replacedLabel ne null}"
@@ -209,7 +212,7 @@
                     <span class="substitute-data"
                           th:data-rs-substitute-id="${substitute.id}"
                           th:data-rs-substitute-name="${substitute.name}">
-                        <i class="bi bi-person-fill"></i>
+                        <i class="bi bi-person-fill text-muted"></i>
                         <span th:text="${substitute.name}">Sub Name</span>
                     </span>&nbsp;
                             <i th:if="${model.adminUnlocked}"
@@ -235,15 +238,24 @@
                 </div>
 
                 <!-- STAGE GAMES -->
-                <div class="col-12 col-xxl-6">
+                <div class="col-12 col-xxl-6 stage-games" th:data-rs-stage-id="${stage.id}">
                     <h5 class="d-flex justify-content-center align-items-center mt-5 mt-lg-0">
-                        <button th:if="${model.adminUnlocked}" type="button"
-                                class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-1 me-auto"
-                                data-bs-toggle="tooltip" data-bs-title="Create new game"
-                                onclick="newGame()"></button>
-                        <span>Games</span>
-                        <span class="ms-auto"></span>
+                        <span class="ms-1 me-auto">
+                            <button th:if="${model.adminUnlocked}" type="button"
+                                    class="btn btn-sm btn-outline-secondary bi bi-plus-lg"
+                                    data-bs-toggle="tooltip" data-bs-title="Create new game"
+                                    onclick="newGame()"></button>
+                        </span>
+                        <span>Games
+                            <i th:id="${'showFiltersButton-'+stage.id}"
+                               data-bs-toggle="tooltip"
+                               data-bs-title="Show/hide filters"
+                               class="bi bi-funnel fs-4 text-brand highlight-primary ms-2"
+                               onclick="toggleFilters()"></i></span>
+                        <span class="ms-auto">
+                        </span>
                     </h5>
+                    <div th:id="${'filters-'+stage.id}" class="filters-container visually-hidden"></div>
                     <div th:if="${stage.gameModelList.isEmpty()}"
                          class="align-middle fst-italic fw-lighter text-center">
                         This
@@ -340,7 +352,7 @@
                                                         <span class="game-participant-data"
                                                               th:data-rs-participant-name="${participant.name}"
                                                               th:data-rs-participant-id="${participant.id}">
-                                                            <i class="bi bi-person-fill"></i>
+                                                            <i class="bi bi-person-fill text-muted"></i>
                                                             <span th:text="${participant.name}">Stark</span></span>
                                                                 <br/>
                                                                 <span th:if="${participant.replacedLabel ne null}"
@@ -462,6 +474,7 @@
     <div layout:replace="~{component/state}"></div>
     <div layout:replace="~{component/rules}"></div>
     <div layout:replace="~{component/unlock-admin}"></div>
+    <div layout:replace="~{component/filters}"></div>
     <div th:if="${model.adminUnlocked}">
         <div layout:replace="~{component/tournament-details}"></div>
         <div layout:replace="~{component/stage}"></div>
