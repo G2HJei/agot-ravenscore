@@ -163,6 +163,7 @@
         // Update a hidden input to store the selected participants+
         $("#participantIdList").replaceWith(participantSelectionHTML);
         $(".participation-check-container").remove();
+        $("#gameType").prop('disabled', false);
         gameForm.submit();
     }
 
