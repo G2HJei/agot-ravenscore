@@ -8,7 +8,6 @@ import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import xyz.zlatanov.ravenscore.Utils;
 import xyz.zlatanov.ravenscore.domain.domain.*;
 
 @RequiredArgsConstructor
@@ -187,13 +186,18 @@ public class TournamentDetailsBuilder {
 	}
 
 	private Integer calculateWins(UUID participantId, List<Game> gameList) {
+		val curPar = participantList.stream()
+				.filter(p -> p.id().equals(participantId))
+				.findFirst()
+				.orElseThrow();
 		return gameList.stream()
 				.filter(Game::completed)
 				.map(game -> {
 					val players = playerList.stream()
-							.filter(p -> Utils.contains(game.participantIdList(), p.participantId()))
+							.filter(p -> p.gameId().equals(game.id()))
 							.sorted((o1, o2) -> -o1.points().compareTo(o2.points()))
 							.toList();
+					players.getFirst();
 					return !players.isEmpty() && players.getFirst().participantId().equals(participantId);
 				})
 				.map(winner -> winner ? 1 : 0)
