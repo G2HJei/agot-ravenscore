@@ -37,7 +37,7 @@ public class GameAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public void removeGame(UUID gameId) {
-		val game = gameRepository.findById(gameId).orElseThrow(() -> new RavenscoreException("Invalid game"));
+		val game = gameRepository.findById(gameId).orElseThrow();
 		if (game.completed()) {
 			throw new RavenscoreException("Cannot delete a completed game.");
 		}
@@ -49,13 +49,13 @@ public class GameAdminService {
 	public void updateRankings(@Valid RankingsForm rankingsForm) throws RavenscoreException {
 		validateRankingsForm(rankingsForm);
 
-		val game = gameRepository.findById(rankingsForm.getGameId()).orElseThrow(() -> new RavenscoreException("Invalid game"));
+		val game = gameRepository.findById(rankingsForm.getGameId()).orElseThrow();
 		gameRepository.save(game.completed(rankingsForm.getCompleted()));
 		val playerScoringList = rankingsForm.getPlayerRankingList().stream()
 				.sorted(Comparator.comparing(PlayerRanking::getPoints))
 				.toList();
 		playerScoringList.forEach(ps -> {
-			val player = playerRepository.findById(ps.getPlayerId()).orElseThrow(() -> new RavenscoreException("Invalid player"));
+			val player = playerRepository.findById(ps.getPlayerId()).orElseThrow();
 			playerRepository.save(player
 					.castles(ps.getCastles())
 					.penaltyPoints(ps.getPenaltyPoints())
@@ -67,7 +67,7 @@ public class GameAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public void updateRound(UUID gameId, Integer round) {
-		val game = gameRepository.findById(gameId).orElseThrow(() -> new RavenscoreException("Invalid game"));
+		val game = gameRepository.findById(gameId).orElseThrow();
 		gameRepository.save(game.round(round));
 	}
 
@@ -89,8 +89,7 @@ public class GameAdminService {
 	}
 
 	private void updateGame(GameForm gameForm) {
-		val game = gameRepository.findById(gameForm.getId())
-				.orElseThrow(() -> new RavenscoreException("Invalid game"));
+		val game = gameRepository.findById(gameForm.getId()).orElseThrow();
 		gameRepository.save(game
 				.type(gameForm.getType())
 				.name(gameForm.getName())

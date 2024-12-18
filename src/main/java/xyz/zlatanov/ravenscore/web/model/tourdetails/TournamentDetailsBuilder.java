@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.Utils;
 import xyz.zlatanov.ravenscore.domain.domain.*;
-import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
 
 @RequiredArgsConstructor
 public class TournamentDetailsBuilder {
@@ -127,7 +126,7 @@ public class TournamentDetailsBuilder {
 							.map(participantId -> participantList.stream()
 									.filter(p -> p.id().equals(participantId))
 									.findFirst()
-									.orElseThrow(() -> new RavenscoreException("Invalid player-participant connection.")));
+									.orElseThrow());
 					return new PlayerModel()
 							.id(player.id().toString())
 							.name(participant.map(Participant::name).orElse(capitalizeFirstLetter(player.house())))

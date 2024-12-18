@@ -45,8 +45,7 @@ public class TournamentStageAdminService {
 		if (!gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stageId).isEmpty()) {
 			throw new RavenscoreException("Cannot delete a stage with existing games.");
 		}
-		val stage = tournamentStageRepository.findById(stageId)
-				.orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		val stage = tournamentStageRepository.findById(stageId).orElseThrow();
 		val participantIds = stage.participantIdList();
 		tournamentStageRepository.delete(stage);
 		deleteOrphanedParticipants(tournamentId, participantIds);
@@ -55,8 +54,7 @@ public class TournamentStageAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public void importParticipants(@Valid ImportParticipantsForm importParticipantsForm) {
-		val stage = tournamentStageRepository.findById(importParticipantsForm.getStageId())
-				.orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		val stage = tournamentStageRepository.findById(importParticipantsForm.getStageId()).orElseThrow();
 		val stageParticipants = participantRepository.findByIdInOrderByName(Arrays.asList(stage.participantIdList()));
 		val stageParticipantsNames = stageParticipants.stream().map(Participant::name).toList();
 		val selectedParticipants = participantRepository
@@ -90,8 +88,7 @@ public class TournamentStageAdminService {
 	}
 
 	private void updateStage(@Valid StageForm stageForm) {
-		val stage = tournamentStageRepository.findById(stageForm.getStageId())
-				.orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		val stage = tournamentStageRepository.findById(stageForm.getStageId()).orElseThrow();
 		tournamentStageRepository.save(stage
 				.name(stageForm.getName())
 				.qualificationCount(stageForm.getQualificationCount()));

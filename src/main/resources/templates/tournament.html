@@ -69,7 +69,7 @@
                href="#" onclick="showUnlockModal()">unlock</a>
             it first to create tournament stages.
         </th:block>
-        <th:block th:if="${not model.adminUnlocked}">
+        <th:block th:if="${model.adminUnlocked}">
             You can now
             <a class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
                href="#" onclick="newTournamentStage()">create</a>

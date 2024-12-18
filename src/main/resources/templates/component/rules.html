@@ -10,7 +10,9 @@
                 <h6 class="fw-semibold">Scoring</h6>
                 <div class="mb-3" th:utext="#{'scoring.description.'+${model.scoring}}"></div>
                 <h6 class="fw-semibold">Description</h6>
-                <pre id="rulesDescription" class="mb-3" th:text="${model.description}">Rules description</pre>
+                <div id="rulesDescription" class="mb-3" style="white-space: pre-wrap;" th:text="${model.description}">
+                    Rules description
+                </div>
             </div>
         </div>
     </div>

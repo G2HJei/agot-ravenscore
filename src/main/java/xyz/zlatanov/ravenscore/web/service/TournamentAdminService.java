@@ -37,8 +37,7 @@ public class TournamentAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public UUID updateTournament(@Valid TournamentForm tournamentForm) {
-		val tournament = tournamentRepository.findById(tournamentForm.getId())
-				.orElseThrow(() -> new RavenscoreException("Invalid tournament"));
+		val tournament = tournamentRepository.findById(tournamentForm.getId()).orElseThrow();
 		tournamentRepository.save(tournament
 				.id(tourInfoService.getTournamentId())
 				.name(tournamentForm.getName())

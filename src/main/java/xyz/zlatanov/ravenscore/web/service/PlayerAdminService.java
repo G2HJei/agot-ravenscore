@@ -51,10 +51,9 @@ public class PlayerAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public void substitution(UUID stageId, UUID participantId, UUID substituteId) {
-		val oldParticipant = participantRepository.findById(participantId)
-				.orElseThrow(() -> new RavenscoreException("Invalid participant"));
+		val oldParticipant = participantRepository.findById(participantId).orElseThrow();
 
-		val substitute = substituteRepository.findById(substituteId).orElseThrow(() -> new RavenscoreException("Invalid substitute"));
+		val substitute = substituteRepository.findById(substituteId).orElseThrow();
 		val newParticipantId = participantRepository.save(new Participant()
 				.name(substitute.name())
 				.profileLinks(substitute.profileLinks()))
@@ -62,7 +61,7 @@ public class PlayerAdminService {
 		participantRepository.save(oldParticipant.replacementParticipantId(newParticipantId));
 		substituteRepository.deleteById(substituteId);
 
-		val stage = tournamentStageRepository.findById(stageId).orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		val stage = tournamentStageRepository.findById(stageId).orElseThrow();
 		tournamentStageRepository.save(stage.participantIdList(Utils.addToArray(newParticipantId, stage.participantIdList())));
 
 		var games = gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stageId);
@@ -111,16 +110,14 @@ public class PlayerAdminService {
 				new Participant()
 						.name(playerForm.getName().trim())
 						.profileLinks(trimEmpty(playerForm.getProfileLinks())));
-		val stage = tournamentStageRepository.findById(playerForm.getTournamentStageId())
-				.orElseThrow(() -> new RavenscoreException("Invalid tournament stage."));
+		val stage = tournamentStageRepository.findById(playerForm.getTournamentStageId()).orElseThrow();
 		val participantIdList = new TreeSet<>(List.of(stage.participantIdList()));
 		participantIdList.add(participant.id());
 		tournamentStageRepository.save(stage.participantIdList(participantIdList.toArray(new UUID[] {})));
 	}
 
 	private void updateParticipant(PlayerForm playerForm) {
-		val participant = participantRepository.findById(playerForm.getPlayerId())
-				.orElseThrow(() -> new RavenscoreException("Invalid participant"));
+		val participant = participantRepository.findById(playerForm.getPlayerId()).orElseThrow();
 		participantRepository.save(participant
 				.name(playerForm.getName().trim())
 				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
@@ -142,8 +139,7 @@ public class PlayerAdminService {
 	}
 
 	private void updateSubstitute(PlayerForm playerForm) {
-		val substitute = substituteRepository.findById(playerForm.getPlayerId())
-				.orElseThrow(() -> new RavenscoreException("Invalid substitute"));
+		val substitute = substituteRepository.findById(playerForm.getPlayerId()).orElseThrow();
 		substituteRepository.save(substitute
 				.name(playerForm.getName().trim())
 				.profileLinks(trimEmpty(playerForm.getProfileLinks())));
@@ -154,7 +150,7 @@ public class PlayerAdminService {
 			throw new RavenscoreException("Cannot remove participant that has been replaced.");
 		}
 		// find tour stages and games manually due to JPA and Postgres limitations on foreign key arrays
-		val stage = tournamentStageRepository.findById(stageId).orElseThrow(() -> new RavenscoreException("Invalid stage"));
+		val stage = tournamentStageRepository.findById(stageId).orElseThrow();
 		val games = gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stage.id());
 		if (participatesInGames(participant.id(), games)) {
 			throw new RavenscoreException("Cannot remove participant already involved in games.");

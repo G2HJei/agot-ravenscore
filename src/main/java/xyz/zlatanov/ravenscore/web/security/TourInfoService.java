@@ -38,7 +38,7 @@ public class TourInfoService {
 	}
 
 	public boolean tournamentIsUnlocked(UUID tournamentId) {
-		val tournament = tournamentRepository.findById(tournamentId).orElseThrow(() -> new RavenscoreException("Invalid tournament"));
+		val tournament = tournamentRepository.findById(tournamentId).orElseThrow();
 		return validateUnlockHash(tournament.tournamentKey(), getAdminCookie());
 	}
 
