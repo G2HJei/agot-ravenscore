@@ -7,8 +7,14 @@
 /*---------------
 # Layout
 -----------------*/
-@media (min-width: 960px) {
+@media (min-width: 1850px) {
     .container-rs {
+        max-width: 1850px !important;
+    }
+}
+
+@media (min-width: 960px) {
+    .container-rs-small {
         max-width: 960px !important;
     }
 }

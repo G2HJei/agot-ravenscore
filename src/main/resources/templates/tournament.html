@@ -81,54 +81,57 @@
         <div th:each="stage, stageIdx : ${model.tournamentStageModelList}"
              th:data-rs-stage-completed="${stage.completed}"
              th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
-
-            <!-- STAGE RANKINGS -->
-            <div class="d-flex justify-content-center align-items-center">
-                <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
-                        data-bs-title="Add player" onclick="newParticipant()"
-                        class="btn btn-outline-secondary btn-sm bi bi-plus-lg ms-1 me-2"></button>
-                <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
-                        data-bs-title="Import players qualifying from previous stages" onclick="importParticipants()"
-                        class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down me-auto"></button>
-                <h5 class="text-center">Stage Rankings</h5>
-                <div class="ms-auto"></div>
-            </div>
-            <div th:if="${stage.participantModelList.isEmpty()}"
-                 class="align-middle fst-italic fw-lighter text-center mb-5">
-                This tournament stage has no participants yet.
-                <th:block th:if="${model.adminUnlocked}">Please
-                    <a href="#" onclick="newParticipant()"
-                       class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add</a>
-                    or
-                    <a href="#" onclick="importParticipants()"
-                       class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">import</a>
-                    players.
-                </th:block>
-            </div>
-            <table class="table table-borderless table-hover mb-4" th:if="${not stage.participantModelList.isEmpty()}">
-                <thead>
-                <tr>
-                    <th scope="col" style="width: 5%"></th>
-                    <th scope="col" style="width: 30%">Player</th>
-                    <th scope="col" class="text-center">Score</th>
-                    <th scope="col" class="text-center">Games</th>
-                    <th scope="col" class="text-center">Wins</th>
-                    <th scope="col" class="text-center">Avg. points</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="participant, participantIdx: ${stage.participantModelList}"
-                    th:class="${participantIdx.index eq stage.qualificationCount ? 'border-top-brand' : ''}">
-                    <th th:if="${participant.id ne model.winnerParticipantId}" class="align-middle text-center"
-                        scope="row" th:text="${participantIdx.index+1}">#
-                    </th>
-                    <th th:if="${participant.id eq model.winnerParticipantId}" class="align-middle text-center"
-                        scope="row">
-                        <img th:src="@{'/crown-golden.png'}" alt="winner" class="pb-2" data-bs-toggle="tooltip"
-                             data-bs-title="Tournament winner"></th>
-                    <td>
-                        <div class="d-flex justify-content-start align-items-center action-container">
-                            <div>
+            <div class="row">
+                <div class="col-12 col-xxl-6">
+                    <!-- STAGE RANKINGS -->
+                    <div class="d-flex justify-content-center align-items-center">
+                        <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                                data-bs-title="Add player" onclick="newParticipant()"
+                                class="btn btn-outline-secondary btn-sm bi bi-plus-lg ms-1 me-2"></button>
+                        <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                                data-bs-title="Import players qualifying from previous stages"
+                                onclick="importParticipants()"
+                                class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down me-auto"></button>
+                        <h5 class="text-center">Stage Rankings</h5>
+                        <div class="ms-auto"></div>
+                    </div>
+                    <div th:if="${stage.participantModelList.isEmpty()}"
+                         class="align-middle fst-italic fw-lighter text-center mb-5">
+                        This tournament stage has no participants yet.
+                        <th:block th:if="${model.adminUnlocked}">Please
+                            <a href="#" onclick="newParticipant()"
+                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add</a>
+                            or
+                            <a href="#" onclick="importParticipants()"
+                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">import</a>
+                            players.
+                        </th:block>
+                    </div>
+                    <table class="table table-borderless table-hover mb-4"
+                           th:if="${not stage.participantModelList.isEmpty()}">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="width: 5%"></th>
+                            <th scope="col" style="width: 30%">Player</th>
+                            <th scope="col" class="text-center">Score</th>
+                            <th scope="col" class="text-center">Games</th>
+                            <th scope="col" class="text-center">Wins</th>
+                            <th scope="col" class="text-center">Avg. points</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="participant, participantIdx: ${stage.participantModelList}"
+                            th:class="${participantIdx.index eq stage.qualificationCount ? 'border-top-brand' : ''}">
+                            <th th:if="${participant.id ne model.winnerParticipantId}" class="align-middle text-center"
+                                scope="row" th:text="${participantIdx.index+1}">#
+                            </th>
+                            <th th:if="${participant.id eq model.winnerParticipantId}" class="align-middle text-center"
+                                scope="row">
+                                <img th:src="@{'/crown-golden.png'}" alt="winner" class="pb-2" data-bs-toggle="tooltip"
+                                     data-bs-title="Tournament winner"></th>
+                            <td>
+                                <div class="d-flex justify-content-start align-items-center action-container">
+                                    <div>
                                 <span class="participant-data"
                                       th:data-rs-stage-id="${stage.id}"
                                       th:data-rs-participant-id="${participant.id}"
@@ -137,298 +140,314 @@
                                     <i class="bi bi-person-fill"></i>
                                     <span th:text="${participant.name}">Petyr Baelish</span>
                                 </span>
-                                <span th:if="${participant.replacedLabel ne null}"
-                                      class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
-                                      data-bs-toggle="tooltip" th:data-bs-title="${participant.replacedLabel}"></span>
-                                <th:block th:each="link : ${participant.profileLinks}">
+                                        <span th:if="${participant.replacedLabel ne null}"
+                                              class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
+                                              data-bs-toggle="tooltip"
+                                              th:data-bs-title="${participant.replacedLabel}"></span>
+                                        <th:block th:each="link : ${participant.profileLinks}">
                                     <span th:if="${link.link eq null}"
                                           class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
                                           data-bs-toggle="tooltip" data-bs-title="Alias"
                                           th:text="' ' + ${link.label}">Handle</span>
-                                    <a th:if="${link.link ne null}" class="text-decoration-none"
-                                       th:href="link.link"
-                                       target="_blank">
+                                            <a th:if="${link.link ne null}" class="text-decoration-none"
+                                               th:href="link.link"
+                                               target="_blank">
                                         <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
                                               data-bs-toggle="tooltip"
                                               th:data-bs-title="${'External player profile: '+link.link}"
                                               th:text="'  ' + ${link.label}">Profile</span>
-                                    </a>
-                                </th:block>
-                                <i th:if="${model.adminUnlocked}"
-                                   class="bi bi-pencil-square visually-hidden action-icon"
-                                   data-bs-toggle="tooltip"
-                                   data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="align-middle text-center" th:if="${participant.penaltyPoints() eq 0}"
-                        th:text="${participant.points}">
-                        Points
-                    </td>
-                    <td class="align-middle text-center" th:if="${participant.penaltyPoints() ne 0}">
-                        <span th:text="${participant.points - participant.penaltyPoints}">Pts</span>&nbsp;
-                        <br/>
-                        <span class="text-muted fst-italic"
-                              th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen. pts.)'}">
+                                            </a>
+                                        </th:block>
+                                        <i th:if="${model.adminUnlocked}"
+                                           class="bi bi-pencil-square visually-hidden action-icon"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle text-center" th:if="${participant.penaltyPoints() eq 0}"
+                                th:text="${participant.points}">
+                                Points
+                            </td>
+                            <td class="align-middle text-center" th:if="${participant.penaltyPoints() ne 0}">
+                                <span th:text="${participant.points - participant.penaltyPoints}">Pts</span>&nbsp;
+                                <br/>
+                                <span class="text-muted fst-italic"
+                                      th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen. pts.)'}">
                             Pts with penalties
                         </span>
-                    </td>
-                    <td class="align-middle text-center" th:text="${participant.games}">Games</td>
-                    <td class="align-middle text-center" th:text="${participant.wins}" data-bs-toggle="tooltip"
-                        th:data-bs-title="${participant.cleanWins+' clean win(s)'}">
-                        Wins
-                    </td>
-                    <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
-                </tr>
-                </tbody>
-            </table>
+                            </td>
+                            <td class="align-middle text-center" th:text="${participant.games}">Games</td>
+                            <td class="align-middle text-center" th:text="${participant.wins}" data-bs-toggle="tooltip"
+                                th:data-bs-title="${participant.cleanWins+' clean win(s)'}">
+                                Wins
+                            </td>
+                            <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
+                        </tr>
+                        </tbody>
+                    </table>
 
-            <!-- SUBSTITUTES -->
-            <h6 class="fw-semibold">
-                <button th:if="${model.adminUnlocked}" type="button"
-                        class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-1"
-                        data-bs-toggle="tooltip" data-bs-title="Add substitute player"
-                        onclick="newSubstitute()"></button>
-                <button th:if="${model.adminUnlocked}" type="button"
-                        class="btn btn-sm btn-outline-secondary bi bi-arrow-down-up mx-2"
-                        data-bs-toggle="tooltip" data-bs-title="Make substitution"
-                        onclick="showSubstitutionModal()"></button>
-                Substitute players
-            </h6>
-            <div th:if="${model.substituteModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">
-                The tournament has no substitutes.
-            </div>
-            <div class="row stage-substitutes" th:data-rs-stage-id="${stage.id}">
-                <div class="col-4 col-lg-3 action-container mb-3" th:each="substitute : ${model.substituteModelList}">
+                    <!-- SUBSTITUTES -->
+                    <h6 class="fw-semibold">
+                        <button th:if="${model.adminUnlocked}" type="button"
+                                class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-1"
+                                data-bs-toggle="tooltip" data-bs-title="Add substitute player"
+                                onclick="newSubstitute()"></button>
+                        <button th:if="${model.adminUnlocked}" type="button"
+                                class="btn btn-sm btn-outline-secondary bi bi-arrow-down-up mx-2"
+                                data-bs-toggle="tooltip" data-bs-title="Make substitution"
+                                onclick="showSubstitutionModal()"></button>
+                        Substitute players
+                    </h6>
+                    <div th:if="${model.substituteModelList.isEmpty()}"
+                         class="align-middle fst-italic fw-lighter text-center">
+                        The tournament has no substitutes.
+                    </div>
+                    <div class="row stage-substitutes" th:data-rs-stage-id="${stage.id}">
+                        <div class="col-4 col-lg-3 action-container mb-3"
+                             th:each="substitute : ${model.substituteModelList}">
                     <span class="substitute-data"
                           th:data-rs-substitute-id="${substitute.id}"
                           th:data-rs-substitute-name="${substitute.name}">
                         <i class="bi bi-person-fill"></i>
                         <span th:text="${substitute.name}">Sub Name</span>
                     </span>&nbsp;
-                    <i th:if="${model.adminUnlocked}"
-                       class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
-                       data-bs-toggle="tooltip" data-bs-title="Edit/remove" onclick="editSubstitute(this)"></i>
-                    <br/>
-                    <th:block th:each="link : ${substitute.profileLinks}">
+                            <i th:if="${model.adminUnlocked}"
+                               class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
+                               data-bs-toggle="tooltip" data-bs-title="Edit/remove" onclick="editSubstitute(this)"></i>
+                            <br/>
+                            <th:block th:each="link : ${substitute.profileLinks}">
                         <span th:if="${link.link eq null}"
                               class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
                               data-bs-toggle="tooltip" data-bs-title="Alias"
                               th:text="' ' + ${link.label}">Handle</span>
-                        <a th:if="${link.link ne null}" class="text-decoration-none"
-                           th:href="link.link"
-                           target="_blank">
+                                <a th:if="${link.link ne null}" class="text-decoration-none"
+                                   th:href="link.link"
+                                   target="_blank">
                          <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
                                data-bs-toggle="tooltip"
                                th:data-bs-title="${'External player profile: '+link.link}"
                                th:text="'  ' + ${link.label}">Profile</span>
-                        </a>
-                    </th:block>
+                                </a>
+                            </th:block>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- STAGE GAMES -->
-            <h5 class="d-flex justify-content-center align-items-center mt-5">
-                <button th:if="${model.adminUnlocked}" type="button"
-                        class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-1 me-auto"
-                        data-bs-toggle="tooltip" data-bs-title="Create new game"
-                        onclick="newGame()"></button>
-                <span>Games</span>
-                <span class="ms-auto"></span>
-            </h5>
-            <div th:if="${stage.gameModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">This
-                tournament stage has no games yet.
-                <th:block th:if="${model.adminUnlocked}">
-                    Why not
-                    <a href="#" onclick="newGame()"
-                       class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
-                        one</a> now?
-                </th:block>
-            </div>
-            <div class="accordion accordion-flush" th:id="${'accordionGames-'+stageIdx.index}">
-                <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
-                    <h6 class="accordion-header highlight-primary">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
-                                aria-controls="flush-collapse">
-                            <span class="text-muted" th:text="${game.type.shortname}">Type</span>&nbsp;
-                            <span th:text="${game.name}">Name</span>&nbsp;
-                            <span th:if="${not game.completed}" th:text="${'(Round '+game.round+')'}"
-                                  th:class="${'text-muted fst-italic round-label '+(game.round eq null? 'visually-hidden' : '')}">
+                <!-- STAGE GAMES -->
+                <div class="col-12 col-xxl-6">
+                    <h5 class="d-flex justify-content-center align-items-center mt-5 mt-lg-0">
+                        <button th:if="${model.adminUnlocked}" type="button"
+                                class="btn btn-sm btn-outline-secondary bi bi-plus-lg ms-1 me-auto"
+                                data-bs-toggle="tooltip" data-bs-title="Create new game"
+                                onclick="newGame()"></button>
+                        <span>Games</span>
+                        <span class="ms-auto"></span>
+                    </h5>
+                    <div th:if="${stage.gameModelList.isEmpty()}"
+                         class="align-middle fst-italic fw-lighter text-center">
+                        This
+                        tournament stage has no games yet.
+                        <th:block th:if="${model.adminUnlocked}">
+                            Why not
+                            <a href="#" onclick="newGame()"
+                               class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
+                                one</a> now?
+                        </th:block>
+                    </div>
+                    <div class="accordion accordion-flush" th:id="${'accordionGames-'+stageIdx.index}">
+                        <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
+                            <h6 class="accordion-header highlight-primary">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
+                                        aria-controls="flush-collapse">
+                                    <span class="text-muted" th:text="${game.type.shortname}">Type</span>&nbsp;
+                                    <span th:text="${game.name}">Name</span>&nbsp;
+                                    <span th:if="${not game.completed}" th:text="${'(Round '+game.round+')'}"
+                                          th:class="${'text-muted fst-italic round-label '+(game.round eq null? 'visually-hidden' : '')}">
                                 (Round #)
                             </span>
-                            <span th:if="${game.completed}" class="text-muted fst-italic">(Completed)</span>
-                        </button>
-                    </h6>
-                    <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
-                         th:data-rs-stage-id="${stage.id}"
-                         th:data-rs-game-id="${game.id}"
-                         th:data-rs-game-name="${game.name}"
-                         th:data-rs-game-link="${game.link}"
-                         th:data-rs-game-type="${game.type}"
-                         th:data-rs-game-completed="${game.completed}"
-                         th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
-                        <div class="accordion-body ms-3">
-                            <div class="d-flex justify-content-start gap-3 w-100">
-                                <div>
-                                    <div th:if="${not model.adminUnlocked}" class=""></div>
-                                    <div th:if="${model.adminUnlocked}"
-                                         class="d-flex justify-content-center gap-2 position-relative">
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
-                                                data-bs-toggle="tooltip" data-bs-title="Modify game details"
-                                                onclick="editGame()"></button>
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
-                                                data-bs-toggle="tooltip" data-bs-title="Update game rankings"
-                                                onclick="updateRanking()"></button>
-                                        <select th:id="${'game-round-'+game.id}" name="type" class="form-select"
-                                                data-bs-toggle="tooltip" data-bs-title="Change current round"
-                                                aria-label="Select round" onchange="updateRound(this)">
-                                            <option th:selected="${game.round eq null}" value="0">Not started
-                                            </option>
-                                            <option th:each="roundNb : ${#numbers.sequence(1, (game.type.toString() eq 'A_DANCE_WITH_DRAGONS' ? 6 : 10))}"
-                                                    th:value="${roundNb}" th:text="${'Round '+roundNb}"
-                                                    th:selected="${game.round eq roundNb}">
-                                                Round #1
-                                            </option>
-                                        </select>
-                                        <i th:id="${'round-change-indicator-'+game.id}"
-                                           class="bi bi-check-lg fs-4 text-brand visually-hidden"
-                                           style="position:absolute; left: 103%; "></i>
-                                    </div>
-                                    <div class="card mt-3" style="width: 15rem; position: relative; overflow: hidden;">
-                                        <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
-                                             class="card-img-top" alt="Background">
-                                        <div class="card-body">
-                                            <a th:if="${game.link ne null}" th:href="${game.link}" target="_blank"
-                                               class="stretched-link"></a>
-                                            <h5 class="card-title text-center text-brand"
-                                                th:text="${game.type.longName}">
-                                                Game
-                                                type</h5>
-                                            <span th:if="${game.link ne null}"
-                                                  class="d-flex justify-content-center text-muted">Go to game
+                                    <span th:if="${game.completed}" class="text-muted fst-italic">(Completed)</span>
+                                </button>
+                            </h6>
+                            <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
+                                 th:data-rs-stage-id="${stage.id}"
+                                 th:data-rs-game-id="${game.id}"
+                                 th:data-rs-game-name="${game.name}"
+                                 th:data-rs-game-link="${game.link}"
+                                 th:data-rs-game-type="${game.type}"
+                                 th:data-rs-game-completed="${game.completed}"
+                                 th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
+                                <div class="accordion-body ms-3">
+                                    <div class="d-flex justify-content-start gap-3 w-100">
+                                        <div>
+                                            <div th:if="${not model.adminUnlocked}" class=""></div>
+                                            <div th:if="${model.adminUnlocked}"
+                                                 class="d-flex justify-content-center gap-2 position-relative">
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
+                                                        data-bs-toggle="tooltip" data-bs-title="Modify game details"
+                                                        onclick="editGame()"></button>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
+                                                        data-bs-toggle="tooltip" data-bs-title="Update game rankings"
+                                                        onclick="updateRanking()"></button>
+                                                <select th:id="${'game-round-'+game.id}" name="type" class="form-select"
+                                                        data-bs-toggle="tooltip" data-bs-title="Change current round"
+                                                        aria-label="Select round" onchange="updateRound(this)">
+                                                    <option th:selected="${game.round eq null}" value="0">Not started
+                                                    </option>
+                                                    <option th:each="roundNb : ${#numbers.sequence(1, (game.type.toString() eq 'A_DANCE_WITH_DRAGONS' ? 6 : 10))}"
+                                                            th:value="${roundNb}" th:text="${'Round '+roundNb}"
+                                                            th:selected="${game.round eq roundNb}">
+                                                        Round #1
+                                                    </option>
+                                                </select>
+                                                <i th:id="${'round-change-indicator-'+game.id}"
+                                                   class="bi bi-check-lg fs-4 text-brand visually-hidden"
+                                                   style="position:absolute; left: 103%; "></i>
+                                            </div>
+                                            <div class="card mt-3"
+                                                 style="width: 15rem; position: relative; overflow: hidden;">
+                                                <img th:src="@{'/cards/'+${game.type}+'.jpg'}"
+                                                     class="card-img-top" alt="Background">
+                                                <div class="card-body">
+                                                    <a th:if="${game.link ne null}" th:href="${game.link}"
+                                                       target="_blank"
+                                                       class="stretched-link"></a>
+                                                    <h5 class="card-title text-center text-brand"
+                                                        th:text="${game.type.longName}">
+                                                        Game
+                                                        type</h5>
+                                                    <span th:if="${game.link ne null}"
+                                                          class="d-flex justify-content-center text-muted">Go to game
                                             </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="w-100">
-                                    <div th:class="${game.playersRevealed ? 'visually-hidden' : ''}">
-                                        <h6 class="text-center mt-1 mb-4">Participants</h6>
-                                        <div th:if="${game.participantIdList.isEmpty()}"
-                                             class="align-middle fst-italic fw-lighter text-center">
-                                            There are no known participants in this game.
-                                        </div>
-                                        <div class="row mb-3">
-                                            <th:block th:each="participant : ${stage.participantModelList}">
-                                                <th:block th:if="${game.participantIdList.contains(participant.id)}">
-                                                    <div class="col-4 mb-3">
+                                        <div class="w-100">
+                                            <div th:class="${game.playersRevealed ? 'visually-hidden' : ''}">
+                                                <h6 class="text-center mt-1 mb-4">Participants</h6>
+                                                <div th:if="${game.participantIdList.isEmpty()}"
+                                                     class="align-middle fst-italic fw-lighter text-center">
+                                                    There are no known participants in this game.
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <th:block th:each="participant : ${stage.participantModelList}">
+                                                        <th:block
+                                                                th:if="${game.participantIdList.contains(participant.id)}">
+                                                            <div class="col-4 mb-3">
                                                         <span class="game-participant-data"
                                                               th:data-rs-participant-name="${participant.name}"
                                                               th:data-rs-participant-id="${participant.id}">
                                                             <i class="bi bi-person-fill"></i>
                                                             <span th:text="${participant.name}">Stark</span></span>
-                                                        <br/>
-                                                        <span th:if="${participant.replacedLabel ne null}"
-                                                              class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
-                                                              data-bs-toggle="tooltip"
-                                                              th:data-bs-title="${participant.replacedLabel}"></span>
-                                                        <th:block th:each="link : ${participant.profileLinks}">
+                                                                <br/>
+                                                                <span th:if="${participant.replacedLabel ne null}"
+                                                                      class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
+                                                                      data-bs-toggle="tooltip"
+                                                                      th:data-bs-title="${participant.replacedLabel}"></span>
+                                                                <th:block th:each="link : ${participant.profileLinks}">
                                                         <span th:if="${link.link eq null}"
                                                               class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill"
                                                               data-bs-toggle="tooltip"
                                                               data-bs-title="Alias"
                                                               th:text="' ' + ${link.label}">Handle</span>
-                                                            <a th:if="${link.link ne null}" class="text-decoration-none"
-                                                               th:href="link.link"
-                                                               target="_blank">
+                                                                    <a th:if="${link.link ne null}"
+                                                                       class="text-decoration-none"
+                                                                       th:href="link.link"
+                                                                       target="_blank">
                                                         <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right"
                                                               data-bs-toggle="tooltip"
                                                               th:data-bs-title="${'External player profile: '+link.link}"
                                                               th:text="'  ' + ${link.label}">Profile</span>
-                                                            </a>
+                                                                    </a>
+                                                                </th:block>
+                                                            </div>
                                                         </th:block>
-                                                    </div>
-                                                </th:block>
-                                            </th:block>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h6 class="text-center">Game Rankings</h6>
-                                        <table class="table table-borderless table-hover">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col"></th>
-                                                <th scope="col">Player</th>
-                                                <th scope="col" class="text-center">Points</th>
-                                                <th scope="col" class="text-center">Castles</th>
-                                                <th scope="col" class="text-center">Penalty pts.</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="player, playerIdx: ${game.playerModelList}" class="player-data"
-                                                th:data-rs-player-id="${player.id}"
-                                                th:data-rs-player-name="${player.name}"
-                                                th:data-rs-player-house="${player.house}"
-                                                th:data-rs-player-castles="${player.castles}"
-                                                th:data-rs-player-points="${player.score}"
-                                                th:data-rs-player-penalty-points="${player.penaltyPoints}"
-                                                th:data-rs-player-participant-id="${player.participantId}">
-                                                <th th:if="${not game.completed or playerIdx.index gt 0}"
-                                                    class="align-middle text-center" scope="row"
-                                                    th:text="${playerIdx.index+1}">
-                                                    #
-                                                </th>
-                                                <th th:if="${game.completed and playerIdx.index eq 0}"
-                                                    class="align-middle text-center" scope="row">
-                                                    <img th:src="@{'/crown.png'}" alt="winner" class="pb-2"
-                                                         data-bs-toggle="tooltip" data-bs-title="Winner">
-                                                </th>
-                                                <td>
-                                                    <div class="d-flex justify-content-start align-items-center">
-                                                        <img th:src="@{'/houses/'+${(player.house eq 'Stark' and game.type.toString() eq 'A_DANCE_WITH_DRAGONS' ? 'Bolton' : player.house)}+'.png'}"
-                                                             alt="house icon" style="max-height: 2.25rem">&nbsp;
-                                                        <div class="ms-3">
+                                                    </th:block>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-center">Game Rankings</h6>
+                                                <table class="table table-borderless table-hover">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col"></th>
+                                                        <th scope="col">Player</th>
+                                                        <th scope="col" class="text-center">Points</th>
+                                                        <th scope="col" class="text-center">Castles</th>
+                                                        <th scope="col" class="text-center">Penalty pts.</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="player, playerIdx: ${game.playerModelList}"
+                                                        class="player-data"
+                                                        th:data-rs-player-id="${player.id}"
+                                                        th:data-rs-player-name="${player.name}"
+                                                        th:data-rs-player-house="${player.house}"
+                                                        th:data-rs-player-castles="${player.castles}"
+                                                        th:data-rs-player-points="${player.score}"
+                                                        th:data-rs-player-penalty-points="${player.penaltyPoints}"
+                                                        th:data-rs-player-participant-id="${player.participantId}">
+                                                        <th th:if="${not game.completed or playerIdx.index gt 0}"
+                                                            class="align-middle text-center" scope="row"
+                                                            th:text="${playerIdx.index+1}">
+                                                            #
+                                                        </th>
+                                                        <th th:if="${game.completed and playerIdx.index eq 0}"
+                                                            class="align-middle text-center" scope="row">
+                                                            <img th:src="@{'/crown.png'}" alt="winner" class="pb-2"
+                                                                 data-bs-toggle="tooltip" data-bs-title="Winner">
+                                                        </th>
+                                                        <td>
+                                                            <div class="d-flex justify-content-start align-items-center">
+                                                                <img th:src="@{'/houses/'+${(player.house eq 'Stark' and game.type.toString() eq 'A_DANCE_WITH_DRAGONS' ? 'Bolton' : player.house)}+'.png'}"
+                                                                     alt="house icon" style="max-height: 2.25rem">&nbsp;
+                                                                <div class="ms-3">
                                                             <span th:text="${player.name}"
                                                                   th:class="${player.profileLinks.isEmpty() ? 'text-muted' : ''}">
                                                                 Lannister
                                                             </span>
-                                                            <br/>
-                                                            <span th:if="${player.replacedLabel ne null}"
-                                                                  class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
-                                                                  data-bs-toggle="tooltip"
-                                                                  th:data-bs-title="${player.replacedLabel}"></span>
-                                                            <th:block th:each="link : ${player.profileLinks}">
+                                                                    <br/>
+                                                                    <span th:if="${player.replacedLabel ne null}"
+                                                                          class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
+                                                                          data-bs-toggle="tooltip"
+                                                                          th:data-bs-title="${player.replacedLabel}"></span>
+                                                                    <th:block th:each="link : ${player.profileLinks}">
                                                                 <span th:if="${link.link eq null}"
                                                                       class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill"
                                                                       data-bs-toggle="tooltip" data-bs-title="Alias"
                                                                       th:text="' ' + ${link.label}">Handle</span>
-                                                                <a th:if="${link.link ne null}"
-                                                                   class="text-decoration-none"
-                                                                   th:href="link.link"
-                                                                   target="_blank">
+                                                                        <a th:if="${link.link ne null}"
+                                                                           class="text-decoration-none"
+                                                                           th:href="link.link"
+                                                                           target="_blank">
                                                                 <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right"
                                                                       data-bs-toggle="tooltip"
                                                                       th:data-bs-title="${'External player profile: '+link.link}"
                                                                       th:text="'  ' + ${link.label}">Profile</span>
-                                                                </a>
-                                                            </th:block>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle text-center" th:text="${player.score}">
-                                                    Points
-                                                </td>
-                                                <td class="align-middle text-center" th:text="${player.castles}">
-                                                    Castles
-                                                </td>
-                                                <td class="align-middle text-center" th:text="${player.penaltyPoints}">
-                                                    Penalty pts.
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                                                        </a>
+                                                                    </th:block>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="align-middle text-center" th:text="${player.score}">
+                                                            Points
+                                                        </td>
+                                                        <td class="align-middle text-center"
+                                                            th:text="${player.castles}">
+                                                            Castles
+                                                        </td>
+                                                        <td class="align-middle text-center"
+                                                            th:text="${player.penaltyPoints}">
+                                                            Penalty pts.
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

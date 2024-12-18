@@ -5,70 +5,75 @@
       layout:decorate="~{layout/layout}">
 <body>
 <main layout:fragment="content" th:with="routing = ${T(xyz.zlatanov.ravenscore.web.ControllerConstants)}">
-    <div class="d-flex justify-content-start align-items-center mt-5">
-        <img th:src="@{'/logo.png'}" style="max-width: 50%; height: 24rem" alt="Logo"
-             class="d-inline-block align-text-top">
-        <div class="me-3">
-            <p> Welcome my Lord,</p>
-            <p> In Ravenscore, you can create, manage and participate in tournaments of the classic
-                board game <a
-                        href="https://www.fantasyflightgames.com/en/products/a-game-of-thrones-the-board-game-second-edition/"
-                        class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">A
-                    Game of Thrones: Second Edition</a> by <a href="https://www.fantasyflightgames.com/"
-                                                              class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Fantasy
-                    Flight Games</a>. Ravenscore is free, so you can host, manage or just observe any tournament here.
-            </p>
-            <p class="mb-4">Good luck!</p>
-            <hr/>
-            <figure>
-                <blockquote class="blockquote fs-6 fst-italic fw-light">
-                    <p class="mb-1">“Always keep your foes confused. If they are never certain who you are or what you
-                        want, they cannot know what you are like to do next. Sometimes the best way to baffle them is to
-                        make
-                        moves that have no purpose, or even seem to work against you. Remember that, Sansa, when you
-                        come to
-                        play the game.”</p>
-                    <p class="mb-1">“What... what game?”</p>
-                    <p class="mb-1">“The only game. The game of thrones.”</p>
-                </blockquote>
-                <figcaption class="blockquote-footer text-end">
-                    "A Storm of Swords"&nbsp;<cite title="A Storm of Swords">(George R. R. Martin)</cite>
-                </figcaption>
-            </figure>
-        </div>
-    </div>
-    <h3 class="text-center mt-4 mb-3">Tournaments</h3>
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-3 d-flex justify-content-center mb-3">
-            <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
-                <img th:src="@{'/cards/bg-new.jpg'}" class="card-img-top" alt="Background">
-                <div class="card-body">
-                    <a href="#" class="stretched-link" data-bs-toggle="modal" onclick="newTournament()"></a>
-                    <h5 class="card-title text-brand text-center">New Tournament</h5>
-                    <p class="card-text text-muted text-center"> Host a new Game of Thrones tournament</p>
-                    <div class="ms-auto"></div>
-                </div>
+    <div class="container container-rs-small">
+        <div class="d-flex justify-content-start align-items-center mt-5">
+            <img th:src="@{'/logo.png'}" style="max-width: 50%; height: 24rem" alt="Logo"
+                 class="d-inline-block align-text-top">
+            <div class="me-3">
+                <p> Welcome my Lord,</p>
+                <p> In Ravenscore, you can create, manage and participate in tournaments of the classic
+                    board game <a
+                            href="https://www.fantasyflightgames.com/en/products/a-game-of-thrones-the-board-game-second-edition/"
+                            class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">A
+                        Game of Thrones: Second Edition</a> by <a href="https://www.fantasyflightgames.com/"
+                                                                  class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Fantasy
+                        Flight Games</a>. Ravenscore is free, so you can host, manage or just observe any tournament
+                    here.
+                </p>
+                <p class="mb-4">Good luck!</p>
+                <hr/>
+                <figure>
+                    <blockquote class="blockquote fs-6 fst-italic fw-light">
+                        <p class="mb-1">“Always keep your foes confused. If they are never certain who you are or what
+                            you
+                            want, they cannot know what you are like to do next. Sometimes the best way to baffle them
+                            is to
+                            make
+                            moves that have no purpose, or even seem to work against you. Remember that, Sansa, when you
+                            come to
+                            play the game.”</p>
+                        <p class="mb-1">“What... what game?”</p>
+                        <p class="mb-1">“The only game. The game of thrones.”</p>
+                    </blockquote>
+                    <figcaption class="blockquote-footer text-end">
+                        "A Storm of Swords"&nbsp;<cite title="A Storm of Swords">(George R. R. Martin)</cite>
+                    </figcaption>
+                </figure>
             </div>
         </div>
-        <div th:each="tourney : ${tourneysList}" class="col-12 col-lg-3 d-flex justify-content-center mb-3">
-            <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
-                <img th:src="@{'/cards/bg-'+${tourney.backgroundNumber}+'.jpg'}"
-                     class="card-img-top" alt="Background">
-                <div class="card-body">
-                    <a th:href="@{${routing.TOURNAMENT_DETAILS.replace('{tournamentId}', tourney.id)}}"
-                       class="stretched-link"></a>
-                    <h5 class="card-title text-center">
-                        <i th:if="${tourney.pinned}" class="bi bi-pin-angle fs-4 text-muted"></i>
-                        <span class="text-brand" th:text="${tourney.name}">Tourney name</span>
-                    </h5>
-                    <p class="card-text text-muted text-center"
-                       th:text="${tourney.numberOfParticipants + ' participants'}">
-                        Participants</p>
-                    <p class="card-text text-center">
-                        <span th:text="${tourney.statusLabel}"></span>
-                        <br/>
-                        <span class="text-muted text-nowrap" th:text="${tourney.statusDate}"></span>
-                    </p>
+        <h3 class="text-center mt-4 mb-3">Tournaments</h3>
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-3 d-flex justify-content-center mb-3">
+                <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
+                    <img th:src="@{'/cards/bg-new.jpg'}" class="card-img-top" alt="Background">
+                    <div class="card-body">
+                        <a href="#" class="stretched-link" data-bs-toggle="modal" onclick="newTournament()"></a>
+                        <h5 class="card-title text-brand text-center">New Tournament</h5>
+                        <p class="card-text text-muted text-center"> Host a new Game of Thrones tournament</p>
+                        <div class="ms-auto"></div>
+                    </div>
+                </div>
+            </div>
+            <div th:each="tourney : ${tourneysList}" class="col-12 col-lg-3 d-flex justify-content-center mb-3">
+                <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
+                    <img th:src="@{'/cards/bg-'+${tourney.backgroundNumber}+'.jpg'}"
+                         class="card-img-top" alt="Background">
+                    <div class="card-body">
+                        <a th:href="@{${routing.TOURNAMENT_DETAILS.replace('{tournamentId}', tourney.id)}}"
+                           class="stretched-link"></a>
+                        <h5 class="card-title text-center">
+                            <i th:if="${tourney.pinned}" class="bi bi-pin-angle fs-4 text-muted"></i>
+                            <span class="text-brand" th:text="${tourney.name}">Tourney name</span>
+                        </h5>
+                        <p class="card-text text-muted text-center"
+                           th:text="${tourney.numberOfParticipants + ' participants'}">
+                            Participants</p>
+                        <p class="card-text text-center">
+                            <span th:text="${tourney.statusLabel}"></span>
+                            <br/>
+                            <span class="text-muted text-nowrap" th:text="${tourney.statusDate}"></span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
