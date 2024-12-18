@@ -286,7 +286,7 @@
                                                 aria-label="Select round" onchange="updateRound(this)">
                                             <option th:selected="${game.round eq null}" value="0">Not started
                                             </option>
-                                            <option th:each="roundNb : ${#numbers.sequence(1, (game.type.toString() eq 'A_FEAST_FOR_CROWS' ? 6 : 10))}"
+                                            <option th:each="roundNb : ${#numbers.sequence(1, (game.type.toString() eq 'A_DANCE_WITH_DRAGONS' ? 6 : 10))}"
                                                     th:value="${roundNb}" th:text="${'Round '+roundNb}"
                                                     th:selected="${game.round eq roundNb}">
                                                 Round #1
