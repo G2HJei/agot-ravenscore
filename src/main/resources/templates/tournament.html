@@ -14,6 +14,14 @@
                 class="btn btn-sm btn-outline-secondary bi bi-pencil-fill ms-2"
                 data-bs-toggle="tooltip" data-bs-title="Modify tournament details"
                 onclick="editTournament()"></button>
+        <button th:if="${not model.adminUnlocked}" type="button"
+                class="btn btn-sm btn-outline-secondary bi bi-key-fill ms-2 me-2"
+                data-bs-toggle="tooltip" data-bs-title="Unlock tournament administration"
+                onclick="showUnlockModal()"></button>
+        <button th:if="${model.adminUnlocked}" type="button"
+                class="btn btn-sm btn-outline-secondary bi bi-unlock-fill ms-2"
+                data-bs-toggle="tooltip" data-bs-title="Tournament administration is unlocked. Click to lock it."
+                onclick="lockAdmin()"></button>
     </div>
     <div th:if="${error ne null}" class="alert alert-danger text-center" role="alert" th:text="${error}">
         Error message
@@ -22,28 +30,20 @@
 
     <!-- NAVIGATION ROW -->
     <div class="d-flex justify-content-center align-items-center mb-3">
-        <button th:if="${not model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-key-fill ms-1 me-2"
-                data-bs-toggle="tooltip" data-bs-title="Unlock tournament administration"
-                onclick="showUnlockModal()"></button>
-        <button th:if="${model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-unlock-fill ms-1 me-2"
-                data-bs-toggle="tooltip" data-bs-title="Tournament administration is unlocked. Click to lock it."
-                onclick="lockAdmin()"></button>
         <!-- todo -->
         <button th:if="${model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-download ms-1 me-2 visually-hidden"
                 data-bs-toggle="tooltip" data-bs-title="Download tournament data"
                 onclick="downloadCSV()"></button>
-        <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-2"
+        <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-3"
                 data-bs-toggle="tooltip" data-bs-title="Show tournament rules & details"
                 onclick="showRulesModal()"></button>
-        <button th:if="${model.adminUnlocked}" type="button" class="btn btn-sm btn-outline-secondary bi bi-plus-lg me-3"
+        <button th:if="${model.adminUnlocked}" type="button" class="btn btn-sm btn-outline-secondary bi bi-plus-lg me-2"
                 data-bs-toggle="tooltip" data-bs-title="Create new tournament stage"
                 onclick="newTournamentStage()"></button>
         <button th:if="${model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-pencil-fill me-2"
-                data-bs-toggle="tooltip" data-bs-title="Modify tournament stage"
+                data-bs-toggle="tooltip" data-bs-title="Modify selected tournament stage"
                 onclick="editTournamentStage()"></button>
         <ul id="stageNav" class="nav nav-underline mb-3" role="tablist">
             <li class="nav-item" role="presentation" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
@@ -253,7 +253,7 @@
                                 aria-controls="flush-collapse">
                             <span class="text-muted" th:text="${game.type.shortname}">Type</span>&nbsp;
                             <span th:text="${game.name}">Name</span>&nbsp;
-                            <span th:if="${not game.completed}" th:text="${'(round '+game.round+')'}"
+                            <span th:if="${not game.completed}" th:text="${'(Round '+game.round+')'}"
                                   th:class="${'text-muted fst-italic round-label '+(game.round eq null? 'visually-hidden' : '')}">
                                 (Round #)
                             </span>
