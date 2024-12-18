@@ -52,7 +52,7 @@
                    th:data-rs-stage-name="${stage.name}"
                    th:data-rs-stage-qualification-count="${stage.qualificationCount}"
                    data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}">
-                    <i th:if="${stage.completed}" class="bi bi-check"></i>
+                    <i th:if="${stage.completed}" class="bi bi-check-lg"></i>
                     <span th:text="${stage.name}">
                         Stage
                     </span>
