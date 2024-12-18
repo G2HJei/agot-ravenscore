@@ -175,7 +175,10 @@
                         </span>
                     </td>
                     <td class="align-middle text-center" th:text="${participant.games}">Games</td>
-                    <td class="align-middle text-center" th:text="${participant.wins}">Wins</td>
+                    <td class="align-middle text-center" th:text="${participant.wins}" data-bs-toggle="tooltip"
+                        th:data-bs-title="${participant.cleanWins+' clean wins'}">
+                        Wins
+                    </td>
                     <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
                 </tr>
                 </tbody>

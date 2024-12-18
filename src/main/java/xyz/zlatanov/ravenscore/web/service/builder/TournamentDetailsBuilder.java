@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.model.tourdetails;
+package xyz.zlatanov.ravenscore.web.service.builder;
 
 import static java.math.RoundingMode.UP;
 import static xyz.zlatanov.ravenscore.Utils.*;
@@ -9,6 +9,7 @@ import java.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.domain.*;
+import xyz.zlatanov.ravenscore.web.model.tourdetails.*;
 
 @RequiredArgsConstructor
 public class TournamentDetailsBuilder {
@@ -81,6 +82,7 @@ public class TournamentDetailsBuilder {
 					val completedGames = games.stream().filter(Game::completed).toList().size();
 					val points = new PlayerPointsCalculator(games, players).calculatePoints();
 					val penaltyPoints = players.stream().map(Player::penaltyPoints).reduce(Integer::sum).orElse(0);
+					val participantWins = calculateWins(participant.id(), gameList);
 					return new ParticipantModel()
 							.id(participant.id().toString())
 							.name(participant.name())
@@ -89,14 +91,24 @@ public class TournamentDetailsBuilder {
 							.games(completedGames)
 							.points(points)
 							.penaltyPoints(penaltyPoints)
-							.wins(calculateWins(participant.id(), gameList))
+							.wins(participantWins.size())
+							.cleanWins((int) participantWins.stream().filter(GameWin::clean).count())
 							.avgPoints(completedGames == 0 ? null
 									: DECIMAL_FORMATTER
 											.format(BigDecimal.valueOf(points - penaltyPoints)
 													.divide(BigDecimal.valueOf(completedGames), 2, UP)));
 				})
-				.sorted((o1, o2) -> -o1.score().compareTo(o2.score()))
-				.toList();
+				.sorted((o1, o2) -> {
+					int scoreComparison = -o1.score().compareTo(o2.score());
+					if (scoreComparison != 0) {
+						return scoreComparison;
+					}
+					int winsComparison = Integer.compare(o2.wins(), o1.wins());
+					if (winsComparison != 0) {
+						return winsComparison;
+					}
+					return Integer.compare(o2.cleanWins(), o1.cleanWins());
+				}).toList();
 	}
 
 	private List<GameModel> getGames(UUID stageId) {
@@ -185,7 +197,7 @@ public class TournamentDetailsBuilder {
 		return new ArrayList<>();
 	}
 
-	private Integer calculateWins(UUID participantId, List<Game> gameList) {
+	private List<GameWin> calculateWins(UUID participantId, List<Game> gameList) {
 		return gameList.stream()
 				.filter(Game::completed)
 				.map(game -> {
@@ -193,11 +205,14 @@ public class TournamentDetailsBuilder {
 							.filter(p -> p.gameId().equals(game.id()))
 							.sorted((o1, o2) -> -o1.points().compareTo(o2.points()))
 							.toList();
-					return !players.isEmpty() && players.getFirst().participantId().equals(participantId);
+					val winner = players.getFirst();
+					val second = players.get(1);
+					return winner.participantId().equals(participantId)
+							? new GameWin().clean(winner.castles() > second.castles())
+							: null;
 				})
-				.map(winner -> winner ? 1 : 0)
-				.reduce(Integer::sum)
-				.orElse(0);
+				.filter(Objects::nonNull)
+				.toList();
 	}
 
 	private String getWinnerId(List<TournamentStageModel> tournamentStageModelList) {

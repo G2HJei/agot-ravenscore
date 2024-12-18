@@ -12,9 +12,9 @@ import lombok.val;
 import xyz.zlatanov.ravenscore.domain.domain.Game;
 import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.*;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.TournamentDetailsBuilder;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.TournamentDetailsModel;
 import xyz.zlatanov.ravenscore.web.security.TourInfoService;
+import xyz.zlatanov.ravenscore.web.service.builder.TournamentDetailsBuilder;
 
 @Service
 @RequiredArgsConstructor

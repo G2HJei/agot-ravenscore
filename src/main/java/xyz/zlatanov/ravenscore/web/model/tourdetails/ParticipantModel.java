@@ -18,6 +18,7 @@ public class ParticipantModel {
 	private Integer				points;
 	private Integer				penaltyPoints;
 	private Integer				wins;
+	private Integer				cleanWins;
 	private String				avgPoints;
 
 	public Integer score() {
