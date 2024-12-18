@@ -118,8 +118,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="participant, participantIdx: ${stage.participantModelList}"
-                    th:with="isQualifier = ${participantIdx.index eq stage.qualificationCount}"
-                    th:class="${isQualifier ? 'border-top-brand' : ''}">
+                    th:class="${participantIdx.index eq stage.qualificationCount ? 'border-top-brand' : ''}">
                     <th th:if="${participant.id ne model.winnerParticipantId}" class="align-middle text-center"
                         scope="row" th:text="${participantIdx.index+1}">#
                     </th>
@@ -133,7 +132,7 @@
                                 <span class="participant-data"
                                       th:data-rs-stage-id="${stage.id}"
                                       th:data-rs-participant-id="${participant.id}"
-                                      th:data-rs-is-qualifier="${isQualifier}"
+                                      th:data-rs-is-qualifier="${participantIdx.index lt stage.qualificationCount}"
                                       th:data-rs-participant-name="${participant.name}">
                                     <i class="bi bi-person-fill"></i>
                                     <span th:text="${participant.name}">Petyr Baelish</span>
@@ -176,7 +175,7 @@
                     </td>
                     <td class="align-middle text-center" th:text="${participant.games}">Games</td>
                     <td class="align-middle text-center" th:text="${participant.wins}" data-bs-toggle="tooltip"
-                        th:data-bs-title="${participant.cleanWins+' clean wins'}">
+                        th:data-bs-title="${participant.cleanWins+' clean win(s)'}">
                         Wins
                     </td>
                     <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
