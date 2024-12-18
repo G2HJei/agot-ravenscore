@@ -61,6 +61,22 @@
         </ul>
     </div>
 
+    <div th:if="${model.tournamentStageModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">
+        This tournament is empty.
+        <th:block th:if="${not model.adminUnlocked}">
+            You must
+            <a class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+               href="#" onclick="showUnlockModal()">unlock</a>
+            it first to create tournament stages.
+        </th:block>
+        <th:block th:if="${not model.adminUnlocked}">
+            You can now
+            <a class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+               href="#" onclick="newTournamentStage()">create</a>
+            its first tournament stage.
+        </th:block>
+    </div>
+
     <div class="tab-content">
         <div th:each="stage, stageIdx : ${model.tournamentStageModelList}"
              th:data-rs-stage-completed="${stage.completed}"
