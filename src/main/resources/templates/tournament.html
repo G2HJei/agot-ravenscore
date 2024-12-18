@@ -221,10 +221,13 @@
                 <span class="ms-auto"></span>
             </h5>
             <div th:if="${stage.gameModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">This
-                tournament stage has no games yet. Why not
-                <a href="#" onclick="newGame()"
-                   class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
-                    one</a> now?
+                tournament stage has no games yet.
+                <th:block th:if="${model.adminUnlocked}">
+                    Why not
+                    <a href="#" onclick="newGame()"
+                       class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
+                        one</a> now?
+                </th:block>
             </div>
             <div class="accordion accordion-flush" th:id="${'accordionGames-'+stageIdx.index}">
                 <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
