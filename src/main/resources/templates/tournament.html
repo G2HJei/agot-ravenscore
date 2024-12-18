@@ -293,7 +293,11 @@
                                 <div class="accordion-body ms-3">
                                     <div class="d-flex justify-content-start gap-3 w-100">
                                         <div>
-                                            <div th:if="${not model.adminUnlocked}" class=""></div>
+                                            <div th:if="${not model.adminUnlocked}"
+                                                 class="text-center text-secondary-emphasis"
+                                                 th:text="${game.completed ? ('Round ' + game.round): ''}">
+                                                Round #
+                                            </div>
                                             <div th:if="${model.adminUnlocked}"
                                                  class="d-flex justify-content-center gap-2 position-relative">
                                                 <button type="button"
