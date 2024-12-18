@@ -7,9 +7,9 @@
                         aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h6 class="fw-semibold">Scoring</h6>
+                <h5 class="fw-semibold">Scoring</h5>
                 <div class="mb-3" th:utext="#{'scoring.description.'+${model.scoring}}"></div>
-                <h6 class="fw-semibold">Description</h6>
+                <h5 class="fw-semibold">Description</h5>
                 <div id="rulesDescription" class="mb-3" style="white-space: pre-wrap;" th:text="${model.description}">
                     Rules description
                 </div>
