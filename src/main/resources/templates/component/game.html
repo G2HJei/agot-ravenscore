@@ -87,6 +87,7 @@
     function editGame() {
         const gameElement = getSelectedGameElement();
         const participantChecksHtml = buildParticipantChecksHtml(getSelectedGameId());
+        const gameLink = gameElement.data("rs-game-link");
         refreshGameModal(GAME_MODAL
             .replaceAll("{{title}}", "Modify Game Details")
             .replaceAll("{{delete-button}}", DELETE_GAME_BUTTON)
@@ -100,7 +101,7 @@
             .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
             .replaceAll("{{game-type-disabled}}", "disabled")
             .replaceAll("{{game-name}}", gameElement.data("rs-game-name"))
-            .replaceAll("{{game-link}}", gameElement.data("rs-game-link"))
+            .replaceAll("{{game-link}}", gameLink !== undefined ? gameLink : "")
             .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_PLAYERS_AVAILABLE)
             .replaceAll("{{participant-list}}", participantChecksHtml)
         );
