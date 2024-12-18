@@ -18,7 +18,7 @@
                             <div class="d-flex justify-content-start align-items-end gap-3 mb-2">
                                 <div style="width: 33%">
                                     <label for="gameType" class="form-label">Game type</label>
-                                    <select id="gameType" name="type" class="form-select " aria-label="Select scoring">
+                                    <select id="gameType" {{game-type-disabled}} name="type" class="form-select " aria-label="Select scoring">
                                         <option value="SECOND_EDITION" {{SECOND_EDITION}}>Base Game 2nd Edition</option>
                                         <option value="A_FEAST_FOR_CROWS" {{A_FEAST_FOR_CROWS}}>A Feast For Crows</option>
                                         <option value="A_DANCE_WITH_DRAGONS" {{A_DANCE_WITH_DRAGONS}}>A Dance With Dragons</option>
@@ -75,6 +75,7 @@
             .replaceAll("{{A_FEAST_FOR_CROWS}}", "")
             .replaceAll("{{A_DANCE_WITH_DRAGONS}}", "")
             .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
+            .replaceAll("{{game-type-disabled}}", "")
             .replaceAll("{{game-name}}", "")
             .replaceAll("{{game-link}}", "")
             .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_PLAYERS_AVAILABLE)
@@ -97,6 +98,7 @@
             .replaceAll("{{A_FEAST_FOR_CROWS}}", "")
             .replaceAll("{{A_DANCE_WITH_DRAGONS}}", "")
             .replaceAll("{{MOTHER_OF_DRAGONS}}", "")
+            .replaceAll("{{game-type-disabled}}", "disabled")
             .replaceAll("{{game-name}}", gameElement.data("rs-game-name"))
             .replaceAll("{{game-link}}", gameElement.data("rs-game-link"))
             .replaceAll("{{no-players}}", participantChecksHtml.length > 0 ? "" : NO_PLAYERS_AVAILABLE)
