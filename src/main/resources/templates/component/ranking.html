@@ -34,8 +34,9 @@
                         </div>
                         <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
                             <div id="rankingsError" class="text-danger visually-hidden ms-1 me-auto">Error</div>
+                            <i id="rankingWarningHelp" class="bi bi-exclamation-circle text-danger visually-hidden fs-5" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Players with same score warning" data-bs-original-title="Warning! Players with same castle count. Make sure final score is correct."></i>
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="gameCompleted" name="completed" {{completed}}>
+                                <input type="checkbox" class="form-check-input" id="gameCompleted" name="completed" onclick="toggleSameCastleCountWarning()" {{completed}}>
                                 <input type="hidden" name="completed" value="false">
                                 <label class="form-check-label" for="gameCompleted">Completed</label>
                             </div>
@@ -59,15 +60,15 @@
 
     function updateRanking() {
         const gameElement = getSelectedGameElement();
-
+        const completed = gameElement.data("rs-game-completed")
         const modalHTML = RANKING_MODAL
             .replaceAll("{{game-name}}", gameElement.data("rs-game-name"))
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{game-id}}", getSelectedGameId)
             .replaceAll("{{ranking-rows}}", buildRankingRowsHTML(gameElement))
-            .replaceAll("{{completed}}", gameElement.data("rs-game-completed") ? "checked" : "");
-
+            .replaceAll("{{completed}}", completed ? "checked" : "");
         $("#rankingModalContainer").empty().append(modalHTML);
+        toggleSameCastleCountWarning();
         $("#pointsCalc").tooltip();
         $("#rankingModal").modal("show");
     }
@@ -159,6 +160,20 @@
         if (!$("#pointsCalc").data("rs-calc-state")) {
             return;
         }
+        const data = getPlayersData();
+        data.playersData.forEach(function (player, index) {
+            let points = data.numberOfPlayers //this formula is valid only for RANKING_PLUS_CASTLES scoring type
+                - (index + 1) //ranking position
+                + player.castles
+                + (index === 0 ? 3 : 0); // winner gets 3 extra points
+            player.pointsElement.val(points);
+        });
+        if ($("#gameCompleted").is(":checked")) {
+            toggleSameCastleCountWarning();
+        }
+    }
+
+    function getPlayersData() {
         const rows = $("#rankingForm tbody tr");
         const numberOfPlayers = rows.length;
         const playersData = [];
@@ -170,13 +185,32 @@
             });
         });
         playersData.sort((a, b) => b.castles - a.castles);
-        playersData.forEach(function (player, index) {
-            let points = numberOfPlayers //this formula is valid only for RANKING_PLUS_CASTLES scoring type
-                - (index + 1) //ranking position
-                + player.castles
-                + (index === 0 ? 3 : 0); // winner gets 3 extra points
-            player.pointsElement.val(points);
-        });
+        return {
+            numberOfPlayers: numberOfPlayers,
+            playersData: playersData
+        };
+    }
+
+    function toggleSameCastleCountWarning() {
+        if (!$("#gameCompleted").is(":checked")) {
+            $("#rankingWarningHelp").addClass("visually-hidden");
+            return;
+        }
+        const playersData = getPlayersData().playersData;
+        const castleCounts = new Set();
+        let hasDuplicateCastles = false;
+        for (const player of playersData) {
+            if (castleCounts.has(player.castles)) {
+                hasDuplicateCastles = true;
+                break;
+            }
+            castleCounts.add(player.castles);
+        }
+        if (hasDuplicateCastles) {
+            $("#rankingWarningHelp").removeClass("visually-hidden").tooltip();
+        } else {
+            $("#rankingWarningHelp").addClass("visually-hidden");
+        }
     }
 
     function togglePointsCalculation() {
