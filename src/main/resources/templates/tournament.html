@@ -115,7 +115,7 @@
                             <thead>
                             <tr>
                                 <th scope="col" style="width: 5%"></th>
-                                <th scope="col" style="width: 30%">Player</th>
+                                <th scope="col" style="width: 45%">Player</th>
                                 <th scope="col" class="text-center">Score</th>
                                 <th scope="col" class="text-center">Games</th>
                                 <th scope="col" class="text-center">Wins</th>
@@ -176,8 +176,8 @@
                                 <td class="align-middle text-center" th:if="${participant.penaltyPoints() ne 0}">
                                     <span th:text="${participant.points - participant.penaltyPoints}">Pts</span>&nbsp;
                                     <br/>
-                                    <span class="text-muted fst-italic"
-                                          th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen. pts.)'}">
+                                    <span class="text-muted fst-italic text-nowrap"
+                                          th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen.)'}">
                             Pts with penalties
                         </span>
                                 </td>
