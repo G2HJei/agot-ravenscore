@@ -11,6 +11,17 @@
     .container-rs {
         max-width: 1850px !important;
     }
+
+    .scrollable-div {
+        max-height: calc(100vh - 320px);
+        overflow-y: auto;
+        box-sizing: border-box;
+        scrollbar-width: thin;
+    }
+
+    .fixed-height-page {
+        overflow-y: hidden !important;
+    }
 }
 
 @media (min-width: 960px) {

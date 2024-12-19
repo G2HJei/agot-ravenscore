@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<header class="sticky-top">
+<div class="sticky-top">
     <nav class="navbar bg-body-tertiary p-0">
         <div class="container container-rs">
             <div class="d-flex justify-content-center align-items-center gap-2 w-100">
@@ -12,9 +8,34 @@
                     <img th:src="@{'/logo.png'}" alt="Logo" height="64">
                     <img th:src="@{'/logo-text-golden.png'}" alt="Logo" height="38" class="ms-2">
                 </a>
-                <!-- Component(s)-->
-                <div layout:replace="~{component/dark-mode}"></div>
+                <div class="form-check form-switch ms-auto me-5" data-bs-toggle="tooltip"
+                     data-bs-title="Toggle dark mode">
+                    <i id="darkModeBtn" class="bi bi-moon-stars-fill highlight-brand fs-5" onclick="toggleDarkMode()">
+                    </i>
+                </div>
             </div>
         </div>
     </nav>
-</header>
+</div>
+<script th:inline="javascript">
+
+    function toggleDarkMode() {
+        $("#darkModeBtn").toggleClass("bi-moon-stars-fill bi-sun-fill");
+        const root = $("#rootHtml");
+        const currentDarkMode = root.attr("data-bs-theme");
+        setDarkMode(currentDarkMode !== "dark")
+    }
+
+    function setDarkMode(darkMode) {
+        $("#rootHtml").attr("data-bs-theme", darkMode ? "dark" : "light");
+        localStorage.setItem("darkMode", darkMode);
+    }
+
+    //handle initial state
+    $(document).ready(function () {
+        if (localStorage.getItem("darkMode") === "false") {
+            $("#darkModeBtn").toggleClass("bi-moon-stars-fill bi-sun-fill");
+            setDarkMode(false);
+        }
+    });
+</script>
