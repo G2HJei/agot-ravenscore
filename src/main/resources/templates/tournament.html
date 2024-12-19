@@ -280,7 +280,8 @@
                                           th:class="${'text-muted fst-italic round-label '+(game.round eq null? 'visually-hidden' : '')}">
                                 (Round #)
                             </span>
-                                    <span th:if="${game.completed}" class="text-muted fst-italic">(Completed)</span>
+                                    <span th:if="${game.completed}"
+                                          class="text-success-emphasis fst-italic">(Completed)</span>
                                 </button>
                             </h6>
                             <div th:id="${'flush-collapse-'+gameIdx.index}" class="accordion-collapse collapse"
