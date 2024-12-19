@@ -256,12 +256,11 @@
                             <i th:id="${'showFiltersButton-'+stage.id}"
                                data-bs-toggle="tooltip"
                                data-bs-title="Show/hide filters"
-                               class="bi bi-funnel fs-4 text-brand highlight-primary ms-2"
-                               onclick="toggleFilters()"></i></span>
+                               class="bi bi-funnel fs-4 text-brand highlight-primary visually-hidden ms-2"
+                               onclick="showGameFilters()"></i></span>
                         <span class="ms-auto">
                         </span>
                     </h5>
-                    <div th:id="${'filters-'+stage.id}" class="filters-container visually-hidden"></div>
                     <div th:if="${stage.gameModelList.isEmpty()}"
                          class="align-middle fst-italic fw-lighter text-center">
                         This

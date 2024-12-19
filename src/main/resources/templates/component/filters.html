@@ -1,22 +1,55 @@
+<div id="filtersModalContainer" class="filters-container visually-hidden"></div>
+
 <script th:inline="javascript">
-    const FILTERS = `
-    <div class="d-flex justify-content-center align-items-center ms-1 gap-3">
-        <div>
-            {{player-select}}
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input filter-game-completed" type="checkbox" role="switch" id="filterGameCompleted" onchange="applyGameFilters()">
-          <label class="form-check-label" for="filterGameCompleted">Hide completed</label>
-        </div>
-    </div>`;
-    const FILTERS_PLAYER_OPTION = ``;
+    const FILTERS_MODAL = `
+        <div class="modal modal-lg fade show" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-modal="true"
+             role="dialog" style="display: block;">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="filtersModalLabel">Filter Games</h1>
+                        <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="filterGameType" class="form-label">Game type</label>
+                                <select id="filterGameType" name="type" class="form-select " aria-label="Select game type">
+                                    <option value="ALL" {{TYPE_ALL}}>All</option>
+                                    <option value="SECOND_EDITION" {{TYPE_SECOND_EDITION}}>Base Game 2nd Edition</option>
+                                    <option value="A_FEAST_FOR_CROWS" {{TYPE_A_FEAST_FOR_CROWS}}>A Feast For Crows</option>
+                                    <option value="A_DANCE_WITH_DRAGONS" {{TYPE_A_DANCE_WITH_DRAGONS}}>A Dance With Dragons</option>
+                                    <option value="MOTHER_OF_DRAGONS" {{TYPE_MOTHER_OF_DRAGONS}}>Mother of Dragons</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <label for="filterGameState" class="form-label">Game state</label>
+                                <select id="filterGameState" name="type" class="form-select " aria-label="Select game state">
+                                    <option value="ALL" {{STATE_ALL}}>All</option>
+                                    <option value="COMPLETED" {{STATE_COMPLETED}}>Completed</option>
+                                    <option value="NOT_COMPLETED" {{STATE_NOT_COMPLETED}}>Not completed</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <label for="filterPlayer" class="form-label">Player</label>
+                                <select id="filterPlayer" name="type" class="form-select " aria-label="Select player">
+                                    <option value="ALL" {{PLAYER_ALL}}>All</option>
+                                    {{filter-player-options}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    const FILTERS_PLAYER_OPTION = `<option value="{{player-id}}" {{PLAYER_SELECTED}}>{{player-name}}</option>`;
 
     $(document).ready(function () {
         $(".filters-container").append(FILTERS
             .replaceAll("{{player-select}}", "")); //todo
     })
 
-    function toggleFilters() {
+    function showGameFilters() {
         $("#showFiltersButton-" + getSelectedStageId()).toggleClass("bi-funnel bi-funnel-fill");
         $("#" + getFiltersContainerId()).toggleClass("visually-hidden");
         applyGameFilters();
