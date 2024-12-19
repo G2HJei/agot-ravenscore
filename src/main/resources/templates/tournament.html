@@ -178,17 +178,11 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="align-middle text-center" th:if="${participant.penaltyPoints() eq 0}"
-                                    th:text="${participant.points}">
-                                    Points
-                                </td>
-                                <td class="align-middle text-center" th:if="${participant.penaltyPoints() ne 0}">
-                                    <span th:text="${participant.points - participant.penaltyPoints}">Pts</span>&nbsp;
-                                    <br/>
-                                    <span class="text-muted fst-italic text-nowrap"
-                                          th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen.)'}">
-                                        Pts with penalties
-                                    </span>
+                                <td class="align-middle text-center">
+                                    <span th:text="${participant.score}">Pts</span>
+                                    <i th:if="${participant.penaltyPoints gt 0}"
+                                       class="bi bi-heartbreak-fill text-danger-emphasis" data-bs-toggle="tooltip"
+                                       th:data-bs-title="${participant.points+' pts. - '+participant.penaltyPoints+' penalty points.'}"></i>
                                 </td>
                                 <td th:if="${participant.games ne 0}" class="align-middle text-center"
                                     th:text="${participant.games}">Games
