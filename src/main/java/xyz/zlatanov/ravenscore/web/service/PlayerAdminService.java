@@ -78,17 +78,24 @@ public class PlayerAdminService {
 	}
 
 	private void validatePlayerName(PlayerForm playerForm, UUID tournamentId) {
-		val name = playerForm.getName().trim();
-		val participantIds = Arrays.stream(tournamentStageRepository.findById(playerForm.getTournamentStageId()).orElseThrow()
-				.participantIdList()).toList();
-		val participantNames = participantRepository.findByIdInOrderByName(participantIds).stream()
-				.filter(p -> !p.id().equals(playerForm.getPlayerId()))
-				.map(Participant::name)
-				.toList();
+		final List<String> participantNames;
+		if (playerForm.getTournamentStageId() == null) {
+			participantNames = List.of();
+		} else {
+			val participantIds = Arrays.stream(tournamentStageRepository.findById(playerForm.getTournamentStageId()).orElseThrow()
+					.participantIdList()).toList();
+			participantNames = participantRepository.findByIdInOrderByName(participantIds).stream()
+					.filter(p -> !p.id().equals(playerForm.getPlayerId()))
+					.map(Participant::name)
+					.toList();
+		}
+
 		val substituteNames = substituteRepository.findByTournamentIdOrderByName(tournamentId).stream()
 				.filter(s -> !s.id().equals(playerForm.getPlayerId()))
 				.map(Substitute::name)
 				.toList();
+
+		val name = playerForm.getName().trim();
 		if (participantNames.contains(name)) {
 			throw new RavenscoreException(String.format("Player with the name \"%s\" is already in this tournament stage.", name));
 		}
