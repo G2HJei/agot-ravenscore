@@ -32,7 +32,7 @@ public class PlayerAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public void player(@Valid PlayerForm playerForm) {
-		validatePlayerName(playerForm.getName().trim(), playerForm.getTournamentId());
+		validatePlayerName(playerForm, playerForm.getTournamentId());
 		if (playerForm.getTournamentStageId() != null) {
 			participant(playerForm);
 		} else {
@@ -78,15 +78,18 @@ public class PlayerAdminService {
 		playerRepository.saveAll(players);
 	}
 
-	private void validatePlayerName(String name, UUID tournamentId) {
+	private void validatePlayerName(PlayerForm playerForm, UUID tournamentId) {
+		val name = playerForm.getName().trim();
 		val participantIds = tournamentStageRepository.findByTournamentIdOrderByStartDateDesc(tournamentId).stream()
 				.map(TournamentStage::participantIdList)
 				.flatMap(Arrays::stream)
 				.toList();
 		val participantNames = participantRepository.findByIdInOrderByName(participantIds).stream()
+				.filter(p -> !p.id().equals(playerForm.getPlayerId()))
 				.map(Participant::name)
 				.toList();
 		val substituteNames = substituteRepository.findByTournamentIdOrderByName(tournamentId).stream()
+				.filter(s -> !s.id().equals(playerForm.getPlayerId()))
 				.map(Substitute::name)
 				.toList();
 		if (participantNames.contains(name)) {
