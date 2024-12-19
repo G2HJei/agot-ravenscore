@@ -178,15 +178,19 @@
                                     <br/>
                                     <span class="text-muted fst-italic text-nowrap"
                                           th:text="${'('+participant.points+' pts. - '+participant.penaltyPoints+' pen.)'}">
-                            Pts with penalties
-                        </span>
+                                        Pts with penalties
+                                    </span>
                                 </td>
-                                <td class="align-middle text-center" th:text="${participant.games}">Games</td>
-                                <td class="align-middle text-center" th:text="${participant.wins}"
-                                    data-bs-toggle="tooltip"
+                                <td th:if="${participant.games ne 0}" class="align-middle text-center"
+                                    th:text="${participant.games}">Games
+                                </td>
+                                <td th:if="${participant.games eq 0}"></td>
+                                <td th:if="${participant.wins ne 0}" class="align-middle text-center"
+                                    th:text="${participant.wins}" data-bs-toggle="tooltip"
                                     th:data-bs-title="${participant.cleanWins+' clean win(s)'}">
                                     Wins
                                 </td>
+                                <td th:if="${participant.wins eq 0}"></td>
                                 <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
                             </tr>
                             </tbody>
@@ -391,7 +395,6 @@
                                                         <th scope="col">Player</th>
                                                         <th scope="col" class="text-center">Points</th>
                                                         <th scope="col" class="text-center">Castles</th>
-                                                        <th scope="col" class="text-center">Penalty pts.</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -444,17 +447,19 @@
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td class="align-middle text-center" th:text="${player.score}">
-                                                            Points
+                                                        <td class="align-middle text-center">
+                                                            <span th:text="${player.score}">Points</span>
+                                                            <i th:if="${player.penaltyPoints gt 0}"
+                                                               class="bi bi-heartbreak-fill text-danger-emphasis"
+                                                               data-bs-toggle="tooltip"
+                                                               th:data-bs-title="${player.penaltyPoints+' penalty points.'}"></i>
                                                         </td>
-                                                        <td class="align-middle text-center"
+                                                        <td th:if="${game.completed or player.castles gt 0}"
+                                                            class="align-middle text-center"
                                                             th:text="${player.castles}">
                                                             Castles
                                                         </td>
-                                                        <td class="align-middle text-center"
-                                                            th:text="${player.penaltyPoints}">
-                                                            Penalty pts.
-                                                        </td>
+                                                        <td th:if="${not game.completed and player.castles eq 0}"></td>
                                                     </tr>
                                                     </tbody>
                                                 </table>
