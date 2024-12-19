@@ -8,6 +8,7 @@
                     <img th:src="@{'/logo.png'}" alt="Logo" height="64">
                     <img th:src="@{'/logo-text-golden.png'}" alt="Logo" height="38" class="ms-2">
                 </a>
+                <span id="localHostIndicator" class="fw-semibold visually-hidden">LOCAL</span>
                 <div class="form-check form-switch ms-auto" data-bs-toggle="tooltip"
                      data-bs-title="Toggle dark mode">
                     <i id="darkModeBtn" class="bi bi-moon-stars-fill highlight-brand fs-5" onclick="toggleDarkMode()">
@@ -36,6 +37,9 @@
         if (localStorage.getItem("darkMode") === "false") {
             $("#darkModeBtn").toggleClass("bi-moon-stars-fill bi-sun-fill");
             setDarkMode(false);
+        }
+        if (window.location.hostname === "localhost") {
+            $("#localHostIndicator").removeClass("visually-hidden");
         }
     });
 </script>
