@@ -65,6 +65,7 @@ public class TourneysSummaryService {
 				.toList();
 		return (int) participants.stream()
 				.filter(p -> participantIds.contains(p.id()))
+				.map(Participant::name)
 				.distinct()
 				.count();
 	}
