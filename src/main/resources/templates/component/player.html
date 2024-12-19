@@ -55,14 +55,8 @@
     }
 
     function editParticipant(subElt) {
-        // Identify the parent container of the clicked element
         const actionContainer = $(subElt).closest(".action-container");
-
-        // Extract the player aliases from the clicked container
-        const aliases = [];
-        actionContainer.find(".player-alias").each(function () {
-            aliases.push($(this).text().trim());
-        });
+        const aliases = getAliases(actionContainer);
 
         const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
 
@@ -89,14 +83,8 @@
     }
 
     function editSubstitute(subElt) {
-        // Identify the parent container of the clicked element
         const actionContainer = $(subElt).closest(".action-container");
-
-        // Extract the substitute aliases from the clicked container
-        const aliases = [];
-        actionContainer.find(".player-alias").each(function () {
-            aliases.push($(this).text().trim());
-        });
+        const aliases = getAliases(actionContainer);
 
         const profileLinksHTML = aliases.map(alias => PROFILE_LINK.replace("{{profile-link}}", alias)).join("");
         const playerModalHTML = PLAYER_MODAL
@@ -131,6 +119,18 @@
             $(this).closest('.input-group').remove();
         });
     });
+
+    function getAliases(actionContainer) {
+        const aliases = [];
+        actionContainer.find(".player-alias").each(function () {
+            if ($(this).is('span')) {
+                aliases.push($(this).text().trim());
+            } else if ($(this).is('a')) {
+                aliases.push($(this).attr('href'));
+            }
+        });
+        return aliases;
+    }
 
     function submitPlayer() {
         const playerForm = $("#playerForm")[0];

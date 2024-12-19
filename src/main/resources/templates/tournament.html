@@ -138,31 +138,29 @@
                                 <td>
                                     <div class="d-flex justify-content-start align-items-center action-container">
                                         <div>
-                                <span class="participant-data"
-                                      th:data-rs-stage-id="${stage.id}"
-                                      th:data-rs-participant-id="${participant.id}"
-                                      th:data-rs-is-qualifier="${participantIdx.index lt stage.qualificationCount}"
-                                      th:data-rs-participant-name="${participant.name}">
-                                    <i class="bi bi-person-fill text-muted"></i>
-                                    <span th:text="${participant.name}">Petyr Baelish</span>
-                                </span>
+                                            <span class="participant-data"
+                                                  th:data-rs-stage-id="${stage.id}"
+                                                  th:data-rs-participant-id="${participant.id}"
+                                                  th:data-rs-is-qualifier="${participantIdx.index lt stage.qualificationCount}"
+                                                  th:data-rs-participant-name="${participant.name}">
+                                                <i class="bi bi-person-fill text-muted"></i>
+                                                <span th:text="${participant.name}">Petyr Baelish</span>
+                                            </span>
                                             <span th:if="${participant.replacedLabel ne null}"
                                                   class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
                                                   data-bs-toggle="tooltip"
                                                   th:data-bs-title="${participant.replacedLabel}"></span>
                                             <th:block th:each="link : ${participant.profileLinks}">
-                                    <span th:if="${link.link eq null}"
-                                          class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
-                                          data-bs-toggle="tooltip" data-bs-title="Alias"
-                                          th:text="' ' + ${link.label}">Handle</span>
-                                                <a th:if="${link.link ne null}" class="text-decoration-none"
-                                                   th:href="${link.link}"
-                                                   target="_blank">
-                                        <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
-                                              data-bs-toggle="tooltip"
-                                              th:data-bs-title="${'External player profile: '+link.link}"
-                                              th:text="'  ' + ${link.label}">Profile</span>
-                                                </a>
+                                                <span th:if="${link.link eq null}"
+                                                      class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
+                                                      data-bs-toggle="tooltip" data-bs-title="Alias"
+                                                      th:text="' ' + ${link.label}">Handle</span>
+                                                <a th:if="${link.link ne null}" th:href="${link.link}"
+                                                   target="_blank"
+                                                   class="text-decoration-none badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
+                                                   data-bs-toggle="tooltip"
+                                                   th:data-bs-title="${'External player profile: '+link.link}"
+                                                   th:text="'  ' + ${link.label}">Profile</a>
                                             </th:block>
                                             <i th:if="${model.adminUnlocked}"
                                                class="bi bi-pencil-square visually-hidden action-icon"
@@ -225,18 +223,16 @@
                                    onclick="editSubstitute(this)"></i>
                                 <br/>
                                 <th:block th:each="link : ${substitute.profileLinks}">
-                        <span th:if="${link.link eq null}"
-                              class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
-                              data-bs-toggle="tooltip" data-bs-title="Alias"
-                              th:text="' ' + ${link.label}">Handle</span>
-                                    <a th:if="${link.link ne null}" class="text-decoration-none"
-                                       th:href="${link.link}"
-                                       target="_blank">
-                         <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
-                               data-bs-toggle="tooltip"
-                               th:data-bs-title="${'External player profile: '+link.link}"
-                               th:text="'  ' + ${link.label}">Profile</span>
-                                    </a>
+                                    <span th:if="${link.link eq null}"
+                                          class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
+                                          data-bs-toggle="tooltip" data-bs-title="Alias"
+                                          th:text="' ' + ${link.label}">Handle</span>
+                                    <a th:if="${link.link ne null}" th:href="${link.link}"
+                                       target="_blank"
+                                       class="text-decoration-none badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
+                                       data-bs-toggle="tooltip"
+                                       th:data-bs-title="${'External player profile: '+link.link}"
+                                       th:text="'  ' + ${link.label}">Profile</a>
                                 </th:block>
                             </div>
                         </div>
@@ -369,20 +365,16 @@
                                                                       data-bs-toggle="tooltip"
                                                                       th:data-bs-title="${participant.replacedLabel}"></span>
                                                                 <th:block th:each="link : ${participant.profileLinks}">
-                                                        <span th:if="${link.link eq null}"
-                                                              class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill"
-                                                              data-bs-toggle="tooltip"
-                                                              data-bs-title="Alias"
-                                                              th:text="' ' + ${link.label}">Handle</span>
+                                                                    <span th:if="${link.link eq null}"
+                                                                          class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill"
+                                                                          data-bs-toggle="tooltip" data-bs-title="Alias"
+                                                                          th:text="' ' + ${link.label}">Handle</span>
                                                                     <a th:if="${link.link ne null}"
-                                                                       class="text-decoration-none"
-                                                                       th:href="${link.link}"
-                                                                       target="_blank">
-                                                        <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right"
-                                                              data-bs-toggle="tooltip"
-                                                              th:data-bs-title="${'External player profile: '+link.link}"
-                                                              th:text="'  ' + ${link.label}">Profile</span>
-                                                                    </a>
+                                                                       th:href="${link.link}" target="_blank"
+                                                                       class="text-decoration-none badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
+                                                                       data-bs-toggle="tooltip"
+                                                                       th:data-bs-title="${'External player profile: '+link.link}"
+                                                                       th:text="'  ' + ${link.label}">Profile</a>
                                                                 </th:block>
                                                             </div>
                                                         </th:block>
@@ -436,19 +428,17 @@
                                                                           data-bs-toggle="tooltip"
                                                                           th:data-bs-title="${player.replacedLabel}"></span>
                                                                     <th:block th:each="link : ${player.profileLinks}">
-                                                                <span th:if="${link.link eq null}"
-                                                                      class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill"
-                                                                      data-bs-toggle="tooltip" data-bs-title="Alias"
-                                                                      th:text="' ' + ${link.label}">Handle</span>
+                                                                        <span th:if="${link.link eq null}"
+                                                                              class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill"
+                                                                              data-bs-toggle="tooltip"
+                                                                              data-bs-title="Alias"
+                                                                              th:text="' ' + ${link.label}">Handle</span>
                                                                         <a th:if="${link.link ne null}"
-                                                                           class="text-decoration-none"
-                                                                           th:href="${link.link}"
-                                                                           target="_blank">
-                                                                <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right"
-                                                                      data-bs-toggle="tooltip"
-                                                                      th:data-bs-title="${'External player profile: '+link.link}"
-                                                                      th:text="'  ' + ${link.label}">Profile</span>
-                                                                        </a>
+                                                                           th:href="${link.link}" target="_blank"
+                                                                           class="text-decoration-none badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
+                                                                           data-bs-toggle="tooltip"
+                                                                           th:data-bs-title="${'External player profile: '+link.link}"
+                                                                           th:text="'  ' + ${link.label}">Profile</a>
                                                                     </th:block>
                                                                 </div>
                                                             </div>

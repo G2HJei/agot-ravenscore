@@ -44,11 +44,6 @@
         </div>`;
     const FILTERS_PLAYER_OPTION = `<option value="{{player-id}}" {{PLAYER_SELECTED}}>{{player-name}}</option>`;
 
-    $(document).ready(function () {
-        $(".filters-container").append(FILTERS
-            .replaceAll("{{player-select}}", "")); //todo
-    })
-
     function showGameFilters() {
         $("#showFiltersButton-" + getSelectedStageId()).toggleClass("bi-funnel bi-funnel-fill");
         $("#" + getFiltersContainerId()).toggleClass("visually-hidden");
