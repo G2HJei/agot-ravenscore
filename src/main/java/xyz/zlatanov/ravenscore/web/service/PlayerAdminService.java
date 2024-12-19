@@ -14,7 +14,6 @@ import xyz.zlatanov.ravenscore.Utils;
 import xyz.zlatanov.ravenscore.domain.domain.Game;
 import xyz.zlatanov.ravenscore.domain.domain.Participant;
 import xyz.zlatanov.ravenscore.domain.domain.Substitute;
-import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
 import xyz.zlatanov.ravenscore.web.security.TournamentAdminOperation;
@@ -80,10 +79,8 @@ public class PlayerAdminService {
 
 	private void validatePlayerName(PlayerForm playerForm, UUID tournamentId) {
 		val name = playerForm.getName().trim();
-		val participantIds = tournamentStageRepository.findByTournamentIdOrderByStartDateDesc(tournamentId).stream()
-				.map(TournamentStage::participantIdList)
-				.flatMap(Arrays::stream)
-				.toList();
+		val participantIds = Arrays.stream(tournamentStageRepository.findById(playerForm.getTournamentStageId()).orElseThrow()
+				.participantIdList()).toList();
 		val participantNames = participantRepository.findByIdInOrderByName(participantIds).stream()
 				.filter(p -> !p.id().equals(playerForm.getPlayerId()))
 				.map(Participant::name)
