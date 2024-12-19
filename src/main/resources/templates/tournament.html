@@ -156,7 +156,7 @@
                                           data-bs-toggle="tooltip" data-bs-title="Alias"
                                           th:text="' ' + ${link.label}">Handle</span>
                                                 <a th:if="${link.link ne null}" class="text-decoration-none"
-                                                   th:href="link.link"
+                                                   th:href="${link.link}"
                                                    target="_blank">
                                         <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
                                               data-bs-toggle="tooltip"
@@ -230,7 +230,7 @@
                               data-bs-toggle="tooltip" data-bs-title="Alias"
                               th:text="' ' + ${link.label}">Handle</span>
                                     <a th:if="${link.link ne null}" class="text-decoration-none"
-                                       th:href="link.link"
+                                       th:href="${link.link}"
                                        target="_blank">
                          <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
                                data-bs-toggle="tooltip"
@@ -376,7 +376,7 @@
                                                               th:text="' ' + ${link.label}">Handle</span>
                                                                     <a th:if="${link.link ne null}"
                                                                        class="text-decoration-none"
-                                                                       th:href="link.link"
+                                                                       th:href="${link.link}"
                                                                        target="_blank">
                                                         <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right"
                                                               data-bs-toggle="tooltip"
@@ -442,7 +442,7 @@
                                                                       th:text="' ' + ${link.label}">Handle</span>
                                                                         <a th:if="${link.link ne null}"
                                                                            class="text-decoration-none"
-                                                                           th:href="link.link"
+                                                                           th:href="${link.link}"
                                                                            target="_blank">
                                                                 <span class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right"
                                                                       data-bs-toggle="tooltip"
