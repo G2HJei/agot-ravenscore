@@ -116,10 +116,19 @@
                             <tr>
                                 <th scope="col" style="width: 5%"></th>
                                 <th scope="col" style="width: 45%">Player</th>
-                                <th scope="col" class="text-center">Score</th>
+                                <th scope="col" class="text-center">Score
+                                    <i th:if="${model.rankingMode eq 'SCORE'}"
+                                       class="bi bi-sort-down fs-5 text-brand highlight-brand"></i>
+                                    <a href="?rankingMode=SCORE" th:if="${model.rankingMode ne 'SCORE'}"
+                                       class="bi bi-sort-down fs-5 text-muted"></a>
+                                </th>
                                 <th scope="col" class="text-center">Games</th>
                                 <th scope="col" class="text-center">Wins</th>
-                                <th scope="col" class="text-center">Avg. points</th>
+                                <th scope="col" class="text-center">Avg. points
+                                    <i th:if="${model.rankingMode eq 'AVG_PTS'}"
+                                       class="bi bi-sort-down fs-5 text-brand highlight-brand"></i>
+                                    <a href="?rankingMode=AVG_PTS" th:if="${model.rankingMode ne 'AVG_PTS'}"
+                                       class="bi bi-sort-down fs-5 text-muted"></a></th>
                             </tr>
                             </thead>
                             <tbody>

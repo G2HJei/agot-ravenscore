@@ -206,7 +206,7 @@ input[type=number] {
 
 .highlight-brand:hover {
     cursor: pointer;
-    color: var(--rs-brand-color);
+    color: var(--rs-brand-color) !important;
 }
 
 .text-brand {

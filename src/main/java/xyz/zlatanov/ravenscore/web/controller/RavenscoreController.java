@@ -17,6 +17,7 @@ import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
 import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
 import xyz.zlatanov.ravenscore.web.security.TournamentId;
 import xyz.zlatanov.ravenscore.web.service.*;
+import xyz.zlatanov.ravenscore.web.service.builder.RankingMode;
 
 @Controller
 @RequiredArgsConstructor
@@ -45,8 +46,9 @@ public class RavenscoreController {
 
 	@GetMapping(TOURNAMENT_DETAILS)
 	String tourneyDetails(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
+			@RequestParam(defaultValue = "SCORE") RankingMode rankingMode,
 			@RequestParam(required = false) String error, Model model) {
-		model.addAttribute("model", tournamentDetailsService.getTournamentDetails(tournamentId));
+		model.addAttribute("model", tournamentDetailsService.getTournamentDetails(tournamentId, rankingMode));
 		model.addAttribute("error", error);
 		return "tournament";
 	}

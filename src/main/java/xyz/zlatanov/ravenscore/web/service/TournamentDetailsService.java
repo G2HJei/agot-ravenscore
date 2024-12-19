@@ -14,6 +14,7 @@ import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.TournamentDetailsModel;
 import xyz.zlatanov.ravenscore.web.security.TourInfoService;
+import xyz.zlatanov.ravenscore.web.service.builder.RankingMode;
 import xyz.zlatanov.ravenscore.web.service.builder.TournamentDetailsBuilder;
 
 @Service
@@ -29,7 +30,7 @@ public class TournamentDetailsService {
 	private final PlayerRepository			playerRepository;
 
 	@Transactional(readOnly = true)
-	public TournamentDetailsModel getTournamentDetails(UUID tournamentId) {
+	public TournamentDetailsModel getTournamentDetails(UUID tournamentId, RankingMode rankingMode) {
 		val tournament = tournamentRepository.findById(tournamentId).orElseThrow();
 		val tourStages = tournamentStageRepository.findByTournamentIdInOrderByStartDateDesc(List.of(tournament.id()));
 		val stageIds = tourStages.stream().map(TournamentStage::id).toList();
@@ -40,7 +41,7 @@ public class TournamentDetailsService {
 		val gameIds = games.stream().map(Game::id).toList();
 		val players = playerRepository.findByGameIdInOrderByPointsDesc(gameIds);
 		return new TournamentDetailsBuilder(tourInfoService.tournamentIsUnlocked(tournamentId), tournament, tourStages, substitutes,
-				participants, games, players).build();
+				participants, games, players, rankingMode).build();
 	}
 
 }

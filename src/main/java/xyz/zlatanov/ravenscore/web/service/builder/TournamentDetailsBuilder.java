@@ -6,6 +6,8 @@ import static xyz.zlatanov.ravenscore.Utils.*;
 import java.math.BigDecimal;
 import java.util.*;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.domain.*;
@@ -22,6 +24,8 @@ public class TournamentDetailsBuilder {
 	private final List<Game>			gameList;
 	private final List<Player>			playerList;
 
+	private final RankingMode			rankingMode;
+
 	public TournamentDetailsModel build() {
 		val tournamentStageModelList = getTournamentStages();
 		return new TournamentDetailsModel()
@@ -33,6 +37,7 @@ public class TournamentDetailsBuilder {
 				.startDate(DATE_FORMATTER.format(tournament.startDate()))
 				.adminUnlocked(adminUnlocked)
 				.tournamentKey(tournament.tournamentKey())
+				.rankingMode(rankingMode.toString())
 				.winnerParticipantId(getWinnerId(tournamentStageModelList))
 				.substituteModelList(getSubstitutes())
 				.tournamentStageModelList(tournamentStageModelList);
@@ -83,6 +88,8 @@ public class TournamentDetailsBuilder {
 					val points = new PlayerPointsCalculator(games, players).calculatePoints();
 					val penaltyPoints = players.stream().map(Player::penaltyPoints).reduce(Integer::sum).orElse(0);
 					val participantWins = calculateWins(participant.id(), gameList);
+					val avgPts = completedGames == 0 ? 0
+							: BigDecimal.valueOf(points - penaltyPoints).divide(BigDecimal.valueOf(completedGames), 2, UP);
 					return new ParticipantModel()
 							.id(participant.id().toString())
 							.name(participant.name())
@@ -93,22 +100,32 @@ public class TournamentDetailsBuilder {
 							.penaltyPoints(penaltyPoints)
 							.wins(participantWins.size())
 							.cleanWins((int) participantWins.stream().filter(GameWin::clean).count())
-							.avgPoints(completedGames == 0 ? null
-									: DECIMAL_FORMATTER
-											.format(BigDecimal.valueOf(points - penaltyPoints)
-													.divide(BigDecimal.valueOf(completedGames), 2, UP)));
+							.avgPtsDouble(avgPts.doubleValue())
+							.avgPoints(DECIMAL_FORMATTER.format(avgPts));
 				})
-				.sorted((o1, o2) -> {
-					int scoreComparison = -o1.score().compareTo(o2.score());
-					if (scoreComparison != 0) {
-						return scoreComparison;
-					}
-					int winsComparison = Integer.compare(o2.wins(), o1.wins());
-					if (winsComparison != 0) {
-						return winsComparison;
-					}
-					return Integer.compare(o2.cleanWins(), o1.cleanWins());
+				.sorted(switch (rankingMode) {
+					case SCORE -> scoringRankingModeComparator();
+					case AVG_PTS -> averagePtsRankingModeComparator();
+					case FINAL -> throw new NotImplementedException(); // todo do not sort at all in this case
 				}).toList();
+	}
+
+	private Comparator<ParticipantModel> scoringRankingModeComparator() {
+		return (o1, o2) -> {
+			int scoreComparison = -o1.score().compareTo(o2.score());
+			if (scoreComparison != 0) {
+				return scoreComparison;
+			}
+			int winsComparison = Integer.compare(o2.wins(), o1.wins());
+			if (winsComparison != 0) {
+				return winsComparison;
+			}
+			return Integer.compare(o2.cleanWins(), o1.cleanWins());
+		};
+	}
+
+	private Comparator<ParticipantModel> averagePtsRankingModeComparator() {
+		return (o1, o2) -> -o1.avgPtsDouble().compareTo(o2.avgPtsDouble());
 	}
 
 	private List<GameModel> getGames(UUID stageId) {
