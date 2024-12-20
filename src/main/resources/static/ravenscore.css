@@ -13,7 +13,7 @@
     }
 
     .scrollable-div {
-        max-height: calc(100vh - 320px);
+        max-height: calc(100vh - 280px);
         overflow-y: auto;
         box-sizing: border-box;
         scrollbar-width: thin;

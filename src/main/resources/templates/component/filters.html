@@ -1,17 +1,17 @@
-<div id="filtersModalContainer" class="filters-container visually-hidden"></div>
+<div id="filtersModalContainer" class="filters-container"></div>
 
 <script th:inline="javascript">
     const FILTERS_MODAL = `
         <div class="modal modal-lg fade show" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-modal="true"
              role="dialog" style="display: block;">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="filtersModalLabel">Filter Games</h1>
                         <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
+                        <div class="row mb-4">
                             <div class="col-4">
                                 <label for="filterGameType" class="form-label">Game type</label>
                                 <select id="filterGameType" name="type" class="form-select " aria-label="Select game type">
@@ -31,44 +31,128 @@
                                 </select>
                             </div>
                             <div class="col-4">
-                                <label for="filterPlayer" class="form-label">Player</label>
-                                <select id="filterPlayer" name="type" class="form-select " aria-label="Select player">
-                                    <option value="ALL" {{PLAYER_ALL}}>All</option>
-                                    {{filter-player-options}}
+                                <label for="filterParticipant" class="form-label">Player</label>
+                                <select id="filterParticipant" name="type" class="form-select " aria-label="Select player">
+                                    <option value="ALL" {{PARTICIPANT_ALL}}>All</option>
+                                    {{filter-participant-options}}
                                 </select>
                             </div>
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                            <button id="resetGameFilters" type="button" class="btn btn-outline-secondary bi bi-arrow-counterclockwise ms-auto" data-bs-toggle="tooltip" data-bs-title="Reset filters" onclick="resetGameFilters()"></button>
+                            <button type="button" class="btn btn-outline-secondary ms-auto" onclick="applyGameFilters()">Done</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>`;
-    const FILTERS_PLAYER_OPTION = `<option value="{{player-id}}" {{PLAYER_SELECTED}}>{{player-name}}</option>`;
+    const FILTERS_PARTICIPANT_OPTION = `<option value="{{participant-id}}" {{PARTICIPANT_SELECTED}}>{{participant-name}}</option>`;
 
     function showGameFilters() {
-        $("#showFiltersButton-" + getSelectedStageId()).toggleClass("bi-funnel bi-funnel-fill");
-        $("#" + getFiltersContainerId()).toggleClass("visually-hidden");
-        applyGameFilters();
+        const filtersSelection = $("#filtersModalSelection-" + getSelectedStageId());
+        const type = filtersSelection.data("rs-game-type");
+        const gameState = filtersSelection.data("rs-game-state");
+        const participant = filtersSelection.data("rs-game-participant");
+        $("#filtersModalContainer").empty()
+            .append(FILTERS_MODAL
+                .replaceAll("{{filter-participant-options}}", buildFilterParticipantOptions(participant))
+                .replaceAll("{{TYPE_" + type + "}}", "selected")
+                .replaceAll("{{STATE_" + gameState + "}}", "selected")
+                .replaceAll("{{PARTICIPANT_ALL}}", participant === "ALL" ? "selected" : "")
+                .replaceAll("{{TYPE_ALL}}", "")
+                .replaceAll("{{TYPE_SECOND_EDITION}}", "")
+                .replaceAll("{{TYPE_A_FEAST_FOR_CROWS}}", "")
+                .replaceAll("{{TYPE_A_DANCE_WITH_DRAGONS}}", "")
+                .replaceAll("{{TYPE_MOTHER_OF_DRAGONS}}", "")
+                .replaceAll("{{STATE_ALL}}", "")
+                .replaceAll("{{STATE_COMPLETED}}", "")
+                .replaceAll("{{STATE_NOT_COMPLETED}}", "")
+            );
+        $("#resetGameFilters").tooltip();
+        $("#filtersModal").modal("show");
     }
 
-    function getFiltersContainerId() {
-        return "filters-" + getSelectedStageId();
+    function buildFilterParticipantOptions(selectedParticipant) {
+        return $(".participant-data[data-rs-stage-id='" + getSelectedStageId() + "']")
+            .map((_, participant) => FILTERS_PARTICIPANT_OPTION
+                .replaceAll("{{participant-id}}", $(participant).data("rs-participant-id"))
+                .replaceAll("{{participant-name}}", $(participant).data("rs-participant-name"))
+                .replaceAll("{{PARTICIPANT_SELECTED}}", selectedParticipant === $(participant).data("rs-participant-id") ? "selected" : "")
+            )
+            .get()
+            .join("");
     }
 
     function applyGameFilters() {
-        const filterForCompleted = $(".stage-games[data-rs-stage-id='" + getSelectedStageId() + "']")
-            .find(".filter-game-completed")
-            .first()
-            .prop("checked");
-        if (filterForCompleted === true) {
-            $(".stage-games[data-rs-stage-id='" + getSelectedStageId() + "']")
-                .find("[data-rs-game-completed='true']")
-                .parent()
-                .addClass("visually-hidden");
-        } else {
-            $(".stage-games[data-rs-stage-id='" + getSelectedStageId() + "']")
-                .find("[data-rs-game-completed]")
-                .parent()
-                .removeClass("visually-hidden");
+        const stageSelector = ".stage-games[data-rs-stage-id='" + getSelectedStageId() + "'] ";
+        //get selection
+        const type = $("#filterGameType").val();
+        const gameState = $("#filterGameState").val();
+        const participant = $("#filterParticipant").val();
+
+        //reset previous filtering
+        const gameDataElts = $(stageSelector + ".game-data");
+        gameDataElts.closest(".accordion-item")
+            .removeClass("game-type-filtered game-state-filtered game-participant-filtered visually-hidden");
+
+        //apply filter
+        if (type !== "ALL") {
+            $(stageSelector + ".game-data:not([data-rs-game-type='" + type + "'])")
+                .closest(".accordion-item")
+                .addClass("game-type-filtered");
         }
+        if (gameState !== "ALL") {
+            $(stageSelector + ".game-data:not([data-rs-game-completed='" + (gameState === "COMPLETED") + "'])")
+                .closest(".accordion-item")
+                .addClass("game-state-filtered");
+        }
+        if (participant !== "ALL") {
+            $(stageSelector + ".game-data")
+                .filter(function () {
+                    return $(this) //game doesn't include selected participant
+                        .find(".game-participant-data[data-rs-participant-id='" + participant + "']")
+                        .length === 0;
+                })
+                .closest(".accordion-item")
+                .addClass("game-participant-filtered");
+        }
+        gameDataElts
+            .closest(
+                ".accordion-item.game-type-filtered, " +
+                ".accordion-item.game-state-filtered, " +
+                ".accordion-item.game-participant-filtered")
+            .addClass("visually-hidden");
+
+        //store state
+        $("#filtersModalSelection-" + getSelectedStageId())
+            .data("rs-game-type", type)
+            .data("rs-game-state", gameState)
+            .data("rs-game-participant", participant);
+
+        //refresh filter icon
+        if (type !== "ALL" || gameState !== "ALL" || participant !== "ALL") {
+            $(stageSelector)
+                .find(".filter-button")
+                .removeClass("bi-funnel")
+                .addClass("bi-funnel-fill");
+        } else {
+            $(stageSelector)
+                .find(".filter-button")
+                .removeClass("bi-funnel-fill")
+                .addClass("bi-funnel");
+        }
+
+        //show modal
+        $("#filtersModal").modal("hide");
+    }
+
+    function resetGameFilters() {
+        //reset state
+        $("#filtersModalSelection-" + getSelectedStageId())
+            .data("rs-game-type", "ALL")
+            .data("rs-game-state", "ALL")
+            .data("rs-game-participant", "ALL");
+        
+        applyGameFilters();
     }
 </script>
