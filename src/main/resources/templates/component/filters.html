@@ -39,8 +39,8 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-end align-items-center gap-2">
-                            <button id="resetGameFilters" type="button" class="btn btn-outline-secondary bi bi-arrow-counterclockwise ms-auto" data-bs-toggle="tooltip" data-bs-title="Reset filters" onclick="resetGameFilters()"></button>
-                            <button type="button" class="btn btn-outline-secondary ms-auto" onclick="applyGameFilters()">Done</button>
+                            <button id="resetGameFilters" type="button" class="btn btn-outline-secondary bi bi-arrow-counterclockwise" data-bs-toggle="tooltip" data-bs-title="Reset filters" onclick="resetGameFilters()"></button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="applyGameFilters()">Done</button>
                         </div>
                     </div>
                 </div>
@@ -152,7 +152,7 @@
             .data("rs-game-type", "ALL")
             .data("rs-game-state", "ALL")
             .data("rs-game-participant", "ALL");
-        
+
         applyGameFilters();
     }
 </script>
