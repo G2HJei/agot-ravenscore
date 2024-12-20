@@ -148,10 +148,9 @@
 
     function resetGameFilters() {
         //reset state
-        $("#filtersModalSelection-" + getSelectedStageId())
-            .data("rs-game-type", "ALL")
-            .data("rs-game-state", "ALL")
-            .data("rs-game-participant", "ALL");
+        $("#filterGameType").val("ALL");
+        $("#filterGameState").val("ALL");
+        $("#filterParticipant").val("ALL");
 
         applyGameFilters();
     }
