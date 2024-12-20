@@ -1,5 +1,7 @@
 package xyz.zlatanov.ravenscore.web.controller;
 
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static xyz.zlatanov.ravenscore.web.ControllerConstants.*;
 
 import java.util.UUID;
@@ -8,7 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.val;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.GameForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.ImportParticipantsForm;
@@ -17,7 +23,7 @@ import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.StageForm;
 import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
 import xyz.zlatanov.ravenscore.web.security.TournamentId;
 import xyz.zlatanov.ravenscore.web.service.*;
-import xyz.zlatanov.ravenscore.web.service.builder.RankingMode;
+import xyz.zlatanov.ravenscore.web.service.builder.tourdetails.RankingMode;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,6 +35,9 @@ public class RavenscoreController {
 	private final TournamentStageAdminService	tournamentStageAdminService;
 	private final PlayerAdminService			playerAdminService;
 	private final GameAdminService				gameAdminService;
+	private final BackupService					backupService;
+
+	private final ObjectMapper					objectMapper;
 
 	@GetMapping(ROOT)
 	String home(Model model) {
@@ -108,6 +117,16 @@ public class RavenscoreController {
 	String removeGame(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(GAME_ID) UUID gameId) {
 		gameAdminService.removeGame(gameId);
 		return redirectToTournament(tournamentId);
+	}
+
+	@GetMapping(DOWNLOAD_BACKUP)
+	@SneakyThrows
+	void download(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, HttpServletResponse response) {
+		val exportData = backupService.getBackup(tournamentId);
+		response.setContentType(APPLICATION_OCTET_STREAM_VALUE);
+		response.setHeader(CONTENT_DISPOSITION, "attachment; filename=tournament-backup.json");
+		response.getOutputStream().write(objectMapper.writeValueAsBytes(exportData));
+		response.getOutputStream().close();
 	}
 
 }

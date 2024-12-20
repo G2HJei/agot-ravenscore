@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.service.builder;
+package xyz.zlatanov.ravenscore.web.service.builder.tourdetails;
 
 import static java.math.RoundingMode.UP;
 import static xyz.zlatanov.ravenscore.Utils.*;

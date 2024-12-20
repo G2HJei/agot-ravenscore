@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.web.service.builder;
+package xyz.zlatanov.ravenscore.web.service.builder.tourdetails;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

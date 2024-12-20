@@ -31,10 +31,9 @@
     <!-- NAVIGATION ROW -->
     <div class="d-flex justify-content-center align-items-center mb-3">
         <!-- todo -->
-        <button th:if="${model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-download ms-1 me-2 visually-hidden"
-                data-bs-toggle="tooltip" data-bs-title="Download tournament data"
-                onclick="downloadCSV()"></button>
+        <a th:if="${model.adminUnlocked}" type="button" th:href="@{'/tournament/'+${model.id}+'/download-backup'}"
+           class="btn btn-sm btn-outline-secondary bi bi-download ms-1 me-2"
+           data-bs-toggle="tooltip" data-bs-title="Download tournament data"></a>
         <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-3"
                 data-bs-toggle="tooltip" data-bs-title="Show tournament rules & details"
                 onclick="showRulesModal()"></button>

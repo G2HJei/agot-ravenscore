@@ -12,16 +12,14 @@ import lombok.val;
 import xyz.zlatanov.ravenscore.domain.domain.Game;
 import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.*;
-import xyz.zlatanov.ravenscore.web.model.tourdetails.TournamentDetailsModel;
-import xyz.zlatanov.ravenscore.web.security.TourInfoService;
-import xyz.zlatanov.ravenscore.web.service.builder.tourdetails.RankingMode;
-import xyz.zlatanov.ravenscore.web.service.builder.tourdetails.TournamentDetailsBuilder;
+import xyz.zlatanov.ravenscore.web.model.export.TournamentExport;
+import xyz.zlatanov.ravenscore.web.security.TournamentAdminOperation;
+import xyz.zlatanov.ravenscore.web.service.builder.tourexport.TournamentExportBuilder;
 
 @Service
 @RequiredArgsConstructor
-public class TournamentDetailsService {
+public class BackupService {
 
-	private final TourInfoService			tourInfoService;
 	private final TournamentRepository		tournamentRepository;
 	private final ParticipantRepository		participantRepository;
 	private final SubstituteRepository		substituteRepository;
@@ -30,7 +28,8 @@ public class TournamentDetailsService {
 	private final PlayerRepository			playerRepository;
 
 	@Transactional(readOnly = true)
-	public TournamentDetailsModel getTournamentDetails(UUID tournamentId, RankingMode rankingMode) {
+	@TournamentAdminOperation
+	public TournamentExport getBackup(UUID tournamentId) {
 		val tournament = tournamentRepository.findById(tournamentId).orElseThrow();
 		val tourStages = tournamentStageRepository.findByTournamentIdInOrderByStartDateDesc(List.of(tournament.id()));
 		val stageIds = tourStages.stream().map(TournamentStage::id).toList();
@@ -40,8 +39,7 @@ public class TournamentDetailsService {
 		val games = gameRepository.findByTournamentStageIdInOrderByTypeAscNameAsc(stageIds);
 		val gameIds = games.stream().map(Game::id).toList();
 		val players = playerRepository.findByGameIdInOrderByPointsDesc(gameIds);
-		return new TournamentDetailsBuilder(tourInfoService.tournamentIsUnlocked(tournamentId), tournament, tourStages, substitutes,
-				participants, games, players, rankingMode).build();
+		return new TournamentExportBuilder(tournament, tourStages, substitutes,
+				participants, games, players).build();
 	}
-
 }
