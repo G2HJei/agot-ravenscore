@@ -3,7 +3,7 @@ name: Deployment Pipeline
 on:
   workflow_dispatch:
   push:
-    branches: [ "master" ]
+    branches: [ "v1" ]
 
 env:
   BUILD_NUMBER: release
