@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
+import xyz.zlatanov.ravenscore.web.model.export.TournamentExport;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.GameForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.ImportParticipantsForm;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.admin.PlayerForm;
@@ -56,9 +58,12 @@ public class RavenscoreController {
 	@GetMapping(TOURNAMENT_DETAILS)
 	String tourneyDetails(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
 			@RequestParam(defaultValue = "SCORE") RankingMode rankingMode,
-			@RequestParam(required = false) String error, Model model) {
+			@RequestParam(required = false) String error,
+			@RequestParam(required = false) String message,
+			Model model) {
 		model.addAttribute("model", tournamentDetailsService.getTournamentDetails(tournamentId, rankingMode));
 		model.addAttribute("error", error);
+		model.addAttribute("message", message);
 		return "tournament";
 	}
 
@@ -127,6 +132,26 @@ public class RavenscoreController {
 		response.setHeader(CONTENT_DISPOSITION, "attachment; filename=tournament-backup.json");
 		response.getOutputStream().write(objectMapper.writeValueAsBytes(exportData));
 		response.getOutputStream().close();
+	}
+
+	@PostMapping(value = RESTORE_BACKUP, consumes = "multipart/form-data")
+	@SneakyThrows
+	String restoreBackup(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
+			@RequestParam MultipartFile file) {
+
+		final TournamentExport tournamentExport;
+		try {
+			tournamentExport = objectMapper.readValue(file.getBytes(), TournamentExport.class);
+		} catch (Exception e) {
+			throw new RavenscoreException("Invalid backup file.", e);
+		}
+		try {
+			backupService.restoreTournament(tournamentId, tournamentExport);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RavenscoreException("Could not restore backup.", e);
+		}
+		return redirectToTournamentWithMessage(tournamentId, "Backup successfully restored");
 	}
 
 }

@@ -49,6 +49,7 @@ public class TournamentExportBuilder {
 																.orElse(null)))
 										.toList())
 								.gameExportList(gameList.stream()
+										.filter(g -> g.tournamentStageId().equals(ts.id()))
 										.map(g -> new GameExport()
 												.name(g.name())
 												.type(g.type())

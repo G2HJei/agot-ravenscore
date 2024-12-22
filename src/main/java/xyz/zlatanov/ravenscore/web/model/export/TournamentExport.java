@@ -22,6 +22,7 @@ public class TournamentExport {
 	private Boolean						hidden;
 	private String						tournamentKey;
 	private LocalDate					startDate;
+	private Boolean						pinned;
 	private List<SubstituteExport>		substituteExportList		= new ArrayList<>();
 	private List<TournamentStageExport>	tournamentStageExportList	= new ArrayList<>();
 }
