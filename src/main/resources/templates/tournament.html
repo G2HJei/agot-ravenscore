@@ -11,10 +11,10 @@
             th:data-rs-tour-hidden="${model.hidden}"
             th:data-rs-tour-key="${model.adminUnlocked ? model.tournamentKey : ''}">Tourney Name</h3>
         <a th:if="${model.adminUnlocked}" type="button" th:href="@{'/tournament/'+${model.id}+'/download-backup'}"
-           class="btn btn-sm btn-outline-secondary bi bi-download ms-2 me-2"
+           class="btn btn-sm btn-outline-secondary bi bi-download ms-2 me-2 visually-hidden"
            data-bs-toggle="tooltip" data-bs-title="Download tournament data"></a>
         <button th:if="${model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-arrow-counterclockwise me-2"
+                class="btn btn-sm btn-outline-secondary bi bi-arrow-counterclockwise me-2 visually-hidden"
                 data-bs-toggle="tooltip" data-bs-title="Restore tournament backup"
                 onclick="showBackupModal()"></button>
         <button th:if="${model.adminUnlocked}" type="button"
