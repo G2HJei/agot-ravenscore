@@ -14,29 +14,22 @@
            class="btn btn-sm btn-outline-secondary bi bi-download ms-2 me-2"
            data-bs-toggle="tooltip" data-bs-title="Download tournament data"></a>
         <button th:if="${model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-arrow-counterclockwise me-2"
-                data-bs-toggle="tooltip" data-bs-title="Restore tournament backup"
-                onclick="showBackupModal()"></button>
-        <button th:if="${model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
+                class="btn btn-sm btn-outline-secondary bi bi-pencil-fill me-2"
                 data-bs-toggle="tooltip" data-bs-title="Modify tournament details"
                 onclick="editTournament()"></button>
         <button th:if="${not model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-key-fill ms-2 me-2"
+                class="btn btn-sm btn-outline-secondary bi bi-key-fill me-2"
                 data-bs-toggle="tooltip" data-bs-title="Unlock tournament administration"
                 onclick="showUnlockModal()"></button>
         <button th:if="${model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-unlock-fill ms-2"
+                class="btn btn-sm btn-outline-secondary bi bi-unlock-fill"
                 data-bs-toggle="tooltip" data-bs-title="Tournament administration is unlocked. Click to lock it."
                 onclick="lockAdmin()"></button>
     </div>
-    <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}">(Tournament Admin Mode)</h5>
     <div th:if="${error ne null}" class="alert alert-danger text-center" role="alert" th:text="${error}">
         Error message
     </div>
-    <div th:if="${message ne null}" class="alert alert-success text-center" role="alert" th:text="${message}">
-        Info message
-    </div>
+    <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}">(Tournament Admin Mode)</h5>
 
     <!-- NAVIGATION ROW -->
     <div class="d-flex justify-content-center align-items-center mb-3">
@@ -294,7 +287,7 @@
                                         (Round #)
                                     </span>
                                     <span th:if="${game.completed}"
-                                          class="text-muted fst-italic">(Completed)</span>
+                                          class="text-success-emphasis fst-italic">(Completed)</span>
                                 </button>
                             </h6>
                             <div th:id="${'flush-collapse-'+gameIdx.index}"
@@ -498,13 +491,12 @@
         <div layout:replace="~{component/substitution}"></div>
         <div layout:replace="~{component/game}"></div>
         <div layout:replace="~{component/ranking}"></div>
-        <div layout:replace="~{component/restore-backup}"></div>
     </div>
 
     <!-- Utility cross-component functions -->
     <script th:inline="javascript">
         $(document).ready(function () {
-            // setup action container icons
+            //setup hover icons
             $(".action-container").hover(
                 function () {
                     $(this).find(".action-icon").removeClass("visually-hidden");
@@ -513,14 +505,6 @@
                     $(this).find(".action-icon").addClass("visually-hidden");
                 }
             );
-
-            // prevent submitting forms on <Enter>
-            $(window).keydown(function (event) {
-                if (event.keyCode === 13) {
-                    event.preventDefault();
-                    return false;
-                }
-            });
         })
     </script>
 </main>

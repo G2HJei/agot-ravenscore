@@ -26,7 +26,6 @@ public class ControllerConstants {
 	public static final String	TOURNAMENT_DETAILS			= ROOT + "tournament/{" + TOURNAMENT_ID + "}";
 	public static final String	DELETE_TOURNAMENT			= TOURNAMENT_DETAILS + "/delete";
 	public static final String	DOWNLOAD_BACKUP				= TOURNAMENT_DETAILS + "/download-backup";
-	public static final String	RESTORE_BACKUP				= TOURNAMENT_DETAILS + "/restore-backup";
 	public static final String	UPSERT_STAGE				= TOURNAMENT_DETAILS + "/stage";
 	public static final String	REMOVE_STAGE				= UPSERT_STAGE + "/remove/{" + STAGE_ID + "}";
 	public static final String	IMPORT_PARTICIPANTS			= TOURNAMENT_DETAILS + "/stage/{" + STAGE_ID + "}/import-participants";
@@ -41,10 +40,6 @@ public class ControllerConstants {
 	public static final String	UNLOCK_TOURNAMENT			= TOURNAMENT_DETAILS + "/unlock-tournament";
 	public static final String	UPDATE_ROUND				= UPSERT_GAME + "/{" + GAME_ID + "}/round/{" + ROUND + "}";
 	public static final String	UPDATE_GAME_RANKINGS		= UPSERT_GAME + "/{" + GAME_ID + "}/rankings";
-
-	public static String redirectToTournamentWithMessage(UUID tournamentId, String message) {
-		return redirectToTournament(tournamentId) + "?message=" + URLEncoder.encode(message, UTF_8);
-	}
 
 	public static String redirectToTournament(UUID tournamentId, String errorMessage) {
 		return redirectToTournament(tournamentId) + "?error=" + URLEncoder.encode(errorMessage, UTF_8);

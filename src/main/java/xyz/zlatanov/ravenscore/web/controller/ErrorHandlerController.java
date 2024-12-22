@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import xyz.zlatanov.ravenscore.web.security.TourInfoService;
 import xyz.zlatanov.ravenscore.web.service.RavenscoreException;
@@ -21,13 +20,10 @@ public class ErrorHandlerController {
 
 	@ExceptionHandler(Exception.class)
 	public String unknownException(Exception e) {
-		val stackTrace = ExceptionUtils.getStackTrace(e);
 		if (e instanceof RavenscoreException) {
-			log.debug(stackTrace);
 			return redirectToTournament(tourInfoService.getTournamentId(), e.getMessage());
-		} else {
-			log.error(stackTrace);
-			return "error";
 		}
+		log.error(ExceptionUtils.getStackTrace(e));
+		return "error";
 	}
 }
