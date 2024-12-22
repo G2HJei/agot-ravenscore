@@ -1,5 +1,6 @@
 package xyz.zlatanov.ravenscore.web.service;
 
+import static xyz.zlatanov.ravenscore.Utils.addToArray;
 import static xyz.zlatanov.ravenscore.Utils.trimEmpty;
 
 import java.util.*;
@@ -61,7 +62,7 @@ public class PlayerAdminService {
 		substituteRepository.deleteById(substituteId);
 
 		val stage = tournamentStageRepository.findById(stageId).orElseThrow();
-		tournamentStageRepository.save(stage.participantIdList(Utils.addToArray(newParticipantId, stage.participantIdList())));
+		tournamentStageRepository.save(stage.participantIdList(addToArray(newParticipantId, stage.participantIdList())));
 
 		var games = gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stageId);
 		games = games.stream()
@@ -79,7 +80,7 @@ public class PlayerAdminService {
 
 	private void validatePlayerName(PlayerForm playerForm, UUID tournamentId) {
 		final List<String> participantNames;
-		if (playerForm.getTournamentStageId() == null) {
+		if (playerForm.getTournamentStageId() == null) { // case of substitute
 			participantNames = List.of();
 		} else {
 			val participantIds = Arrays.stream(tournamentStageRepository.findById(playerForm.getTournamentStageId()).orElseThrow()

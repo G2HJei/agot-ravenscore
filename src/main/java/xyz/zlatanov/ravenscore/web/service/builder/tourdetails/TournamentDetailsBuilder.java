@@ -75,11 +75,11 @@ public class TournamentDetailsBuilder {
 	private List<ParticipantModel> getParticipants(TournamentStage stage) {
 		val participantIds = Arrays.stream(stage.participantIdList()).toList();
 		return participantList.stream()
-				.filter(p -> p.replacementParticipantId() == null)
-				.filter(p -> participantIds.contains(p.id()))
+				.filter(p -> p.replacementParticipantId() == null && participantIds.contains(p.id()))
 				.map(participant -> {
 					val games = gameList.stream()
-							.filter(game -> Arrays.stream(game.participantIdList()).toList().contains(participant.id()))
+							.filter(game -> Arrays.stream(game.participantIdList()).toList().contains(participant.id())
+									&& game.tournamentStageId().equals(stage.id()))
 							.toList();
 					val players = playerList.stream()
 							.filter(player -> participant.id().equals(player.participantId()))
@@ -87,7 +87,7 @@ public class TournamentDetailsBuilder {
 					val completedGames = games.stream().filter(Game::completed).toList().size();
 					val points = new PlayerPointsCalculator(games, players).calculatePoints();
 					val penaltyPoints = players.stream().map(Player::penaltyPoints).reduce(Integer::sum).orElse(0);
-					val participantWins = calculateWins(participant.id(), gameList);
+					val participantWins = calculateWins(participant.id(), games);
 					val avgPts = completedGames == 0 ? 0
 							: BigDecimal.valueOf(points - penaltyPoints).divide(BigDecimal.valueOf(completedGames), 2, UP);
 					return new ParticipantModel()

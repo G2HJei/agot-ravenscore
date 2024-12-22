@@ -11,7 +11,7 @@ public class TournamentSummaryModel {
 
 	private String	id;
 	private String	name;
-	private Integer	numberOfParticipants;
+	private Long	numberOfParticipants;
 	private String	statusLabel;
 	private String	statusDate;
 	private boolean	pinned;
