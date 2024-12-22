@@ -58,10 +58,14 @@ public class TourneysSummaryService {
 				.pinned(tour.pinned());
 	}
 
-	private Long getNumberOfParticipants(UUID tourId, List<TournamentStage> stages, List<Participant> participants) {
-		return stages.stream()
+	private Integer getNumberOfParticipants(UUID tourId, List<TournamentStage> stages, List<Participant> participants) {
+		val participantIds = stages.stream()
 				.filter(s -> s.tournamentId().equals(tourId))
 				.flatMap(s -> Arrays.stream(s.participantIdList()))
+				.toList();
+		return (int) participants.stream()
+				.filter(p -> participantIds.contains(p.id()))
+				.map(Participant::name)
 				.distinct()
 				.count();
 	}

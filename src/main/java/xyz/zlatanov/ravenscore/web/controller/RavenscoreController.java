@@ -81,7 +81,7 @@ public class RavenscoreController {
 
 	@GetMapping(REMOVE_STAGE)
 	String removeStage(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId) {
-		tournamentStageAdminService.removeStage(stageId);
+		tournamentStageAdminService.removeStage(tournamentId, stageId);
 		return redirectToTournament(tournamentId);
 	}
 

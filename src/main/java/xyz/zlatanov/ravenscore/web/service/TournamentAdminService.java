@@ -10,7 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.domain.Tournament;
-import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
+import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.web.model.toursummary.TournamentForm;
 import xyz.zlatanov.ravenscore.web.security.TourInfoService;
 import xyz.zlatanov.ravenscore.web.security.TournamentAdminOperation;
@@ -20,8 +20,13 @@ import xyz.zlatanov.ravenscore.web.security.TournamentAdminOperation;
 @Validated
 public class TournamentAdminService {
 
-	private final TourInfoService		tourInfoService;
-	private final TournamentRepository	tournamentRepository;
+	private final TourInfoService			tourInfoService;
+	private final TournamentRepository		tournamentRepository;
+	private final ParticipantRepository		participantRepository;
+	private final SubstituteRepository		substituteRepository;
+	private final TournamentStageRepository	tournamentStageRepository;
+	private final GameRepository			gameRepository;
+	private final PlayerRepository			playerRepository;
 
 	@Transactional
 	public UUID createTournament(@Valid TournamentForm tournamentForm) {
