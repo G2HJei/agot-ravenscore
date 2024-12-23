@@ -33,7 +33,7 @@ public class PlayerAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public void player(@Valid PlayerForm playerForm) {
-		validatePlayerName(playerForm, playerForm.getTournamentId());
+		validatePlayerName(playerForm);
 		if (playerForm.getTournamentStageId() != null) {
 			participant(playerForm);
 		} else {
@@ -74,27 +74,31 @@ public class PlayerAdminService {
 		playerRepository.saveAll(players);
 	}
 
-	private void validatePlayerName(PlayerForm playerForm, UUID tournamentId) {
+	private void validatePlayerName(PlayerForm playerForm) {
 		final List<String> participantNames;
 		if (playerForm.getTournamentStageId() == null) { // case of substitute
 			participantNames = List.of();
 		} else {
-			val participantIds = Arrays.stream(tournamentStageRepository.findById(playerForm.getTournamentStageId()).orElseThrow()
-					.participantIdList()).toList();
+			val participantIds = participantRepository.findByTournamentId(playerForm.getTournamentId())
+					.stream()
+					.map(Participant::id)
+					.toList();
 			participantNames = participantRepository.findByIdInOrderByName(participantIds).stream()
 					.filter(p -> !p.id().equals(playerForm.getPlayerId()))
 					.map(Participant::name)
 					.toList();
 		}
 
-		val substituteNames = substituteRepository.findByTournamentIdOrderByName(tournamentId).stream()
+		val substituteNames = substituteRepository.findByTournamentIdOrderByName(playerForm.getTournamentId()).stream()
 				.filter(s -> !s.id().equals(playerForm.getPlayerId()))
 				.map(Substitute::name)
 				.toList();
 
 		val name = playerForm.getName().trim();
 		if (participantNames.contains(name)) {
-			throw new RavenscoreException(String.format("Player with the name \"%s\" is already in this tournament stage.", name));
+			throw new RavenscoreException(String.format(
+					"Player with the name \"%s\" is already in this tournament. You can use the import function to include it in the selected stage.",
+					name));
 		}
 		if (substituteNames.contains(name)) {
 			throw new RavenscoreException(String.format("Substitute with the name \"%s\" already exists.", name));

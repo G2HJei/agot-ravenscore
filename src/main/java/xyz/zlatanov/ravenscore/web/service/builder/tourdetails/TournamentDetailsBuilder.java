@@ -231,6 +231,7 @@ public class TournamentDetailsBuilder {
 							: null;
 				})
 				.filter(Objects::nonNull)
+				.sorted(Comparator.comparing(GameWin::house))
 				.toList();
 	}
 

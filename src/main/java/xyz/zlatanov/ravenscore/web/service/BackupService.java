@@ -129,8 +129,7 @@ public class BackupService {
 				.completed(g.completed())
 				.participantIdList(participants.stream()
 						.filter(p -> g.participantNameList().contains(p.name()))
-						.map(p -> ofNullable(p.replacementParticipantId())
-								.orElseGet(p::id))
+						.map(p -> ofNullable(p.replacementParticipantId()).orElseGet(p::id))
 						.toArray(UUID[]::new));
 		gameRepository.save(game);
 		val players = g.playerExportList().stream()

@@ -50,26 +50,27 @@
 
     function buildImportParticipantsChecksHTML() {
         // Extract the participants for non-selected stages
-        const uniqueNames = new Set();
+        const selectedStageNames = new Set();
         $(".participant-data[data-rs-stage-id='" + getSelectedStageId() + "']") // Participants in selected stage
             .each(function () {
-                uniqueNames.add($(this).text().trim());
+                selectedStageNames.add($(this).text().trim());
             });
 
         const participants = [];
         $(".participant-data:not([data-rs-stage-id='" + getSelectedStageId() + "'])") // Participants in other stages
-            .filter(function () {
-                return $(this).closest("[data-rs-stage-completed='true']").length > 0; // Only completed stages
-            })
             .each(function () {
+                const stageCompleted = $(this).closest(".stage-data").data("rs-stage-completed");
                 const name = $(this).text().trim();
-                if (!uniqueNames.has(name)) { // Check if the name is not already in the Set
-                    uniqueNames.add(name);
+                const existingParticipant = participants.find(participant => participant.name === name);
+                if (!existingParticipant && !selectedStageNames.has(name)) { // available qualifier
+                    selectedStageNames.add(name);
                     participants.push({
                         id: $(this).data("rs-participant-id"),
                         name: name,
-                        qualifier: $(this).data("rs-is-qualifier")
+                        qualifier: stageCompleted && $(this).data("rs-is-qualifier")
                     });
+                } else if (existingParticipant && stageCompleted && !existingParticipant.qualifier) {  // if necessary, update only qualifier flag
+                    existingParticipant.qualifier = $(this).data("rs-is-qualifier");
                 }
             });
 

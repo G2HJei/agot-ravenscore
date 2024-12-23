@@ -84,8 +84,8 @@
 
     <div class="tab-content">
         <div th:each="stage, stageIdx : ${model.tournamentStageModelList}"
-             th:data-rs-stage-completed="${stage.completed}"
-             th:id="${'stage-'+stageIdx.index}" th:class="${'tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
+             th:data-rs-stage-completed="${stage.completed}" th:id="${'stage-'+stageIdx.index}"
+             th:class="${'stage-data tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
             <div class="row">
                 <div class="col-12 col-xxl-6">
                     <!-- STAGE RANKINGS -->
