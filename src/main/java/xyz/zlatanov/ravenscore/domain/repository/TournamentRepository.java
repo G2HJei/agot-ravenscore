@@ -20,6 +20,9 @@ public interface TournamentRepository extends JpaRepository<Tournament, UUID> {
 			DELETE FROM tournament_stage
 			WHERE tournament_id = :tournamentId;
 
+			DELETE FROM substitute
+			WHERE tournament_id = :tournamentId;
+
 			DELETE FROM participant
 			WHERE NOT EXISTS (
 				SELECT 1

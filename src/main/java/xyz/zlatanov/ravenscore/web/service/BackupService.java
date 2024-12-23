@@ -1,6 +1,9 @@
 package xyz.zlatanov.ravenscore.web.service;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,15 +98,25 @@ public class BackupService {
 				.name(tournamentStageExport.name())
 				.qualificationCount(tournamentStageExport.qualificationCount())
 				.startDate(tournamentStageExport.startDate())
-				.participantIdList(tournamentStageExport.participantExportList().stream()
-						.map(participantExport -> participants.stream()
-								.filter(participant -> participant.name().equals(participantExport.name()))
-								.findFirst()
-								.orElseThrow()
-								.id())
-						.toArray(UUID[]::new));
+				.participantIdList(buildStageParticipantIdList(participants, tournamentStageExport));
+
 		tournamentStageRepository.save(stage);
 		return stage.id();
+	}
+
+	private static UUID[] buildStageParticipantIdList(List<Participant> participants, TournamentStageExport tournamentStageExport) {
+		var participantIdList = new HashSet<UUID>();
+		for (ParticipantExport participantExport : tournamentStageExport.participantExportList()) {
+			val participant = participants.stream()
+					.filter(p -> p.name().equals(participantExport.name()))
+					.findFirst()
+					.orElseThrow();
+			participantIdList.add(participant.id());
+			if (participant.replacementParticipantId() != null) {
+				participantIdList.add(participant.replacementParticipantId());
+			}
+		}
+		return participantIdList.toArray(new UUID[] {});
 	}
 
 	private void createGame(GameExport g, List<Participant> participants, UUID stageId) {
@@ -116,7 +129,8 @@ public class BackupService {
 				.completed(g.completed())
 				.participantIdList(participants.stream()
 						.filter(p -> g.participantNameList().contains(p.name()))
-						.map(Participant::id)
+						.map(p -> ofNullable(p.replacementParticipantId())
+								.orElseGet(p::id))
 						.toArray(UUID[]::new));
 		gameRepository.save(game);
 		val players = g.playerExportList().stream()
@@ -161,12 +175,14 @@ public class BackupService {
 				.points(pl.points())
 				.penaltyPoints(pl.penaltyPoints())
 				.gameId(game.id())
-				.participantId(pl.participantName() == null ? null
-						: participants.stream()
-								.filter(p -> p.name().equals(pl.participantName()))
+				.participantId(ofNullable(pl.participantName())
+						.map(name -> participants.stream()
+								.filter(p -> p.name().equals(name))
 								.findFirst()
-								.orElseThrow()
-								.id());
+								.orElseThrow())
+						.map(p -> ofNullable(p.replacementParticipantId())
+								.orElse(p.id()))
+						.orElse(null));
 	}
 
 }
