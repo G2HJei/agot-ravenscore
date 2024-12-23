@@ -9,6 +9,4 @@ public enum House {
 	public String label() {
 		return capitalizeFirstLetter(this.name());
 	}
-
-	// todo handle BOLTON in ADWD
 }
