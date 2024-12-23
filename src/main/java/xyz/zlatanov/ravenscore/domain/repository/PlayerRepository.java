@@ -1,5 +1,6 @@
 package xyz.zlatanov.ravenscore.domain.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,4 +15,6 @@ public interface PlayerRepository extends JpaRepository<Player, UUID> {
 	List<Player> findByGameIdInOrderByPointsDesc(List<UUID> gameIdList);
 
 	List<Player> findByGameIdOrderByPointsDesc(UUID gameId);
+
+	List<Player> findByGameIdInAndParticipantId(Collection<UUID> gameIds, UUID participantId);
 }

@@ -31,7 +31,7 @@ public class ControllerConstants {
 	public static final String	REMOVE_STAGE				= UPSERT_STAGE + "/remove/{" + STAGE_ID + "}";
 	public static final String	IMPORT_PARTICIPANTS			= TOURNAMENT_DETAILS + "/stage/{" + STAGE_ID + "}/import-participants";
 	public static final String	SUBSTITUTE_PLAYER			= //
-			UPSERT_STAGE + "/{" + STAGE_ID + "}/participant/{" + PARTICIPANT_ID + "}/substitute/{" + SUBSTITUTE_ID + "}";
+			TOURNAMENT_DETAILS + "/participant/{" + PARTICIPANT_ID + "}/substitute/{" + SUBSTITUTE_ID + "}";
 	public static final String	UPSERT_PLAYER				= TOURNAMENT_DETAILS + "/player";
 	public static final String	REMOVE_PLAYER				= UPSERT_PLAYER + "/remove/{" + STAGE_ID + "}/{" + PLAYER_ID + "}";
 	public static final String	UPSERT_GAME					= TOURNAMENT_DETAILS + "/stage/{" + STAGE_ID + "}/game";

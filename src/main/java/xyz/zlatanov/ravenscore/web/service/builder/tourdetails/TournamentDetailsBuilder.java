@@ -98,7 +98,7 @@ public class TournamentDetailsBuilder {
 							.games(completedGames)
 							.points(points)
 							.penaltyPoints(penaltyPoints)
-							.wins(participantWins.size())
+							.wins(participantWins)
 							.cleanWins((int) participantWins.stream().filter(GameWin::clean).count())
 							.avgPtsDouble(avgPts.doubleValue())
 							.avgPoints(DECIMAL_FORMATTER.format(avgPts));
@@ -116,7 +116,7 @@ public class TournamentDetailsBuilder {
 			if (scoreComparison != 0) {
 				return scoreComparison;
 			}
-			int winsComparison = Integer.compare(o2.wins(), o1.wins());
+			int winsComparison = Integer.compare(o2.wins().size(), o1.wins().size());
 			if (winsComparison != 0) {
 				return winsComparison;
 			}
@@ -225,7 +225,9 @@ public class TournamentDetailsBuilder {
 					val winner = players.getFirst();
 					val second = players.get(1);
 					return winner.participantId().equals(participantId)
-							? new GameWin().clean(winner.castles() > second.castles())
+							? new GameWin()
+									.house(winner.house())
+									.clean(winner.castles() > second.castles())
 							: null;
 				})
 				.filter(Objects::nonNull)

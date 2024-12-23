@@ -193,12 +193,14 @@
                                     th:text="${participant.games}">Games
                                 </td>
                                 <td th:if="${participant.games eq 0}"></td>
-                                <td th:if="${participant.wins ne 0}" class="align-middle text-center"
-                                    th:text="${participant.wins}" data-bs-toggle="tooltip"
-                                    th:data-bs-title="${participant.cleanWins+' clean win(s)'}">
-                                    Wins
+                                <td th:if="${participant.wins.size() ne 0}"
+                                    class="align-middle text-center" data-bs-toggle="tooltip"
+                                    th:data-bs-title="${participant.wins.size()+' win(s), of which '+participant.cleanWins+' clean'}">
+                                    <img th:each="win : ${participant.wins}"
+                                         th:src="@{'/houses/'+${win.house.name()}+'.png'}" alt="house icon"
+                                         style="max-height: 0.9rem">
                                 </td>
-                                <td th:if="${participant.wins eq 0}"></td>
+                                <td th:if="${participant.wins.size() eq 0}"></td>
                                 <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
                             </tr>
                             </tbody>

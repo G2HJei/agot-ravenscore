@@ -31,4 +31,11 @@ public interface TournamentStageRepository extends JpaRepository<TournamentStage
 			""")
 	// deletes the tournament data without the tournament itself
 	void deleteAndCleanup(UUID stageId);
+
+	@NativeQuery("""
+			SELECT *
+			FROM tournament_stage
+			WHERE :participantId = ANY(participant_id_list)
+			""")
+	List<TournamentStage> findByParticipantIdListContains(UUID participantId);
 }

@@ -1,9 +1,11 @@
 package xyz.zlatanov.ravenscore.web.service;
 
-import static xyz.zlatanov.ravenscore.Utils.addToArray;
-import static xyz.zlatanov.ravenscore.Utils.trimEmpty;
+import static xyz.zlatanov.ravenscore.Utils.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import xyz.zlatanov.ravenscore.Utils;
 import xyz.zlatanov.ravenscore.domain.domain.Game;
 import xyz.zlatanov.ravenscore.domain.domain.Participant;
 import xyz.zlatanov.ravenscore.domain.domain.Substitute;
@@ -50,9 +51,8 @@ public class PlayerAdminService {
 
 	@Transactional
 	@TournamentAdminOperation
-	public void substitution(UUID stageId, UUID participantId, UUID substituteId) {
+	public void substitution(UUID participantId, UUID substituteId) {
 		val oldParticipant = participantRepository.findById(participantId).orElseThrow();
-
 		val substitute = substituteRepository.findById(substituteId).orElseThrow();
 		val newParticipantId = participantRepository.save(new Participant()
 				.name(substitute.name())
@@ -61,20 +61,16 @@ public class PlayerAdminService {
 		participantRepository.save(oldParticipant.replacementParticipantId(newParticipantId));
 		substituteRepository.deleteById(substituteId);
 
-		val stage = tournamentStageRepository.findById(stageId).orElseThrow();
-		tournamentStageRepository.save(stage.participantIdList(addToArray(newParticipantId, stage.participantIdList())));
+		val stages = tournamentStageRepository.findByParticipantIdListContains(oldParticipant.id());
+		stages.forEach(s -> s.participantIdList(addToArray(newParticipantId, s.participantIdList())));
+		tournamentStageRepository.saveAll(stages);
 
-		var games = gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stageId);
-		games = games.stream()
-				.map(game -> game.participantIdList(Utils.replaceInArray(oldParticipant.id(), newParticipantId, game.participantIdList())))
-				.toList();
+		val games = gameRepository.findByParticipantIdListContains(oldParticipant.id());
+		games.forEach(g -> g.participantIdList(replaceInArray(oldParticipant.id(), newParticipantId, g.participantIdList())));
 		gameRepository.saveAll(games);
 
-		val players = playerRepository.findByGameIdInOrderByPointsDesc(games.stream().map(Game::id).toList())
-				.stream()
-				.filter(p -> Objects.equals(p.participantId(), oldParticipant.id()))
-				.map(p -> p.participantId(newParticipantId))
-				.toList();
+		val players = playerRepository.findByGameIdInAndParticipantId(games.stream().map(Game::id).toList(), oldParticipant.id());
+		players.forEach(p -> p.participantId(newParticipantId));
 		playerRepository.saveAll(players);
 	}
 

@@ -106,9 +106,9 @@ public class RavenscoreController {
 	}
 
 	@PostMapping(SUBSTITUTE_PLAYER)
-	String substitutePlayer(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
+	String substitutePlayer(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
 			@PathVariable(PARTICIPANT_ID) UUID participantId, @PathVariable(SUBSTITUTE_ID) UUID substituteId) {
-		playerAdminService.substitution(stageId, participantId, substituteId);
+		playerAdminService.substitution(participantId, substituteId);
 		return redirectToTournament(tournamentId);
 	}
 

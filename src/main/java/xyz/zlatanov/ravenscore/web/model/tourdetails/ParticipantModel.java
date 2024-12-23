@@ -5,6 +5,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import xyz.zlatanov.ravenscore.web.service.builder.tourdetails.GameWin;
 
 @Data
 @Accessors(fluent = true)
@@ -17,7 +18,7 @@ public class ParticipantModel {
 	private Integer				games;
 	private Integer				points;
 	private Integer				penaltyPoints;
-	private Integer				wins;
+	private List<GameWin>		wins;
 	private Integer				cleanWins;
 	private Double				avgPtsDouble;
 	private String				avgPoints;
