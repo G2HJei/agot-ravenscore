@@ -176,28 +176,6 @@ public class TournamentDetailsBuilder {
 				.toList();
 	}
 
-	@RequiredArgsConstructor
-	public static class PlayerPointsCalculator {
-
-		private final List<Game>	games;
-
-		private final List<Player>	players;
-
-		public Integer calculatePoints() {
-			val gamesMap = new LinkedHashMap<UUID, Game>();
-			games.stream()
-					.filter(Game::completed)
-					.toList()
-					.forEach(g -> gamesMap.put(g.id(), g));
-			return players.stream()
-					.filter(p -> gamesMap.containsKey(p.gameId()))
-					.map(Player::points)
-					.reduce(Integer::sum)
-					.orElse(0);
-		}
-
-	}
-
 	private String getReplacedLabel(UUID participantId) {
 		val replacedNames = findReplacementNames(participantId);
 		return replacedNames.isEmpty() ? null : "Replaced " + String.join(", ", replacedNames);
@@ -245,4 +223,27 @@ public class TournamentDetailsBuilder {
 		}
 		return lastStage.participantModelList().getFirst().id();
 	}
+
+	@RequiredArgsConstructor
+	public static class PlayerPointsCalculator {
+
+		private final List<Game>	games;
+
+		private final List<Player>	players;
+
+		public Integer calculatePoints() {
+			val gamesMap = new LinkedHashMap<UUID, Game>();
+			games.stream()
+					.filter(Game::completed)
+					.toList()
+					.forEach(g -> gamesMap.put(g.id(), g));
+			return players.stream()
+					.filter(p -> gamesMap.containsKey(p.gameId()))
+					.map(Player::points)
+					.reduce(Integer::sum)
+					.orElse(0);
+		}
+
+	}
+
 }
