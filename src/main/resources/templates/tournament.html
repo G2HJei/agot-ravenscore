@@ -40,6 +40,9 @@
 
     <!-- NAVIGATION ROW -->
     <div class="d-flex justify-content-center align-items-center mb-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary bi bi-bar-chart-fill me-2"
+                data-bs-toggle="tooltip" data-bs-title="Show tournament statistics"
+                onclick="showStatsModal()"></button>
         <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-3"
                 data-bs-toggle="tooltip" data-bs-title="Show tournament rules & details"
                 onclick="showRulesModal()"></button>
@@ -198,7 +201,7 @@
                                     th:data-bs-title="${participant.wins.size()+' win(s), of which '+participant.cleanWins+' clean'}">
                                     <img th:each="win : ${participant.wins}"
                                          th:src="@{'/houses/'+${win.house.label()}+'.png'}" alt="house icon"
-                                         style="max-height: 0.9rem">
+                                         style="max-height: 1rem">
                                 </td>
                                 <td th:if="${participant.wins.size() eq 0}"></td>
                                 <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
@@ -489,6 +492,7 @@
 
     <!-- Components -->
     <div layout:replace="~{component/state}"></div>
+    <div layout:replace="~{component/stats}"></div>
     <div layout:replace="~{component/rules}"></div>
     <div layout:replace="~{component/unlock-admin}"></div>
     <div layout:replace="~{component/filters}"></div>

@@ -1,7 +1,12 @@
 package xyz.zlatanov.ravenscore.web.service.builder.tourdetails;
 
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UP;
+import static java.util.Comparator.comparing;
 import static xyz.zlatanov.ravenscore.Utils.*;
+import static xyz.zlatanov.ravenscore.domain.domain.House.BOLTON;
+import static xyz.zlatanov.ravenscore.domain.domain.House.STARK;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -11,6 +16,9 @@ import org.apache.commons.lang3.NotImplementedException;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.domain.*;
+import xyz.zlatanov.ravenscore.web.model.statistics.Dataset;
+import xyz.zlatanov.ravenscore.web.model.statistics.HouseData;
+import xyz.zlatanov.ravenscore.web.model.statistics.TournamentStatistics;
 import xyz.zlatanov.ravenscore.web.model.tourdetails.*;
 
 @RequiredArgsConstructor
@@ -40,7 +48,8 @@ public class TournamentDetailsBuilder {
 				.rankingMode(rankingMode.toString())
 				.winnerParticipantId(getWinnerId(tournamentStageModelList))
 				.substituteModelList(getSubstitutes())
-				.tournamentStageModelList(tournamentStageModelList);
+				.tournamentStageModelList(tournamentStageModelList)
+				.tournamentStatistics(buildStatistics(tournamentStageModelList));
 	}
 
 	private List<SubstituteModel> getSubstitutes() {
@@ -50,7 +59,7 @@ public class TournamentDetailsBuilder {
 						.name(sub.name())
 						.profileLinks(Arrays.stream(Optional.ofNullable(sub.profileLinks()).orElse(new String[] {}))
 								.map(ProfileLink::new)
-								.sorted(Comparator.comparing(ProfileLink::link, Comparator.nullsFirst(Comparator.naturalOrder())))
+								.sorted(comparing(ProfileLink::link, Comparator.nullsFirst(Comparator.naturalOrder())))
 								.toList()))
 				.toList();
 	}
@@ -163,7 +172,7 @@ public class TournamentDetailsBuilder {
 									.map(p -> Arrays.stream(p.profileLinks()).toList()
 											.stream()
 											.map(ProfileLink::new)
-											.sorted(Comparator.comparing(ProfileLink::link,
+											.sorted(comparing(ProfileLink::link,
 													Comparator.nullsFirst(Comparator.naturalOrder())))
 											.toList())
 									.orElse(List.of()))
@@ -209,7 +218,7 @@ public class TournamentDetailsBuilder {
 							: null;
 				})
 				.filter(Objects::nonNull)
-				.sorted(Comparator.comparing(GameWin::house))
+				.sorted(comparing(GameWin::house))
 				.toList();
 	}
 
@@ -222,6 +231,60 @@ public class TournamentDetailsBuilder {
 			return null;
 		}
 		return lastStage.participantModelList().getFirst().id();
+	}
+
+	private TournamentStatistics buildStatistics(List<TournamentStageModel> tournamentStageModelList) {
+		val houseDataList = calculateHouseData(tournamentStageModelList);
+		val stats = new TournamentStatistics().datasets(List.of(
+				new Dataset().label("Win percentage"),
+				new Dataset().label("Average points")));
+		for (val hd : houseDataList) {
+			stats.labels().add(hd.label());
+			stats.datasets().get(0).data().add(hd.winPercent());
+			stats.datasets().get(1).data().add(hd.averagePoints());
+		}
+		return stats;
+	}
+
+	private List<HouseData> calculateHouseData(List<TournamentStageModel> tournamentStageModelList) {
+		val houseDataList = new ArrayList<HouseData>();
+		playerList.stream()
+				.map(Player::house)
+				.filter(h -> h != BOLTON) // include in Stark statistics
+				.distinct() // each house participating in the tournament game types
+				.forEach(house -> {
+					val winsCount = tournamentStageModelList.stream()
+							.flatMap(tsm -> tsm.participantModelList().stream())
+							.map(ParticipantModel::wins)
+							.flatMap(Collection::stream)
+							.filter(gw -> gw.house() == house || (gw.house() == BOLTON && house == STARK))
+							.count();
+					val pointsList = gameList.stream()
+							.filter(Game::completed)
+							.map(g -> playerList.stream()
+									.filter(p -> p.gameId().equals(g.id())
+											&& (p.house() == house || (p.house() == BOLTON && house == STARK)))
+									.findFirst()
+									.map(Player::points)
+									.orElse(null))
+							.filter(Objects::nonNull)
+							.toList();
+					val pointsSum = pointsList.stream().reduce(Integer::sum).map(BigDecimal::valueOf).orElse(ZERO);
+					val gamesCount = BigDecimal.valueOf(pointsList.size());
+					val houseData = new HouseData().label(house != STARK ? house.label() : STARK.label() + " / " + BOLTON.label());
+					if (gamesCount.compareTo(ZERO) > 0) {
+						houseData.winPercent(BigDecimal.valueOf(winsCount).divide(gamesCount, 2, HALF_UP));
+						houseData.averagePoints(pointsSum.divide(gamesCount, 2, UP));
+					} else {
+						houseData.winPercent(ZERO);
+						houseData.averagePoints(ZERO);
+					}
+					houseDataList.add(houseData);
+				});
+		return houseDataList.stream()
+				.sorted(comparing(HouseData::averagePoints))
+				.toList()
+				.reversed();
 	}
 
 	@RequiredArgsConstructor
@@ -243,7 +306,5 @@ public class TournamentDetailsBuilder {
 					.reduce(Integer::sum)
 					.orElse(0);
 		}
-
 	}
-
 }

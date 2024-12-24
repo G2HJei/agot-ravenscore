@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import xyz.zlatanov.ravenscore.domain.domain.Scoring;
+import xyz.zlatanov.ravenscore.web.model.statistics.TournamentStatistics;
 
 @Data
 @Accessors(fluent = true)
@@ -23,4 +24,5 @@ public class TournamentDetailsModel {
 	private String						rankingMode;
 	private List<SubstituteModel>		substituteModelList			= new ArrayList<>();
 	private List<TournamentStageModel>	tournamentStageModelList	= new ArrayList<>();
+	private TournamentStatistics		tournamentStatistics;
 }

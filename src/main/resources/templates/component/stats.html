@@ -1,0 +1,101 @@
+<div class="modal modal-lg fade" id="statsModal" tabindex="-1" aria-labelledby="statsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="statsModalLabel">Tournament Statistics</h1>
+                <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <canvas id="statsContainer"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let statsChart;
+
+    function showStatsModal() {
+        if (statsChart) {
+            statsChart.destroy();
+        }
+        $("#statsModal").modal("show");
+        const data = /*[[${model.tournamentStatistics()}]]*/ "replaced by Thymeleaf";
+        data.datasets[0].type = "line";
+        data.datasets[0].yAxisID = "y1";
+        data.datasets[0].backgroundColor = "rgba(218, 165, 32, 0.55)";
+        data.datasets[0].borderColor = "rgba(218, 165, 32, 0.33)";
+        data.datasets[1].type = "bar";
+        data.datasets[1].yAxisID = "y";
+        data.datasets[1].backgroundColor = "rgba(176, 176, 176, 0.2)";
+        const statsContainer = $("#statsContainer")[0];
+        Chart.register(ChartDataLabels);
+        statsChart = new Chart(statsContainer, {
+            data: data,
+            options: {
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: "#A0A0A0",
+                        }
+                    },
+                    y: {
+                        type: "linear",
+                        display: true,
+                        position: "left",
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    },
+                    y1: {
+                        type: "linear",
+                        display: true,
+                        position: "right",
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            display: false,
+                            format: {
+                                style: "percent"
+                            },
+                            precision: 0
+                        }
+                    },
+                },
+                elements: {
+                    line: {
+                        borderWidth: 3
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: "#A0A0A0",
+                        }
+                    },
+                    datalabels: {
+                        anchor: "end",
+                        align: "end",
+                        color: "#A0A0A0",
+                        font: {
+                            //weight: 'bold',
+                        },
+                        formatter: function (value, context) {
+                            return context.datasetIndex === 0
+                                ? (value * 100) + "%"
+                                : value;
+                        }
+                    }
+                }
+            },
+        });
+    }
+</script>
