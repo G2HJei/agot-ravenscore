@@ -24,7 +24,7 @@
                                     <i id="pointsCalc" class="bi bi-calculator-fill text-brand highlight-primary fs-5" data-bs-toggle="tooltip" data-rs-calc-state="true" onclick="togglePointsCalculation()"
                                         data-bs-title="Automatically calculate points based on the scoring type. In case of tie-breakers such as land areas, supply etc, click to turn this off to manually enter the points for each player."></i>
                                 </th>
-                                <th scope="col" class="text-center" style="width: 15%">Castles</th>
+                                <th scope="col" class="text-center" style="width: 15%">{{objective-type}}</th>
                                 <th scope="col" class="text-center" style="width: 15%">Penalty</th>
                             </thead>
                             <tbody>
@@ -65,6 +65,7 @@
             .replaceAll("{{game-name}}", gameElement.data("rs-game-name"))
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{game-id}}", getSelectedGameId)
+            .replaceAll("{{objective-type}}", gameElement.data("rs-game-type") !== "A_FEAST_FOR_CROWS" ? "Castles" : "Objectives")
             .replaceAll("{{ranking-rows}}", buildRankingRowsHTML(gameElement))
             .replaceAll("{{completed}}", completed ? "checked" : "");
         $("#rankingModalContainer").empty().append(modalHTML);

@@ -409,7 +409,10 @@
                                                         <th scope="col" style="width: 5%"></th>
                                                         <th scope="col" style="width: 55%">Player</th>
                                                         <th scope="col" class="text-center">Points</th>
-                                                        <th scope="col" class="text-center">Castles</th>
+                                                        <th scope="col" class="text-center"
+                                                            th:text="${game.type.toString() ne 'A_FEAST_FOR_CROWS' ? 'Castles' : 'Objectives'}">
+                                                            Castles
+                                                        </th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
