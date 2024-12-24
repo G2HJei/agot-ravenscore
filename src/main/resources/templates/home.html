@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 <body>
-<main layout:fragment="content" th:with="routing = ${T(xyz.zlatanov.ravenscore.web.ControllerConstants)}">
+<main layout:fragment="content" th:with="routing = ${T(xyz.zlatanov.ravenscore.controller.ControllerConstants)}">
     <div class="container container-rs-small">
         <div class="d-flex justify-content-start align-items-center mt-5">
             <img th:src="@{'/logo.png'}" style="max-width: 50%; height: 24rem" alt="Logo"
