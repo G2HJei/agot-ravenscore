@@ -85,16 +85,14 @@
                         anchor: "end",
                         align: "end",
                         color: "#A0A0A0",
-                        font: {
-                            //weight: 'bold',
-                        },
                         formatter: function (value, context) {
                             return context.datasetIndex === 0
                                 ? (value * 100) + "%"
                                 : value;
                         }
                     }
-                }
+                },
+                animation: false
             },
         });
     }
