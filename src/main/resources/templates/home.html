@@ -6,10 +6,12 @@
 <body>
 <main layout:fragment="content" th:with="routing = ${T(xyz.zlatanov.ravenscore.controller.ControllerConstants)}">
     <div class="container container-rs-small">
-        <div class="d-flex justify-content-start align-items-center mt-5">
-            <img th:src="@{'/logo.png'}" style="max-width: 50%; height: 24rem" alt="Logo"
-                 class="d-inline-block align-text-top">
-            <div class="me-3">
+        <div class="row mt-5">
+            <div class="col-12 col-md-6 d-flex justify-content-center align-items-center">
+                <img th:src="@{'/logo.png'}" style="max-height: 24rem" alt="Logo"
+                     class="d-inline-block align-text-top">
+            </div>
+            <div class="col-12 col-md-6">
                 <p> Welcome my Lord,</p>
                 <p> In Ravenscore, you can create, manage and participate in tournaments of the classic
                     board game <a
@@ -24,7 +26,7 @@
                 <hr/>
                 <figure>
                     <blockquote class="blockquote fs-6 fst-italic fw-light">
-                        <p class="mb-1">“Always keep your foes confused. If they are never certain who you are or what
+                        <p>“Always keep your foes confused. If they are never certain who you are or what
                             you
                             want, they cannot know what you are like to do next. Sometimes the best way to baffle them
                             is to
@@ -32,10 +34,10 @@
                             moves that have no purpose, or even seem to work against you. Remember that, Sansa, when you
                             come to
                             play the game.”</p>
-                        <p class="mb-1">“What... what game?”</p>
-                        <p class="mb-1">“The only game. The game of thrones.”</p>
+                        <p>“What... what game?”</p>
+                        <p>“The only game. The game of thrones.”</p>
                     </blockquote>
-                    <figcaption class="blockquote-footer text-end">
+                    <figcaption class="blockquote-footer text-end mt-1">
                         "A Storm of Swords"&nbsp;<cite title="A Storm of Swords">(George R. R. Martin)</cite>
                     </figcaption>
                 </figure>

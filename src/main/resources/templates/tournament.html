@@ -312,8 +312,8 @@
                                  th:data-rs-game-completed="${game.completed}"
                                  th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
                                 <div class="accordion-body ms-3">
-                                    <div class="d-flex justify-content-start gap-3 w-100">
-                                        <div>
+                                    <div class="row">
+                                        <div class="col-12 col-lg-4 d-flex flex-column justify-content-start align-items-center mb-3">
                                             <div th:if="${not model.adminUnlocked}"
                                                  class="text-center text-secondary-emphasis"
                                                  th:text="${game.completed ? ('Round ' + game.round): ''}">
@@ -362,7 +362,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="w-100">
+                                        <div class="col-12 col-lg-8">
                                             <div th:class="${game.playersRevealed ? 'visually-hidden' : ''}">
                                                 <h6 class="text-center mt-1 mb-4">Participants</h6>
                                                 <div th:if="${game.participantIdList.isEmpty()}"
@@ -406,8 +406,8 @@
                                                 <table class="table table-borderless table-hover">
                                                     <thead>
                                                     <tr>
-                                                        <th scope="col"></th>
-                                                        <th scope="col">Player</th>
+                                                        <th scope="col" style="width: 5%"></th>
+                                                        <th scope="col" style="width: 55%">Player</th>
                                                         <th scope="col" class="text-center">Points</th>
                                                         <th scope="col" class="text-center">Castles</th>
                                                     </tr>
