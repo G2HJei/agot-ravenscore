@@ -135,10 +135,10 @@
                                 <th scope="col" style="width: 5%"></th>
                                 <th scope="col" style="width: 45%">Player</th>
                                 <th scope="col" class="text-center">Score
-                                    <i th:if="${stage.rankingMode eq 'SCORE'}"
+                                    <i th:if="${(stage.rankingMode eq 'SCORE') or (stage.rankingMode eq 'AUTO' and not stage.completed)}"
                                        class="bi bi-sort-down fs-5 text-brand highlight-brand"></i>
-                                    <a href="?rankingMode=SCORE" th:if="${stage.rankingMode ne 'SCORE'}"
-                                       class="bi bi-sort-down fs-5 text-muted"></a>
+                                    <a th:if="${(stage.rankingMode ne 'SCORE') and ((stage.rankingMode ne 'AUTO') or stage.completed)}"
+                                       href="?rankingMode=SCORE" class="bi bi-sort-down fs-5 text-muted"></a>
                                 </th>
                                 <th scope="col" class="text-center">Games</th>
                                 <th scope="col" class="text-center">Wins</th>
