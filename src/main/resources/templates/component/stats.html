@@ -87,7 +87,7 @@
                         color: "#A0A0A0",
                         formatter: function (value, context) {
                             return context.datasetIndex === 0
-                                ? (value * 100) + "%"
+                                ? Math.round(value * 100) + "%" // Round to avoid floating precision issues
                                 : value;
                         }
                     }
