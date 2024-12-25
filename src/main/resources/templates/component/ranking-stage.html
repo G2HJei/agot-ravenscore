@@ -1,0 +1,84 @@
+<div id="rankingStageModalContainer"></div>
+
+<script th:inline="javascript">
+    const RANKING_STAGE_MODAL = `
+        <div class="modal fade show" id="rankingStageModal" tabindex="-1" aria-labelledby="rankingStageModalLabel" aria-modal="true" role="dialog" style="display: block;">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="rankingStageModalLabel">Stage Rankings</h1>
+                        <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-1">
+                        <h5 class="text-muted text-center">{{stage-name}}</h5>
+                        <form id="rankingForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/rankings">
+                            <table class="table table-sm table-borderless table-hover mt-2">
+                                <thead>
+                                <tr>
+                                    <th scope="col" style="width: 45%">Player</th>
+                                    <th scope="col" class="text-center">Score</th>
+                                    <th scope="col" class="text-center">Wins</th>
+                                    <th scope="col" class="text-center">Clean wins</th>
+                                </tr>
+                                </thead>
+                                <tbody id="stageRankingsSortable" >
+                                    {{participant-rows}}
+                                </tbody>
+                            </table>
+                            <div class="align-middle fst-italic fw-lighter text-center mt-2">Drag & drop to rearrange final stage rankings. After the ranking is finalized, the stage itself, its games and participants cannot be modified.</div>
+                            <div class="d-flex justify-content-end align-items-center mt-3 mb-2 me-2">
+                                <button type="submit" class="btn btn-outline-secondary"
+                                    onclick="return confirm('Are you sure you want to complete this tournament stage? This action cannot be undone and you will not be able to modify it further.');">
+                                        Done
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    const PARTICIPANT_STAGE_RANKING_ROW = `
+        <tr>
+            <td class="align-middle text-start"><i class="bi bi-person-fill text-muted me-1">
+                </i><span>{{participant-name}}</span>
+                <input type="hidden" name="stageRankingParticipantIdList" value="{{participant-id}}">
+            </td>
+            <td class="align-middle text-center">{{score}}</td>
+            <td class="align-middle text-center">{{wins}}</td>
+            <td class="align-middle text-center">{{clean-wins}}</td>
+        </tr>`;
+
+    function updateStageRanking() {
+        const stageId = getSelectedStageId();
+        const stageElement = $("#stage-" + stageId);
+        const modalHTML = RANKING_STAGE_MODAL
+            .replaceAll("{{tour-id}}", getTournamentId())
+            .replaceAll("{{stage-id}}", stageId)
+            .replaceAll("{{stage-name}}", stageElement.data("rs-stage-name"))
+            .replaceAll("{{participant-rows}}", buildParticipantRowsHTML(stageElement));
+        $("#rankingStageModalContainer").empty().append(modalHTML);
+        Sortable.create($("#stageRankingsSortable")[0], {
+            animation: 150, // Smooth animation
+            handle: "tr" // Drag entire row
+        });
+        $("#rankingStageModal").modal("show");
+    }
+
+    function buildParticipantRowsHTML(stageElement) {
+        return stageElement.find(".participant-data")
+            .map((_, participant) => {
+                return PARTICIPANT_STAGE_RANKING_ROW
+                    .replaceAll("{{participant-id}}", $(participant).data("rs-participant-id"))
+                    .replaceAll("{{participant-name}}", $(participant).data("rs-participant-name"))
+                    .replaceAll("{{score}}", $(participant).data("rs-score"))
+                    .replaceAll("{{wins}}", $(participant).data("rs-wins"))
+                    .replaceAll("{{clean-wins}}", $(participant).data("rs-clean-wins"));
+            })
+            .get()
+            .join("");
+    }
+
+    function submitStageRanking() {
+        $("tr[data-rs-stage-ranking-participant-id]")
+    }
+</script>

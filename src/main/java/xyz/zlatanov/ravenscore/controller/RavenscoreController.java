@@ -57,7 +57,7 @@ public class RavenscoreController {
 
 	@GetMapping(TOURNAMENT_DETAILS)
 	String tourneyDetails(@PathVariable(TOURNAMENT_ID) UUID tournamentId,
-			@RequestParam(defaultValue = "SCORE") RankingMode rankingMode,
+			@RequestParam(defaultValue = "AUTO") RankingMode rankingMode,
 			@RequestParam(required = false) String error,
 			@RequestParam(required = false) String message,
 			Model model) {
@@ -82,6 +82,13 @@ public class RavenscoreController {
 	@GetMapping(REMOVE_STAGE)
 	String removeStage(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId) {
 		tournamentStageAdminService.removeStage(stageId);
+		return redirectToTournament(tournamentId);
+	}
+
+	@PostMapping(FINALIZE_STAGE_RANKINGS)
+	String finalizeStageRankings(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId, @PathVariable(STAGE_ID) UUID stageId,
+			@RequestParam UUID[] stageRankingParticipantIdList) {
+		tournamentStageAdminService.finalizeRankings(stageId, stageRankingParticipantIdList);
 		return redirectToTournament(tournamentId);
 	}
 

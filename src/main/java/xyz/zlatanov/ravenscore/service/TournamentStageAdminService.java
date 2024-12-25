@@ -1,7 +1,6 @@
 package xyz.zlatanov.ravenscore.service;
 
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,17 +76,40 @@ public class TournamentStageAdminService {
 		tournamentStageRepository.save(stage.participantIdList(newStageParticipantIds));
 	}
 
+	@Transactional
+	@TournamentAdminOperation
+	public void finalizeRankings(UUID stageId, UUID[] finalizedRankingsArray) {
+		// replaced participants will not be present in the finalized rankings so find and add them now
+		val finalizedRankings = new ArrayList<>(Arrays.stream(finalizedRankingsArray).toList());
+		val stage = tournamentStageRepository.findById(stageId).orElseThrow();
+		val replacedParticipants = getReplacedParticipants(stage, finalizedRankings);
+		finalizedRankings.addAll(replacedParticipants);
+		stage.participantIdList(finalizedRankings.toArray(UUID[]::new));
+		stage.completed(true);
+		tournamentStageRepository.save(stage);
+	}
+
 	private void createStage(@Valid StageForm stageForm) {
 		tournamentStageRepository.save(new TournamentStage()
 				.name(stageForm.getName())
 				.tournamentId(stageForm.getTournamentId())
-				.qualificationCount(stageForm.getQualificationCount()));
+				.qualificationCount(stageForm.getQualificationCount()))
+				.completed(false);
 	}
 
 	private void updateStage(@Valid StageForm stageForm) {
 		val stage = tournamentStageRepository.findById(stageForm.getStageId()).orElseThrow();
+		if (stage.completed() && !Objects.equals(stage.qualificationCount(), stageForm.getQualificationCount())) {
+			throw new RavenscoreException("Cannot change the qualifiers count of a completed stage.");
+		}
 		tournamentStageRepository.save(stage
 				.name(stageForm.getName())
 				.qualificationCount(stageForm.getQualificationCount()));
+	}
+
+	private List<UUID> getReplacedParticipants(TournamentStage stage, List<UUID> finalizedRankings) {
+		val replacedParticipants = new ArrayList<>(Arrays.stream(stage.participantIdList()).toList());
+		replacedParticipants.removeAll(finalizedRankings);
+		return replacedParticipants;
 	}
 }

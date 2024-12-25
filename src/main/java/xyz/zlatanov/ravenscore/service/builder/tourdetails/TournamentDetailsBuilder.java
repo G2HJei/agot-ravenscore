@@ -7,8 +7,6 @@ import static xyz.zlatanov.ravenscore.Utils.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.domain.*;
@@ -38,7 +36,6 @@ public class TournamentDetailsBuilder {
 				.startDate(DATE_FORMATTER.format(tournament.startDate()))
 				.adminUnlocked(adminUnlocked)
 				.tournamentKey(tournament.tournamentKey())
-				.rankingMode(rankingMode.toString())
 				.winnerParticipantId(getWinnerId(tournamentStageModelList))
 				.substituteModelList(getSubstitutes())
 				.tournamentStageModelList(tournamentStageModelList)
@@ -67,7 +64,9 @@ public class TournamentDetailsBuilder {
 							.name(stage.name())
 							.qualificationCount(stage.qualificationCount())
 							.startDate(DATE_FORMATTER.format(stage.startDate()))
-							.completed(!gameModelList.isEmpty() && gameModelList.stream().allMatch(GameModel::completed))
+							.completed(stage.completed())
+							.completable(!gameModelList.isEmpty() && gameModelList.stream().allMatch(GameModel::completed))
+							.rankingMode(rankingMode.toString())
 							.participantModelList(getParticipants(stage))
 							.gameModelList(gameModelList);
 				})
@@ -106,28 +105,38 @@ public class TournamentDetailsBuilder {
 							.avgPoints(DECIMAL_FORMATTER.format(avgPts));
 				})
 				.sorted(switch (rankingMode) {
+					case AUTO -> stage.completed() ? finalRankingModeComparator(stage.participantIdList()) : scoringRankingModeComparator();
 					case SCORE -> scoringRankingModeComparator();
 					case AVG_PTS -> averagePtsRankingModeComparator();
-					case FINAL -> throw new NotImplementedException(); // todo do not sort at all in this case
+					case FINAL -> finalRankingModeComparator(stage.participantIdList());
 				}).toList();
 	}
 
+	private Comparator<ParticipantModel> finalRankingModeComparator(UUID[] stageParticipantIds) {
+		val participantIdsList = Arrays.stream(stageParticipantIds).map(UUID::toString).toList();
+		return (p1, p2) -> {
+			val i1 = (Integer) participantIdsList.indexOf(p1.id());
+			val i2 = participantIdsList.indexOf(p2.id());
+			return i1.compareTo(i2);
+		};
+	}
+
 	private Comparator<ParticipantModel> scoringRankingModeComparator() {
-		return (o1, o2) -> {
-			int scoreComparison = -o1.score().compareTo(o2.score());
+		return (p1, p2) -> {
+			int scoreComparison = -p1.score().compareTo(p2.score());
 			if (scoreComparison != 0) {
 				return scoreComparison;
 			}
-			int winsComparison = Integer.compare(o2.wins().size(), o1.wins().size());
+			int winsComparison = Integer.compare(p2.wins().size(), p1.wins().size());
 			if (winsComparison != 0) {
 				return winsComparison;
 			}
-			return Integer.compare(o2.cleanWins(), o1.cleanWins());
+			return Integer.compare(p2.cleanWins(), p1.cleanWins());
 		};
 	}
 
 	private Comparator<ParticipantModel> averagePtsRankingModeComparator() {
-		return (o1, o2) -> -o1.avgPtsDouble().compareTo(o2.avgPtsDouble());
+		return (p1, p2) -> -p1.avgPtsDouble().compareTo(p2.avgPtsDouble());
 	}
 
 	private List<GameModel> getGames(UUID stageId) {

@@ -25,7 +25,7 @@
                                     Qualifiers
                                     <i id="qualifiersInfo" class="bi bi-question-circle text-muted fs-5 mb-1" data-bs-toggle="tooltip" data-bs-original-title="Number of players to qualify for a next round."></i>
                                 </label>
-                                <input type="number" required="" min="1" max="64" class="form-control text-center" id="qualifyCount"
+                                <input type="number" required="" min="1" max="64" class="form-control text-center" id="qualifyCount" {{qualification-count-disabled}}
                                        name="qualificationCount" value="{{qualification-count}}">
                             </div>
                         </div>
@@ -34,7 +34,7 @@
                         </div>
                         <div class="d-flex justify-content-end align-items-center">
                             {{delete-button}}
-                            <button type="button" class="btn btn-outline-secondary ms-auto" onclick="submitStage()">Done</button>
+                            <button type="button" class="btn btn-outline-secondary ms-auto" onclick="submitStage({{reset-selections}})">Done</button>
                         </div>
                     </form>
                 </div>
@@ -54,16 +54,21 @@
             .replaceAll("{{stage-id}}", "")
             .replaceAll("{{stage-name}}", "")
             .replaceAll("{{qualification-count}}", "1")
+            .replaceAll("{{reset-selections}}", "true")
+            .replaceAll("{{qualification-count-disabled}}", "")
         );
     }
 
     function editTournamentStage() {
-        let selectedStage = $('#stageNav .nav-item .nav-link.active');
+        const stageId = getSelectedStageId();
+        let selectedStage = $("#stage-" + stageId);
         refreshStageModal(STAGE_MODAL
             .replaceAll("{{title}}", "Modify Tournament Stage")
             .replaceAll("{{delete-button}}", DELETE_STAGE_BUTTON)
             .replaceAll("{{tour-id}}", getTournamentId())
-            .replaceAll("{{stage-id}}", getSelectedStageId())
+            .replaceAll("{{stage-id}}", stageId)
+            .replaceAll("{{reset-selections}}", "false")
+            .replaceAll("{{qualification-count-disabled}}", selectedStage.data("rs-stage-completed") ? "disabled" : "")
             .replaceAll("{{stage-name}}", selectedStage.data("rs-stage-name"))
             .replaceAll("{{qualification-count}}", selectedStage.data("rs-stage-qualification-count"))
         );
@@ -76,14 +81,17 @@
         $("#stageModal").modal("show");
     }
 
-    function submitStage() {
+    function submitStage(resetSelections) {
         const stageForm = $("#stageForm")[0];
         if (!stageForm.checkValidity()) {
             stageForm.reportValidity();
             return;
         }
-        resetStageSelection();
-        resetGameSelection();
+        if (resetSelections) {
+            resetStageSelection();
+            resetGameSelection();
+        }
+        $("#qualifyCount").prop("disabled", false);
         stageForm.submit();
     }
 </script>

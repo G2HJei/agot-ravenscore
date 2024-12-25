@@ -29,6 +29,7 @@ public class ControllerConstants {
 	public static final String	RESTORE_BACKUP				= TOURNAMENT_DETAILS + "/restore-backup";
 	public static final String	UPSERT_STAGE				= TOURNAMENT_DETAILS + "/stage";
 	public static final String	REMOVE_STAGE				= UPSERT_STAGE + "/remove/{" + STAGE_ID + "}";
+	public static final String	FINALIZE_STAGE_RANKINGS		= UPSERT_STAGE + "/{" + STAGE_ID + "}/rankings";
 	public static final String	IMPORT_PARTICIPANTS			= TOURNAMENT_DETAILS + "/stage/{" + STAGE_ID + "}/import-participants";
 	public static final String	SUBSTITUTE_PLAYER			= //
 			TOURNAMENT_DETAILS + "/participant/{" + PARTICIPANT_ID + "}/substitute/{" + SUBSTITUTE_ID + "}";

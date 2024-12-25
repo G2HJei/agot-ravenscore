@@ -21,7 +21,6 @@ public class TournamentDetailsModel {
 	private Boolean						adminUnlocked				= false;
 	private String						tournamentKey;
 	private String						winnerParticipantId;
-	private String						rankingMode;
 	private List<SubstituteModel>		substituteModelList			= new ArrayList<>();
 	private List<TournamentStageModel>	tournamentStageModelList	= new ArrayList<>();
 	private TournamentStatistics		tournamentStatistics;

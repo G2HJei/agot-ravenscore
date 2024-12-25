@@ -59,7 +59,7 @@
                    th:data-rs-stage-id="${stage.id}"
                    th:data-rs-stage-name="${stage.name}"
                    th:data-rs-stage-qualification-count="${stage.qualificationCount}"
-                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stageIdx.index}">
+                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stage.id}">
                     <i th:if="${stage.completed}" class="bi bi-check-lg"></i>
                     <span th:text="${stage.name}">
                         Stage
@@ -87,20 +87,30 @@
 
     <div class="tab-content">
         <div th:each="stage, stageIdx : ${model.tournamentStageModelList}"
-             th:data-rs-stage-completed="${stage.completed}" th:id="${'stage-'+stageIdx.index}"
+             th:id="${'stage-'+stage.id}"
+             th:data-rs-stage-completed="${stage.completed}"
+             th:data-rs-stage-name="${stage.name}"
+             th:data-rs-stage-qualification-count="${stage.qualificationCount}"
              th:class="${'stage-data tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
             <div class="row">
                 <div class="col-12 col-xxl-6">
                     <!-- STAGE RANKINGS -->
                     <div class="d-flex justify-content-center align-items-center mb-2">
                         <div class="ms-1 me-auto">
-                            <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                            <button th:if="${model.adminUnlocked and not stage.completed}" type="button"
+                                    data-bs-toggle="tooltip"
                                     data-bs-title="Add player" onclick="newParticipant()"
                                     class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-2"></button>
-                            <button th:if="${model.adminUnlocked}" type="button" data-bs-toggle="tooltip"
+                            <button th:if="${model.adminUnlocked and not stage.completed}" type="button"
+                                    data-bs-toggle="tooltip"
                                     data-bs-title="Import players qualifying from previous stages"
                                     onclick="importParticipants()"
-                                    class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down"></button>
+                                    class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down me-2"></button>
+                            <button type="button"
+                                    th:if="${model.adminUnlocked and not stage.completed and stage.completable}"
+                                    class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
+                                    data-bs-toggle="tooltip" data-bs-title="Finalize rankings & complete stage"
+                                    onclick="updateStageRanking()"></button>
                         </div>
                         <h5 class="text-center">Stage Rankings</h5>
                         <div class="ms-auto"></div>
@@ -108,7 +118,7 @@
                     <div th:if="${stage.participantModelList.isEmpty()}"
                          class="align-middle fst-italic fw-lighter text-center mb-5">
                         This tournament stage has no participants yet.
-                        <th:block th:if="${model.adminUnlocked}">Please
+                        <th:block th:if="${model.adminUnlocked and not stage.completed}">Please
                             <a href="#" onclick="newParticipant()"
                                class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">add</a>
                             or
@@ -125,17 +135,17 @@
                                 <th scope="col" style="width: 5%"></th>
                                 <th scope="col" style="width: 45%">Player</th>
                                 <th scope="col" class="text-center">Score
-                                    <i th:if="${model.rankingMode eq 'SCORE'}"
+                                    <i th:if="${stage.rankingMode eq 'SCORE'}"
                                        class="bi bi-sort-down fs-5 text-brand highlight-brand"></i>
-                                    <a href="?rankingMode=SCORE" th:if="${model.rankingMode ne 'SCORE'}"
+                                    <a href="?rankingMode=SCORE" th:if="${stage.rankingMode ne 'SCORE'}"
                                        class="bi bi-sort-down fs-5 text-muted"></a>
                                 </th>
                                 <th scope="col" class="text-center">Games</th>
                                 <th scope="col" class="text-center">Wins</th>
                                 <th scope="col" class="text-center">Avg. points
-                                    <i th:if="${model.rankingMode eq 'AVG_PTS'}"
+                                    <i th:if="${stage.rankingMode eq 'AVG_PTS'}"
                                        class="bi bi-sort-down fs-5 text-brand highlight-brand"></i>
-                                    <a href="?rankingMode=AVG_PTS" th:if="${model.rankingMode ne 'AVG_PTS'}"
+                                    <a href="?rankingMode=AVG_PTS" th:if="${stage.rankingMode ne 'AVG_PTS'}"
                                        class="bi bi-sort-down fs-5 text-muted"></a></th>
                             </tr>
                             </thead>
@@ -159,7 +169,10 @@
                                                   th:data-rs-stage-id="${stage.id}"
                                                   th:data-rs-participant-id="${participant.id}"
                                                   th:data-rs-is-qualifier="${participantIdx.index lt stage.qualificationCount}"
-                                                  th:data-rs-participant-name="${participant.name}">
+                                                  th:data-rs-participant-name="${participant.name}"
+                                                  th:data-rs-score="${participant.score}"
+                                                  th:data-rs-wins="${participant.wins.size()}"
+                                                  th:data-rs-clean-wins="${participant.cleanWins}">
                                                 <i class="bi bi-person-fill text-muted"></i>
                                                 <span th:text="${participant.name}">Petyr Baelish</span>
                                             </span>
@@ -179,7 +192,7 @@
                                                    th:data-bs-title="${'External player profile: '+link.link}"
                                                    th:text="'  ' + ${link.label}">Profile</a>
                                             </th:block>
-                                            <i th:if="${model.adminUnlocked}"
+                                            <i th:if="${model.adminUnlocked and not stage.completed}"
                                                class="bi bi-pencil-square visually-hidden action-icon"
                                                data-bs-toggle="tooltip"
                                                data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
@@ -260,7 +273,7 @@
                 <div class="col-12 col-xxl-6 stage-games" th:data-rs-stage-id="${stage.id}">
                     <h5 class="d-flex justify-content-center align-items-center mt-5 mt-lg-0">
                         <span class="ms-1 me-auto">
-                            <button th:if="${model.adminUnlocked}" type="button"
+                            <button th:if="${model.adminUnlocked and not stage.completed}" type="button"
                                     class="btn btn-sm btn-outline-secondary bi bi-plus-lg"
                                     data-bs-toggle="tooltip" data-bs-title="Create new game"
                                     onclick="newGame()"></button>
@@ -279,7 +292,7 @@
                          class="align-middle fst-italic fw-lighter text-center">
                         This
                         tournament stage has no games yet.
-                        <th:block th:if="${model.adminUnlocked}">
+                        <th:block th:if="${model.adminUnlocked and not stage.completed}">
                             Why not
                             <a href="#" onclick="newGame()"
                                class="text-brand-light link-secondary link-underline link-underline-opacity-0 link-underline-opacity-75-hover">create
@@ -314,12 +327,12 @@
                                 <div class="accordion-body ms-3">
                                     <div class="row">
                                         <div class="col-12 col-lg-4 d-flex flex-column justify-content-start align-items-center mb-3">
-                                            <div th:if="${not model.adminUnlocked}"
+                                            <div th:if="${(not model.adminUnlocked) or stage.completed}"
                                                  class="text-center text-secondary-emphasis"
                                                  th:text="${game.completed ? ('Round ' + game.round): ''}">
                                                 Round #
                                             </div>
-                                            <div th:if="${model.adminUnlocked}"
+                                            <div th:if="${model.adminUnlocked and not stage.completed}"
                                                  class="d-flex justify-content-center gap-2 position-relative">
                                                 <button type="button"
                                                         class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
@@ -506,7 +519,8 @@
         <div layout:replace="~{component/import-participants}"></div>
         <div layout:replace="~{component/substitution}"></div>
         <div layout:replace="~{component/game}"></div>
-        <div layout:replace="~{component/ranking}"></div>
+        <div layout:replace="~{component/ranking-game}"></div>
+        <div layout:replace="~{component/ranking-stage}"></div>
         <div layout:replace="~{component/restore-backup}"></div>
     </div>
 

@@ -29,6 +29,8 @@ public class TournamentStage {
 	// timestamp for sorting purposes
 	private LocalDateTime	startDate			= LocalDateTime.now();
 
+	private Boolean			completed			= false;
+
 	private UUID			tournamentId;
 
 	@Type(UUIDArrayType.class)

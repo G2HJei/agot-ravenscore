@@ -15,6 +15,8 @@ public class TournamentStageModel {
 	private Integer					qualificationCount;
 	private String					startDate;
 	private boolean					completed				= false;
+	private boolean					completable				= false;
+	private String					rankingMode;
 	private List<ParticipantModel>	participantModelList	= new ArrayList<>();
 	private List<GameModel>			gameModelList			= new ArrayList<>();
 }
