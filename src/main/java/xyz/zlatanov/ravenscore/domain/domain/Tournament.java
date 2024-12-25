@@ -3,6 +3,7 @@ package xyz.zlatanov.ravenscore.domain.domain;
 import static jakarta.persistence.EnumType.STRING;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,22 +25,24 @@ public class Tournament {
 
 	@Id
 	@UuidGenerator
-	private UUID		id;
+	private UUID			id;
 
-	private String		name;
+	private String			name;
 
-	private String		description;
+	private String			description;
 
 	@Enumerated(STRING)
-	private Scoring		scoring;
+	private Scoring			scoring;
 
-	private boolean		hidden		= false;
+	private boolean			hidden		= false;
 
-	private String		tournamentKey;
+	private String			tournamentKey;
 
-	private LocalDate	startDate	= LocalDate.now();
+	private LocalDate		startDate	= LocalDate.now();
 
-	private boolean		pinned		= false;
+	private LocalDateTime	lastUpdated;
+
+	private boolean			pinned		= false;
 
 	public boolean validateTournamentKey(String keyToValidate) {
 		return validateUnlockHash(keyToValidate.hashCode());

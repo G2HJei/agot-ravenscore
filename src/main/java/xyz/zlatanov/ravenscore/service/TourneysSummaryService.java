@@ -27,7 +27,7 @@ public class TourneysSummaryService {
 
 	@Transactional(readOnly = true)
 	public List<TournamentSummaryModel> getPublicTourneys() {
-		val tourneys = tournamentRepository.findByHiddenFalseOrderByPinnedDescStartDateDesc();
+		val tourneys = tournamentRepository.findByHiddenFalseOrderByPinnedDescLastUpdatedDesc();
 		val tourIds = tourneys.stream().map(Tournament::id).toList();
 		val stages = tournamentStageRepository.findByTournamentIdInOrderByStartDateDesc(tourIds);
 		val participantIds = stages.stream().flatMap(ts -> Arrays.stream(ts.participantIdList())).toList();
@@ -45,7 +45,7 @@ public class TourneysSummaryService {
 				.name(tour.name())
 				.numberOfParticipants(getNumberOfParticipants(tour.id(), stages, participants))
 				.statusLabel(getStatusLabel(lastStage))
-				.statusDate(getStatusDate(tour, lastStage))
+				.statusDate(DATE_FORMATTER.format(tour.lastUpdated()))
 				.pinned(tour.pinned());
 	}
 
@@ -65,11 +65,5 @@ public class TourneysSummaryService {
 
 	private String getStatusLabel(Optional<TournamentStage> lastStage) {
 		return lastStage.map(TournamentStage::name).orElse("");
-	}
-
-	private String getStatusDate(Tournament tour, Optional<TournamentStage> lastStage) {
-		// todo last updated date
-		return lastStage.map(TournamentStage::startDate).map(DATE_FORMATTER::format)
-				.orElseGet(() -> DATE_FORMATTER.format(tour.startDate()));
 	}
 }

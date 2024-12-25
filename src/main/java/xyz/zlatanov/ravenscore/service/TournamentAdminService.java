@@ -1,7 +1,12 @@
 package xyz.zlatanov.ravenscore.service;
 
+import static xyz.zlatanov.ravenscore.security.TourInfoService.TOURNAMENT_ADMIN_OPERATION_POINTCUT;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +20,7 @@ import xyz.zlatanov.ravenscore.model.toursummary.TournamentForm;
 import xyz.zlatanov.ravenscore.security.TourInfoService;
 import xyz.zlatanov.ravenscore.security.TournamentAdminOperation;
 
+@Aspect
 @Service
 @RequiredArgsConstructor
 @Validated
@@ -52,6 +58,14 @@ public class TournamentAdminService {
 	public void deleteTournament(UUID tournamentId) {
 		tournamentRepository.deleteTournamentData(tournamentId);
 		tournamentRepository.deleteById(tournamentId);
+	}
+
+	@After(TOURNAMENT_ADMIN_OPERATION_POINTCUT)
+	@Transactional
+	public void updateLastUpdated() {
+		val tourId = tourInfoService.getTournamentId();
+		val tournament = tournamentRepository.findById(tourId).orElseThrow();
+		tournamentRepository.save(tournament.lastUpdated(LocalDateTime.now()));
 	}
 
 }

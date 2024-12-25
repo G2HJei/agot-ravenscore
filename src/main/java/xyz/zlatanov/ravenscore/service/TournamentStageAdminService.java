@@ -63,9 +63,6 @@ public class TournamentStageAdminService {
 			throw new RavenscoreException(
 					String.format("Players(s) are already in present this tournament stage: %s", String.join(", ", commonNames)));
 		}
-
-		// todo track stage complete/updated
-
 		val clonedParticipants = participantRepository.saveAll(selectedParticipants.stream()
 				.map(Participant::clone)
 				.toList());

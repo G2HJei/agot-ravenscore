@@ -24,10 +24,11 @@ import xyz.zlatanov.ravenscore.service.RavenscoreException;
 @RequiredArgsConstructor
 public class TourInfoService {
 
-	private final TournamentRepository tournamentRepository;
+	public static final String			TOURNAMENT_ADMIN_OPERATION_POINTCUT	= "@annotation(xyz.zlatanov.ravenscore.security.TournamentAdminOperation)";
+	private final TournamentRepository	tournamentRepository;
 
 	// AOP ensures the selected tournament is unlocked while performing an administrative operation
-	@Before("@annotation(xyz.zlatanov.ravenscore.security.TournamentAdminOperation)")
+	@Before(TOURNAMENT_ADMIN_OPERATION_POINTCUT)
 	public void tournamentIsUnlocked() {
 		val tournamentIsUnlocked = tournamentRepository.findById(getTournamentId())
 				.map(t -> validateUnlockHash(t.tournamentKey(), getAdminCookie()))
