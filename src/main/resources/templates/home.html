@@ -71,9 +71,13 @@
                            th:text="${tourney.numberOfParticipants + ' participants'}">
                             Participants</p>
                         <p class="card-text text-center">
+                            <span class="text-muted">Current stage</span>
+                            <br/>
                             <span th:text="${tourney.statusLabel}"></span>
                             <br/>
-                            <span class="text-muted text-nowrap" th:text="${tourney.statusDate}"></span>
+                            <span class="text-muted">Last updated</span>
+                            <br/>
+                            <span class="text-nowrap" th:text="${tourney.statusDate}"></span>
                         </p>
                     </div>
                 </div>
