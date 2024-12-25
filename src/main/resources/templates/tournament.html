@@ -39,34 +39,39 @@
     </div>
 
     <!-- NAVIGATION ROW -->
-    <div class="d-flex justify-content-center align-items-center mb-3">
-        <button type="button" class="btn btn-sm btn-outline-secondary bi bi-bar-chart-fill me-2"
-                data-bs-toggle="tooltip" data-bs-title="Show tournament statistics"
-                onclick="showStatsModal()"></button>
-        <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-3"
-                data-bs-toggle="tooltip" data-bs-title="Show tournament rules & details"
-                onclick="showRulesModal()"></button>
-        <button th:if="${model.adminUnlocked}" type="button" class="btn btn-sm btn-outline-secondary bi bi-plus-lg me-2"
-                data-bs-toggle="tooltip" data-bs-title="Create new tournament stage"
-                onclick="newTournamentStage()"></button>
-        <button th:if="${model.adminUnlocked}" type="button"
-                class="btn btn-sm btn-outline-secondary bi bi-pencil-fill me-2"
-                data-bs-toggle="tooltip" data-bs-title="Modify selected tournament stage"
-                onclick="editTournamentStage()"></button>
-        <ul id="stageNav" class="nav nav-underline mb-3" role="tablist">
-            <li class="nav-item" role="presentation" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
-                <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : '')}" href="#"
-                   th:data-rs-stage-id="${stage.id}"
-                   th:data-rs-stage-name="${stage.name}"
-                   th:data-rs-stage-qualification-count="${stage.qualificationCount}"
-                   data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stage.id}">
-                    <i th:if="${stage.completed}" class="bi bi-check-lg"></i>
-                    <span th:text="${stage.name}">
+    <div class="row d-flex justify-content-center align-items-center mb-3">
+        <div class="col-12 col-lg-5 d-flex justify-content-center justify-content-lg-end align-items-center mb-3 mb-lg-0">
+            <button type="button" class="btn btn-sm btn-outline-secondary bi bi-bar-chart-fill me-2"
+                    data-bs-toggle="tooltip" data-bs-title="Show tournament statistics"
+                    onclick="showStatsModal()"></button>
+            <button type="button" class="btn btn-sm btn-outline-secondary bi bi-text-paragraph me-3"
+                    data-bs-toggle="tooltip" data-bs-title="Show tournament rules & details"
+                    onclick="showRulesModal()"></button>
+            <button th:if="${model.adminUnlocked}" type="button"
+                    class="btn btn-sm btn-outline-secondary bi bi-plus-lg me-2"
+                    data-bs-toggle="tooltip" data-bs-title="Create new tournament stage"
+                    onclick="newTournamentStage()"></button>
+            <button th:if="${model.adminUnlocked}" type="button"
+                    class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
+                    data-bs-toggle="tooltip" data-bs-title="Modify selected tournament stage"
+                    onclick="editTournamentStage()"></button>
+        </div>
+        <div class="col-12 col-lg-7 mb-3 d-flex justify-content-center justify-content-lg-start align-items-center">
+            <ul id="stageNav" class="nav nav-underline" role="tablist">
+                <li class="nav-item" role="presentation" th:each="stage, stageIdx : ${model.tournamentStageModelList}">
+                    <a th:class="${'nav-link ' + (stageIdx.first ? 'active' : '')}" href="#"
+                       th:data-rs-stage-id="${stage.id}"
+                       th:data-rs-stage-name="${stage.name}"
+                       th:data-rs-stage-qualification-count="${stage.qualificationCount}"
+                       data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stage.id}">
+                        <i th:if="${stage.completed}" class="bi bi-check-lg"></i>
+                        <span th:text="${stage.name}">
                         Stage
                     </span>
-                </a>
-            </li>
-        </ul>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div th:if="${model.tournamentStageModelList.isEmpty()}" class="align-middle fst-italic fw-lighter text-center">
