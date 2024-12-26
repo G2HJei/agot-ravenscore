@@ -30,6 +30,12 @@
     }
 }
 
+@media (max-width: 576px) {
+    table td, table th {
+        padding: 0.25rem !important;
+    }
+}
+
 .container-fluid {
     padding-left: 0;
     padding-right: 0;

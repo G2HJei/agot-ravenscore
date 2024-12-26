@@ -133,7 +133,7 @@
                         </th:block>
                     </div>
                     <div class="scrollable-div">
-                        <table class="table table-borderless table-hover mb-4"
+                        <table class="table table-responsive-sm  table-borderless table-hover mb-4"
                                th:if="${not stage.participantModelList.isEmpty()}">
                             <thead>
                             <tr>
@@ -329,9 +329,9 @@
                                  th:data-rs-game-type="${game.type}"
                                  th:data-rs-game-completed="${game.completed}"
                                  th:data-bs-parent="${'#accordionGames-'+stageIdx.index}">
-                                <div class="accordion-body ms-3">
+                                <div class="accordion-body">
                                     <div class="row">
-                                        <div class="col-12 col-lg-4 d-flex flex-column justify-content-start align-items-center mb-3">
+                                        <div class="col-12 col-lg-4 d-flex flex-column justify-content-start align-items-center px-0 mb-3">
                                             <div th:if="${(not model.adminUnlocked) or stage.completed}"
                                                  class="text-center text-secondary-emphasis"
                                                  th:text="${game.completed ? ('Round ' + game.round): ''}">
@@ -380,7 +380,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-12 col-lg-8">
+                                        <div class="col-12 col-lg-8 px-0">
                                             <div th:class="${game.playersRevealed ? 'visually-hidden' : ''}">
                                                 <h6 class="text-center mt-1 mb-4">Participants</h6>
                                                 <div th:if="${game.participantIdList.isEmpty()}"
