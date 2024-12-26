@@ -30,6 +30,11 @@
     }
 }
 
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
 th {
     font-weight: 600 !important;
 }

@@ -98,7 +98,7 @@
              th:data-rs-stage-qualification-count="${stage.qualificationCount}"
              th:class="${'stage-data tab-pane fade ' + (stageIdx.first ? 'show active' : '')}">
             <div class="row">
-                <div class="col-12 col-xxl-6">
+                <div class="col-12 col-xxl-6 px-0 px-xxl-1">
                     <!-- STAGE RANKINGS -->
                     <div class="d-flex justify-content-center align-items-center mb-2">
                         <div class="ms-1 me-auto">
@@ -275,7 +275,7 @@
                 </div>
 
                 <!-- STAGE GAMES -->
-                <div class="col-12 col-xxl-6 stage-games" th:data-rs-stage-id="${stage.id}">
+                <div class="col-12 col-xxl-6 stage-games px-0 px-xxl-1" th:data-rs-stage-id="${stage.id}">
                     <h5 class="d-flex justify-content-center align-items-center mt-5 mt-lg-0">
                         <span class="ms-1 me-auto">
                             <button th:if="${model.adminUnlocked and not stage.completed}" type="button"
