@@ -2,18 +2,17 @@
     <nav class="navbar bg-body-tertiary p-0">
         <div class="container container-rs-small">
             <div class="d-flex justify-content-center align-items-center gap-2 w-100">
-                <div class="ms-5 me-auto"></div>
-                <a class="navbar-brand highlight-primary d-flex justify-content-center align-items-center ms-5 me-0"
+                <div class="me-auto">
+                    <span id="localHostIndicator" class="fw-semibold visually-hidden">LOCAL</span>
+                </div>
+                <a class="navbar-brand highlight-primary d-flex justify-content-center align-items-center"
                    th:href="@{/}">
                     <img th:src="@{'/logo.png'}" alt="Logo" height="64">
                     <img th:src="@{'/logo-text-golden.png'}" alt="Logo" height="38" class="ms-2">
                 </a>
-                <span id="localHostIndicator" class="fw-semibold visually-hidden">LOCAL</span>
-                <div class="form-check form-switch ms-auto" data-bs-toggle="tooltip"
-                     data-bs-title="Toggle dark mode">
-                    <i id="darkModeBtn" class="bi bi-moon-stars-fill highlight-brand fs-5" onclick="toggleDarkMode()">
-                    </i>
-                </div>
+                <i id="darkModeBtn" class="bi bi-moon-stars-fill highlight-brand ms-auto fs-5" data-bs-toggle="tooltip"
+                   data-bs-title="Toggle dark mode" onclick="toggleDarkMode()">
+                </i>
             </div>
         </div>
     </nav>
