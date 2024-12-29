@@ -532,6 +532,13 @@
     <!-- Utility cross-component functions -->
     <script th:inline="javascript">
         $(document).ready(function () {
+            // remove error/info message from URL (if any)
+            const url = window.location.href;
+            const cleanUrl = url.split("?")[0];
+            if (url !== cleanUrl) {
+                history.replaceState(null, "", cleanUrl);
+            }
+
             // setup action container icons
             $(".action-container").hover(
                 function () {

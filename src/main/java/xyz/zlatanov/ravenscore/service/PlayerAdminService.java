@@ -44,8 +44,7 @@ public class PlayerAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public void removePlayer(UUID stageId, UUID playerId) {
-		// substitutes can always be deleted
-		substituteRepository.findById(playerId).ifPresent(substituteRepository::delete);
+		substituteRepository.findById(playerId).ifPresent(substituteRepository::delete);// substitutes can always be deleted
 		participantRepository.findById(playerId).ifPresent(participant -> deleteParticipant(stageId, participant));
 	}
 
@@ -161,7 +160,7 @@ public class PlayerAdminService {
 		val stage = tournamentStageRepository.findById(stageId).orElseThrow();
 		val games = gameRepository.findByTournamentStageIdOrderByTypeAscNameAsc(stage.id());
 		if (participatesInGames(participant.id(), games)) {
-			throw new RavenscoreException("Cannot remove participant already involved in games.");
+			throw new RavenscoreException("Cannot remove participant already involved in games in the selected stage.");
 		}
 		tournamentStageRepository.save(stage
 				.participantIdList(Arrays.stream(stage.participantIdList())

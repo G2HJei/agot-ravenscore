@@ -27,6 +27,7 @@ public class GameAdminService {
 	@Transactional
 	@TournamentAdminOperation
 	public void game(@Valid GameForm gameForm) {
+		validateParticipantCount(gameForm);
 		if (gameForm.getId() == null) {
 			createGame(gameForm);
 		} else {
@@ -71,6 +72,15 @@ public class GameAdminService {
 		gameRepository.save(game.round(round));
 	}
 
+	private void validateParticipantCount(@Valid GameForm gameForm) {
+		val maxNumberOfParticipants = gameForm.getType().houses().size();
+		val selectedParticipants = gameForm.getParticipantIdList().length;
+		if (selectedParticipants > maxNumberOfParticipants) {
+			throw new RavenscoreException(
+					String.format("Maximum number of participants for this type of game is %s.", maxNumberOfParticipants));
+		}
+	}
+
 	private void createGame(GameForm gameForm) {
 		val game = gameRepository.save(new Game()
 				.type(gameForm.getType())
@@ -90,6 +100,9 @@ public class GameAdminService {
 
 	private void updateGame(GameForm gameForm) {
 		val game = gameRepository.findById(gameForm.getId()).orElseThrow();
+		if (game.completed()) {
+			throw new RavenscoreException("Cannot update game details of a completed game.");
+		}
 		gameRepository.save(game
 				.type(gameForm.getType())
 				.name(gameForm.getName())
@@ -97,13 +110,12 @@ public class GameAdminService {
 				.tournamentStageId(gameForm.getStageId())
 				.participantIdList(gameForm.getParticipantIdList()));
 		// disassociate player from removed participant
-		val players = playerRepository.findByGameIdOrderByPointsDesc(game.id());
-		val updatedPlayers = players.stream()
+		val players = playerRepository.findByGameIdOrderByPointsDesc(game.id()).stream()
 				.filter(p -> p.participantId() != null)
 				.filter(p -> !participatesInGames(p.participantId(), List.of(game)))
 				.map(p -> p.participantId(null))
 				.toList();
-		playerRepository.saveAll(updatedPlayers);
+		playerRepository.saveAll(players);
 	}
 
 	private boolean participatesInGames(UUID participantId, List<Game> games) {
