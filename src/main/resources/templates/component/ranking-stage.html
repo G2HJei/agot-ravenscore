@@ -6,11 +6,11 @@
             <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="rankingStageModalLabel">Finalize Stage</h1>
+                        <h1 class="modal-title fs-5" id="rankingStageModalLabel">Stage Final Rankings</h1>
                         <button type="button" class="btn-close text-brand" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-1">
-                        <h5 class="text-muted text-center">{{stage-name}} Final Rankings</h5>
+                        <h5 class="text-muted text-center">{{stage-name}}</h5>
                         <form id="rankingForm" method="POST" action="/tournament/{{tour-id}}/stage/{{stage-id}}/rankings">
                             <table class="table table-sm table-borderless table-hover mt-2">
                                 <thead>
