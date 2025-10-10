@@ -16,9 +16,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
 import xyz.zlatanov.ravenscore.service.RavenscoreException;
 
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -48,6 +50,8 @@ public class TourInfoService {
 		val request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		return Optional.ofNullable(request.getCookies())
 				.flatMap(cookies -> Arrays.stream(cookies)
+						// debug
+						.peek(c -> log.info("cookie: {} = {}", c.getName(), c.getValue()))
 						.filter(c -> TOURNAMENT_ID_COOKIE_NAME.equals(c.getName()))
 						.map(Cookie::getValue)
 						.map(UUID::fromString)
