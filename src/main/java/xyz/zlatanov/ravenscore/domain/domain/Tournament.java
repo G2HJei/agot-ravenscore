@@ -40,7 +40,7 @@ public class Tournament {
 
 	private LocalDate		startDate	= LocalDate.now();
 
-	private LocalDateTime	lastUpdated;
+	private LocalDateTime	lastUpdated	= LocalDateTime.now();
 
 	private boolean			pinned		= false;
 
