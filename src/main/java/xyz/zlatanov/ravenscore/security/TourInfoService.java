@@ -50,8 +50,6 @@ public class TourInfoService {
 		val request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		return Optional.ofNullable(request.getCookies())
 				.flatMap(cookies -> Arrays.stream(cookies)
-						// debug
-						.peek(c -> log.info("cookie: {} = {}", c.getName(), c.getValue()))
 						.filter(c -> TOURNAMENT_ID_COOKIE_NAME.equals(c.getName()))
 						.map(Cookie::getValue)
 						.map(UUID::fromString)
