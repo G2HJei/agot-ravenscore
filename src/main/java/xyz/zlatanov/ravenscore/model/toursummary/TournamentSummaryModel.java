@@ -13,6 +13,7 @@ public class TournamentSummaryModel {
 	private String	name;
 	private Long	numberOfParticipants;
 	private String	statusLabel;
+	private String	winner;
 	private String	statusDate;
 	private boolean	pinned;
 
