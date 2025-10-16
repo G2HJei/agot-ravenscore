@@ -6,6 +6,7 @@ import static xyz.zlatanov.ravenscore.controller.ControllerConstants.*;
 
 import java.util.UUID;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 import xyz.zlatanov.ravenscore.model.export.TournamentExport;
 import xyz.zlatanov.ravenscore.model.tourdetails.admin.GameForm;
 import xyz.zlatanov.ravenscore.model.tourdetails.admin.ImportParticipantsForm;
@@ -29,6 +31,7 @@ import xyz.zlatanov.ravenscore.service.builder.tourdetails.RankingMode;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class RavenscoreController {
 
 	private final TourneysSummaryService		tourneysSummaryService;
@@ -146,19 +149,26 @@ public class RavenscoreController {
 	String restoreBackup(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
 			@RequestParam MultipartFile file) {
 
-		final TournamentExport tournamentExport;
+		val tournamentExport = getTournamentExport(file);
+		restoreTournament(tournamentId, tournamentExport);
+		return redirectToTournamentWithMessage(tournamentId, "Backup successfully restored");
+	}
+
+	private TournamentExport getTournamentExport(MultipartFile file) {
 		try {
-			tournamentExport = objectMapper.readValue(file.getBytes(), TournamentExport.class);
+			return objectMapper.readValue(file.getBytes(), TournamentExport.class);
 		} catch (Exception e) {
 			throw new RavenscoreException("Invalid backup file.", e);
 		}
+	}
+
+	private void restoreTournament(UUID tournamentId, TournamentExport tournamentExport) {
 		try {
 			backupService.restoreTournament(tournamentId, tournamentExport);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Could not restore tournament backup: \n{}", ExceptionUtils.getStackTrace(e));
 			throw new RavenscoreException("Could not restore backup.", e);
 		}
-		return redirectToTournamentWithMessage(tournamentId, "Backup successfully restored");
 	}
 
 }

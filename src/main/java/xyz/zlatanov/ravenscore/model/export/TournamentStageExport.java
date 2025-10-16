@@ -18,6 +18,7 @@ public class TournamentStageExport {
 	private String					name;
 	private Integer					qualificationCount;
 	private LocalDateTime			startDate;
+	private Boolean					completed;
 	private List<ParticipantExport>	participantExportList	= new ArrayList<>();
 	private List<GameExport>		gameExportList			= new ArrayList<>();
 }

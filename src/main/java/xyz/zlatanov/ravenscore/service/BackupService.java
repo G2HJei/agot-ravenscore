@@ -48,13 +48,8 @@ public class BackupService {
 	@Transactional
 	@TournamentAdminOperation
 	public void restoreTournament(UUID tournamentId, TournamentExport tournamentExport) {
-		restorePinned(tournamentId, tournamentExport);
 		tournamentRepository.deleteTournamentData(tournamentId);
 		restoreTournamentData(tournamentId, tournamentExport);
-	}
-
-	private void restorePinned(UUID tournamentId, TournamentExport tournamentExport) {
-		tournamentExport.pinned(tournamentRepository.findById(tournamentId).orElseThrow().pinned());
 	}
 
 	private void restoreTournamentData(UUID tournamentId, TournamentExport tournamentExport) {
@@ -78,8 +73,7 @@ public class BackupService {
 				.scoring(tournamentExport.scoring())
 				.hidden(tournamentExport.hidden())
 				.tournamentKey(tournamentExport.tournamentKey())
-				.startDate(tournamentExport.startDate())
-				.pinned(tournamentExport.pinned()));
+				.startDate(tournamentExport.startDate()));
 	}
 
 	private void createSubstitutes(UUID tournamentId, TournamentExport tournamentExport) {
@@ -91,17 +85,14 @@ public class BackupService {
 				.toList());
 	}
 
-	private UUID createStage(UUID tournamentId, List<Participant> participants,
-			TournamentStageExport tournamentStageExport) {
-		val stage = new TournamentStage()
+	private UUID createStage(UUID tournamentId, List<Participant> participants, TournamentStageExport stageExport) {
+		return tournamentStageRepository.save(new TournamentStage()
 				.tournamentId(tournamentId)
-				.name(tournamentStageExport.name())
-				.qualificationCount(tournamentStageExport.qualificationCount())
-				.startDate(tournamentStageExport.startDate())
-				.participantIdList(buildStageParticipantIdList(participants, tournamentStageExport));
-
-		tournamentStageRepository.save(stage);
-		return stage.id();
+				.name(stageExport.name())
+				.qualificationCount(stageExport.qualificationCount())
+				.startDate(stageExport.startDate())
+				.completed(stageExport.completed())
+				.participantIdList(buildStageParticipantIdList(participants, stageExport))).id();
 	}
 
 	private static UUID[] buildStageParticipantIdList(List<Participant> participants, TournamentStageExport tournamentStageExport) {
