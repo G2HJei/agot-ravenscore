@@ -36,6 +36,7 @@ public class TournamentExportBuilder {
 								.name(ts.name())
 								.qualificationCount(ts.qualificationCount())
 								.startDate(ts.startDate())
+								.completed(ts.completed())
 								.participantExportList(participantList.stream()
 										.filter(p -> contains(ts.participantIdList(), p.id()))
 										.map(p -> new ParticipantExport()
