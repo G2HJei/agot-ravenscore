@@ -54,7 +54,7 @@
         <div class="col-4 mb-2 participation-check-container">
             <input type="checkbox" class="form-check-input participant-check"
                 id="game-participant-{{participant-id}}" data-rs-participant-id="{{participant-id}}"  {{checked}}>
-            <label class="form-check-label" for="game-participant-{{participant-id}}">{{participant-name}}</label>
+            <label class="form-check-label" for="game-participant-{{participant-id}}">{{participantStageRank}}. {{participant-name}}</label>
         </div>`;
     const DELETE_GAME_BUTTON = `<a id="deleteGameButton" class="btn btn-outline-danger"
                                 data-bs-toggle="tooltip" data-bs-title="Delete game"
@@ -112,12 +112,14 @@
         const participants = [];
         $(".participant-data[data-rs-stage-id=" + getSelectedStageId() + "]").each(function () {
             const participantId = $(this).data("rs-participant-id");
+            const stageRank = $(this).data("rs-participant-stage-rank");
             const participationChecked =
                 participatesInGame(participantId, gameId)
                     ? "checked" : ""
 
             participants.push({
                 id: participantId,
+                stageRank: stageRank,
                 name: $(this).text().trim(),
                 checked: participationChecked
             });
@@ -126,6 +128,7 @@
         return participants
             .map(participant => PARTICIPANT_CHECK
                 .replaceAll("{{participant-id}}", participant.id)
+                .replaceAll("{{participantStageRank}}", participant.stageRank)
                 .replaceAll("{{participant-name}}", participant.name)
                 .replaceAll("{{checked}}", participant.checked))
             .join("")
