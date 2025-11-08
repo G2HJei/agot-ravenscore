@@ -21,8 +21,6 @@
                                 <th scope="col" style="width: 55%">Player</th>
                                 <th scope="col" class="text-center" style="width: 15%">
                                     Points
-                                    <i id="pointsCalc" class="bi bi-calculator-fill text-brand highlight-primary fs-5" data-bs-toggle="tooltip" data-rs-calc-state="true" onclick="togglePointsCalculation()"
-                                        data-bs-title="Automatically calculate points based on the scoring type. In case of tie-breakers such as land areas, supply etc, click to turn this off to manually enter the points for each player."></i>
                                 </th>
                                 <th scope="col" class="text-center" style="width: 15%">{{objective-type}}</th>
                                 <th scope="col" class="text-center" style="width: 15%">Penalty</th>
@@ -40,6 +38,10 @@
                                 <input type="hidden" name="completed" value="false">
                                 <label class="form-check-label" for="gameCompleted">Completed</label>
                             </div>
+                            <button type="button" class="btn btn-outline-secondary" onclick="autocompletePoints()"
+                                    data-bs-toggle="tooltip" data-bs-title="Calculate points based on the scoring type. In case of tie-breakers such as land areas, supply etc, manually enter the points for each player instead.">
+                                Calc points
+                            </button>
                             <button type="button" class="btn btn-outline-secondary" onclick="submitRanking()">Done</button>
                         </div>
                     </form>
@@ -52,9 +54,9 @@
         <input type="hidden" name="playerId" value="{{player-id}}">
         <td><img src="/houses/{{house}}.png" alt="house icon" style="max-height: 2.25rem"></td>
         <td class="align-middle"><select class="form-select " name="participantId" aria-label="Select participant">{{participant-options}}</select></td>
-        <td class="align-middle text-center"><input type="number" name="points" min=0 max="30" class="form-control text-center" value="{{points}}" disabled></td>
-        <td class="align-middle text-center"><input type="number" name="castles" min=0 max="10" class="form-control text-center" value="{{castles}}" onchange="autocompletePoints()"></td>
-        <td class="align-middle text-center"><input type="number" name="penaltyPoints" min=0 max="20" class="form-control text-center" value="{{penalty}}" onchange="autocompletePoints()"></td>
+        <td class="align-middle text-center"><input type="number" name="points" min=0 max="30" class="form-control text-center" value="{{points}}"></td>
+        <td class="align-middle text-center"><input type="number" name="castles" min=0 max="10" class="form-control text-center" value="{{castles}}"></td>
+        <td class="align-middle text-center"><input type="number" name="penaltyPoints" min=0 max="20" class="form-control text-center" value="{{penalty}}"></td>
     </tr>`;
     const PARTICIPANT_OPTION = `<option value="{{participant-id}}" {{selected}}>{{player-name}}</option>`;
 
@@ -158,9 +160,6 @@
     }
 
     function autocompletePoints() {
-        if (!$("#pointsCalc").data("rs-calc-state")) {
-            return;
-        }
         const data = getPlayersData();
         data.playersData.forEach(function (player, index) {
             let points = data.numberOfPlayers //this formula is valid only for RANKING_PLUS_CASTLES scoring type
@@ -212,17 +211,5 @@
         } else {
             $("#rankingWarningHelp").addClass("visually-hidden");
         }
-    }
-
-    function togglePointsCalculation() {
-        const calc = $("#pointsCalc");
-        const newCalcState = !calc.data("rs-calc-state");
-        calc.toggleClass("text-brand text-muted")
-            .data("rs-calc-state", newCalcState);
-        if (newCalcState) {
-            autocompletePoints();
-        }
-        $("input[name='points']").prop("disabled", newCalcState);
-
     }
 </script>
