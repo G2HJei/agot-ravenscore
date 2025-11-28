@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import xyz.zlatanov.ravenscore.domain.domain.Tournament;
+import xyz.zlatanov.ravenscore.domain.model.Tournament;
 
 @Repository
 public interface TournamentRepository extends JpaRepository<Tournament, UUID> {

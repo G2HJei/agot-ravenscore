@@ -1,15 +1,13 @@
-package xyz.zlatanov.ravenscore.domain.domain;
+package xyz.zlatanov.ravenscore.domain.model;
 
 import static jakarta.persistence.EnumType.STRING;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -46,15 +44,6 @@ public class Tournament {
 
 	public boolean validateTournamentKey(String keyToValidate) {
 		return validateUnlockHash(keyToValidate.hashCode());
-	}
-
-	public boolean validateUnlockHash(String checkHash) {
-		try {
-			return StringUtils.isNotBlank(checkHash) && Objects.equals(tournamentKey.hashCode(), Integer.parseInt(checkHash));
-		} catch (NumberFormatException e) {
-			log.warn("Unexpected tournament key hash: {}", checkHash);
-			return false;
-		}
 	}
 
 	public boolean validateUnlockHash(Integer checkHash) {

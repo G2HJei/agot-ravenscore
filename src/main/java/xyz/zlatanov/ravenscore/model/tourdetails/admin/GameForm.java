@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import xyz.zlatanov.ravenscore.domain.domain.GameType;
+import xyz.zlatanov.ravenscore.domain.model.GameType;
 
 @Data
 @Accessors(chain = true)

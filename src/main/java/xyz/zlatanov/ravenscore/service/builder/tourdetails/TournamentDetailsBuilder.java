@@ -9,7 +9,7 @@ import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import xyz.zlatanov.ravenscore.domain.domain.*;
+import xyz.zlatanov.ravenscore.domain.model.*;
 import xyz.zlatanov.ravenscore.model.tourdetails.*;
 
 @RequiredArgsConstructor

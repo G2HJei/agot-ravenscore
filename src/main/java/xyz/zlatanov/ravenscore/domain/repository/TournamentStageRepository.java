@@ -8,14 +8,12 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.stereotype.Repository;
 
-import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
+import xyz.zlatanov.ravenscore.domain.model.TournamentStage;
 
 @Repository
 public interface TournamentStageRepository extends JpaRepository<TournamentStage, UUID> {
 
 	List<TournamentStage> findByTournamentIdInOrderByStartDateDesc(List<UUID> list);
-
-	List<TournamentStage> findByTournamentIdOrderByStartDateDesc(UUID tournamentId);
 
 	@Modifying
 	@NativeQuery("""

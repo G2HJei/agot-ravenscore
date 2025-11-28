@@ -9,11 +9,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.Utils;
-import xyz.zlatanov.ravenscore.domain.domain.Participant;
-import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
+import xyz.zlatanov.ravenscore.domain.model.Participant;
+import xyz.zlatanov.ravenscore.domain.model.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.GameRepository;
 import xyz.zlatanov.ravenscore.domain.repository.ParticipantRepository;
-import xyz.zlatanov.ravenscore.domain.repository.SubstituteRepository;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentStageRepository;
 import xyz.zlatanov.ravenscore.model.tourdetails.admin.ImportParticipantsForm;
 import xyz.zlatanov.ravenscore.model.tourdetails.admin.StageForm;
@@ -26,7 +25,6 @@ public class TournamentStageAdminService {
 	private final TournamentStageRepository	tournamentStageRepository;
 	private final GameRepository			gameRepository;
 	private final ParticipantRepository		participantRepository;
-	private final SubstituteRepository		substituteRepository;
 
 	@Transactional
 	@TournamentAdminOperation

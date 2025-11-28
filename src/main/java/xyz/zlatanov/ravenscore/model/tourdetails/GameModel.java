@@ -5,7 +5,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import xyz.zlatanov.ravenscore.domain.domain.GameType;
+import xyz.zlatanov.ravenscore.domain.model.GameType;
 
 @Data
 @Accessors(fluent = true)

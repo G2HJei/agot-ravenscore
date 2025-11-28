@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.domain.domain;
+package xyz.zlatanov.ravenscore.domain.model;
 
 import static jakarta.persistence.EnumType.STRING;
 

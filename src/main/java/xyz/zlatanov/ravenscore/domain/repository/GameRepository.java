@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.stereotype.Repository;
 
-import xyz.zlatanov.ravenscore.domain.domain.Game;
+import xyz.zlatanov.ravenscore.domain.model.Game;
 
 @Repository
 public interface GameRepository extends JpaRepository<Game, UUID> {

@@ -1,6 +1,6 @@
 package xyz.zlatanov.ravenscore.model.toursummary;
 
-import static xyz.zlatanov.ravenscore.domain.domain.Scoring.RANKING_PLUS_CASTLES;
+import static xyz.zlatanov.ravenscore.domain.model.Scoring.RANKING_PLUS_CASTLES;
 
 import java.util.UUID;
 
@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import xyz.zlatanov.ravenscore.domain.domain.Scoring;
+import xyz.zlatanov.ravenscore.domain.model.Scoring;
 import xyz.zlatanov.ravenscore.security.TournamentId;
 
 @Data

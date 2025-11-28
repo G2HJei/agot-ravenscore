@@ -1,6 +1,6 @@
-package xyz.zlatanov.ravenscore.domain.domain;
+package xyz.zlatanov.ravenscore.domain.model;
 
-import static xyz.zlatanov.ravenscore.domain.domain.House.*;
+import static xyz.zlatanov.ravenscore.domain.model.House.*;
 
 import java.util.List;
 

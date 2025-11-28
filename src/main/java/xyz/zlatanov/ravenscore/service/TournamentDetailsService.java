@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import xyz.zlatanov.ravenscore.domain.domain.Game;
-import xyz.zlatanov.ravenscore.domain.domain.TournamentStage;
+import xyz.zlatanov.ravenscore.domain.model.Game;
+import xyz.zlatanov.ravenscore.domain.model.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.model.tourdetails.TournamentDetailsModel;
 import xyz.zlatanov.ravenscore.security.TourInfoService;

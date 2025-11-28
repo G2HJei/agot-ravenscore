@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import xyz.zlatanov.ravenscore.domain.domain.Tournament;
+import xyz.zlatanov.ravenscore.domain.model.Tournament;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
 import xyz.zlatanov.ravenscore.model.toursummary.TournamentForm;
 import xyz.zlatanov.ravenscore.security.TourInfoService;

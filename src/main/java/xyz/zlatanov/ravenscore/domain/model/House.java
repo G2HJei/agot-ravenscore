@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.domain.domain;
+package xyz.zlatanov.ravenscore.domain.model;
 
 import static xyz.zlatanov.ravenscore.Utils.capitalizeFirstLetter;
 

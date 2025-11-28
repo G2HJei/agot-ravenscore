@@ -1,4 +1,4 @@
-package xyz.zlatanov.ravenscore.domain.domain;
+package xyz.zlatanov.ravenscore.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

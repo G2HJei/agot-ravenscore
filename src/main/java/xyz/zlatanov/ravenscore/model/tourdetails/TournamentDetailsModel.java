@@ -5,7 +5,7 @@ import java.util.List;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import xyz.zlatanov.ravenscore.domain.domain.Scoring;
+import xyz.zlatanov.ravenscore.domain.model.Scoring;
 import xyz.zlatanov.ravenscore.model.statistics.TournamentStatistics;
 
 @Data

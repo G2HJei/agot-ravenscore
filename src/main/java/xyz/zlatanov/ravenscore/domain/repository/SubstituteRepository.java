@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import xyz.zlatanov.ravenscore.domain.domain.Substitute;
+import xyz.zlatanov.ravenscore.domain.model.Substitute;
 
 @Repository
 public interface SubstituteRepository extends JpaRepository<Substitute, UUID> {
@@ -15,5 +15,4 @@ public interface SubstituteRepository extends JpaRepository<Substitute, UUID> {
 
 	List<Substitute> findByTournamentIdOrderByName(UUID tournamentId);
 
-	void deleteByTournamentId(UUID tournamentId);
 }

@@ -4,8 +4,8 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_UP;
 import static java.math.RoundingMode.UP;
 import static java.util.Comparator.comparing;
-import static xyz.zlatanov.ravenscore.domain.domain.House.BOLTON;
-import static xyz.zlatanov.ravenscore.domain.domain.House.STARK;
+import static xyz.zlatanov.ravenscore.domain.model.House.BOLTON;
+import static xyz.zlatanov.ravenscore.domain.model.House.STARK;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import xyz.zlatanov.ravenscore.domain.domain.Game;
-import xyz.zlatanov.ravenscore.domain.domain.Player;
+import xyz.zlatanov.ravenscore.domain.model.Game;
+import xyz.zlatanov.ravenscore.domain.model.Player;
 import xyz.zlatanov.ravenscore.model.statistics.Dataset;
 import xyz.zlatanov.ravenscore.model.statistics.HouseData;
 import xyz.zlatanov.ravenscore.model.statistics.TournamentStatistics;

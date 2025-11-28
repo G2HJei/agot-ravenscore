@@ -5,7 +5,7 @@ import static xyz.zlatanov.ravenscore.Utils.contains;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import xyz.zlatanov.ravenscore.domain.domain.*;
+import xyz.zlatanov.ravenscore.domain.model.*;
 import xyz.zlatanov.ravenscore.model.export.*;
 
 @RequiredArgsConstructor

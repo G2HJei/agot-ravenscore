@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import xyz.zlatanov.ravenscore.domain.domain.GameType;
+import xyz.zlatanov.ravenscore.domain.model.GameType;
 
 @Data
 @Accessors(fluent = true)
