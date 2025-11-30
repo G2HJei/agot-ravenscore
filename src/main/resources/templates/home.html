@@ -93,7 +93,7 @@
         </div>
     </div>
     <!-- Component(s)-->
-    <div layout:replace="~{component/tournament-details}"></div>
+    <div layout:replace="~{component/modal/admin/tournament-details}"></div>
     <script th:inline="javascript">
         $(document).ready(function resetTournamentId() {
             document.cookie = `tournament-id=; path=/; max-age=1209600`;

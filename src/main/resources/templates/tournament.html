@@ -283,6 +283,12 @@
                                     class="btn btn-sm btn-outline-secondary bi bi-plus-lg"
                                     data-bs-toggle="tooltip" data-bs-title="Create new game"
                                     onclick="newGame()"></button>
+                            <button th:if="${model.adminUnlocked and not stage.completed}"
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary bi bi-arrow-repeat"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-title="Auto-update stage games' progress (Swords & Ravens only). You must be authenticated at swordsandravens.net for this feature to work."
+                                    onclick="refreshGamesProgress()"></button>
                         </span>
                         <span>Games
                             <i class="filter-button bi bi-funnel fs-5 text-brand highlight-primary ms-2"
@@ -296,8 +302,7 @@
                          data-rs-game-participant="ALL"></div>
                     <div th:if="${stage.gameModelList.isEmpty()}"
                          class="align-middle fst-italic fw-lighter text-center">
-                        This
-                        tournament stage has no games yet.
+                        This tournament stage has no games yet.
                         <th:block th:if="${model.adminUnlocked and not stage.completed}">
                             Why not
                             <a href="#" onclick="newGame()"
@@ -513,21 +518,22 @@
     </div>
 
     <!-- Components -->
-    <div layout:replace="~{component/state}"></div>
-    <div layout:replace="~{component/stats}"></div>
-    <div layout:replace="~{component/rules}"></div>
-    <div layout:replace="~{component/unlock-admin}"></div>
-    <div layout:replace="~{component/filters}"></div>
+    <div layout:replace="~{component/util/state}"></div>
+    <div layout:replace="~{component/util/swordsandravens}"></div>
+    <div layout:replace="~{component/modal/stats}"></div>
+    <div layout:replace="~{component/modal/rules}"></div>
+    <div layout:replace="~{component/modal/unlock-admin}"></div>
+    <div layout:replace="~{component/modal/filters}"></div>
     <div th:if="${model.adminUnlocked}">
-        <div layout:replace="~{component/tournament-details}"></div>
-        <div layout:replace="~{component/stage}"></div>
-        <div layout:replace="~{component/player}"></div>
-        <div layout:replace="~{component/import-participants}"></div>
-        <div layout:replace="~{component/substitution}"></div>
-        <div layout:replace="~{component/game}"></div>
-        <div layout:replace="~{component/ranking-game}"></div>
-        <div layout:replace="~{component/ranking-stage}"></div>
-        <div layout:replace="~{component/restore-backup}"></div>
+        <div layout:replace="~{component/modal/admin/tournament-details}"></div>
+        <div layout:replace="~{component/modal/admin/stage}"></div>
+        <div layout:replace="~{component/modal/admin/player}"></div>
+        <div layout:replace="~{component/modal/admin/import-participants}"></div>
+        <div layout:replace="~{component/modal/admin/substitution}"></div>
+        <div layout:replace="~{component/modal/admin/game}"></div>
+        <div layout:replace="~{component/modal/admin/ranking-game}"></div>
+        <div layout:replace="~{component/modal/admin/ranking-stage}"></div>
+        <div layout:replace="~{component/modal/admin/restore-backup}"></div>
     </div>
 
     <!-- Utility cross-component functions -->
