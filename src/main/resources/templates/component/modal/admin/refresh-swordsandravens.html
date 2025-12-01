@@ -61,7 +61,7 @@
             const gameId = $(gameElt).data('rs-game-link').match(/swordsandravens\.net\/play\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i)?.[1];
 
             try {
-                const snrData = await loadSnrIframe(gameId);
+                const snrData = await loadSnrData(gameId);
                 if (snrData) {
                     const snrUpdates = buildSnrUpdates(gameElt, snrData);
                     if (Object.keys(snrUpdates).length > 0) {
@@ -79,6 +79,20 @@
         $('#snrRefreshData').data('refresh-data', refreshData);
     }
 
+    function loadSnrData(gameId) {
+        //  'http://localhost:8080/api/public/game/' + id + '?format=json',
+        return fetch('https://swordsandravens.net/api/public/game/' + gameId + '?format=json', {
+            credentials: 'include', // This sends cookies for authentication
+            mode: 'cors'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status);
+                }
+                return response.json();
+            });
+    }
+
     function logUpdates(snrUpdates, gameName) {
         logSnr(gameName);
         if (snrUpdates.round) {
@@ -94,37 +108,6 @@
             }
         }
         logSnr('');
-    }
-
-    function loadSnrIframe(id) {
-        return new Promise((resolve, reject) => {
-            const iframe = $('<iframe>', {
-                // src: 'http://localhost:8080/api/public/game/' + id + '?format=json',
-                src: 'https://swordsandravens.net/api/public/game/' + id + '?format=json',
-                width: '1px',
-                height: '1px',
-                frameborder: '0'
-            });
-
-            iframe.on('load', function () {
-                try {
-                    const content = $(this).contents().find('body').text();
-                    const data = JSON.parse(content);
-                    resolve(data);
-                } catch (e) {
-                    reject(e);
-                } finally {
-                    $(this).remove();
-                }
-            });
-
-            iframe.on('error', function (e) {
-                $(this).remove();
-                reject(e);
-            });
-
-            $('#snrIframe').empty().append(iframe);
-        });
     }
 
     function buildSnrUpdates(gameElt, snrData) {
