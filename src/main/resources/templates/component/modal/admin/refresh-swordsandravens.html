@@ -1,0 +1,224 @@
+<div id="refreshSnrGamesModal" class="modal modal-lg fade" tabindex="-1" aria-labelledby="refreshSnrGamesModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="refreshSnrGamesModalLabel">Refresh Swords & Ravens Games Status</h1>
+                <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-muted fst-italic mb-3 text-center">
+                    You can automatically fetch all Swords & Ravens games' status.
+                    You must be authenticated at <a class="text-brand" href="https://swordsandravens.net"
+                                                    target="_blank">SwordsAndRavens.net</a>
+                    for this feature to work.
+                </div>
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="me-auto"></div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="fetchSnrData()">
+                        <span class="d-flex justify-content-center align-items-center gap-2">
+                            <img th:src="@{/external/snr-logo.svg}" alt="SnR" style="height: 16px; width: 16px;">
+                            Fetch SnR data
+                        </span>
+                    </button>
+                    <div id="snrIframe" class="ms-auto"></div>
+                </div>
+                <code id="snrProgress" class="overflow-auto d-block mt-2"
+                      style="white-space: pre-wrap; word-wrap: break-word; max-height: 540px">
+                </code>
+                <div id="snrRefreshData" class="visually-hidden"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    function showRefreshSnrModal() {
+        refreshGameModal();
+        $("#refreshSnrGamesModal").modal("show");
+    }
+
+    function resetRefreshSnrModal() {
+        $('#snrIframe').empty();
+        $('#snrProgress').empty();
+        $('#snrRefreshData').data('refresh-data', []);
+    }
+
+    async function fetchSnrData() {
+        resetRefreshSnrModal();
+        const stageId = getSelectedStageId();
+        let refreshData = [];
+        const gameElements = $('[data-rs-stage-id="' + stageId + '"] [data-rs-game-link]')
+            .filter(function () {
+                return $(this).data('rs-game-completed') === false
+            });
+
+        for (let i = 0; i < gameElements.length; i++) {
+            const gameElt = gameElements[i];
+            const gameName = $(gameElt).data('rs-game-name');
+            const gameId = $(gameElt).data('rs-game-link').match(/swordsandravens\.net\/play\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i)?.[1];
+
+            try {
+                const snrData = await loadSnrIframe(gameId);
+                if (snrData) {
+                    const snrUpdates = buildSnrUpdates(gameElt, snrData);
+                    if (Object.keys(snrUpdates).length > 0) {
+                        refreshData.push(snrUpdates);
+                        logUpdates(snrUpdates, gameName);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error loading game:', error);
+                logSnr(gameName);
+                logSnr('    Error loading game. Please manually update the game.\n');
+            }
+        }
+        $('#snrRefreshData').data('refresh-data', refreshData);
+    }
+
+    function logUpdates(snrUpdates, gameName) {
+        logSnr(gameName);
+        if (snrUpdates.round) {
+            logSnr('    Round ' + snrUpdates.round
+                + (snrUpdates.completed ? ' (completed) ' : ''));
+        }
+        if (snrUpdates.completed) {
+            logSnr('    Final rankings');
+            for (let r = 0; r < snrUpdates.rankingForm.playerRankingList.length; r++) {
+                const player = snrUpdates.rankingForm.playerRankingList[r];
+                logSnr('        ' + (r + 1) + '. ' + (player.participantName + ' (' + player.house + ')').padEnd(42, ' ')
+                    + (player.points + '').padStart(2, ' ') + ' pts. ' + (player.penaltyPoints ? (' -' + player.penaltyPoints + ' pen.pts.') : ''));
+            }
+        }
+        logSnr('');
+    }
+
+    function loadSnrIframe(id) {
+        return new Promise((resolve, reject) => {
+            const iframe = $('<iframe>', {
+                src: 'http://localhost:8080/api/public/game/' + id + '?format=json',
+                width: '1px',
+                height: '1px',
+                frameborder: '0'
+            });
+
+            iframe.on('load', function () {
+                try {
+                    const content = $(this).contents().find('body').text();
+                    const data = JSON.parse(content);
+                    resolve(data);
+                } catch (e) {
+                    logSnr('Failed to parse game data: ' + e + '\n');
+                    reject(e);
+                } finally {
+                    $(this).remove();
+                }
+            });
+
+            iframe.on('error', function (e) {
+                logSnr('Failed to load game\n');
+                $(this).remove();
+                reject(e);
+            });
+
+            $('#snrIframe').empty().append(iframe);
+        });
+    }
+
+    function buildSnrUpdates(gameElt, snrData) {
+        const snrState = snrData.state;
+        const snrRound = snrData.view_of_game.round;
+
+        const rsGameId = $(gameElt).data('rs-game-id');
+        let updates = {};
+        if (snrState === 'FINISHED') {
+            updates.completed = true;
+            updates.rankingForm = buildRankingForm(gameElt, snrData.view_of_game.victoryTrack);
+        }
+        const rsRound = $('#game-round-' + rsGameId + ' option:selected').val();
+        if (snrRound !== rsRound) {
+            updates.round = snrRound;
+        }
+
+        return updates;
+    }
+
+    function logSnr(log) {
+        $('#snrProgress').append(log + "\n");
+    }
+
+    function buildRankingForm(gameElt, snrVictoryTrack) {
+
+        snrVictoryTrack.sort((a, b) => {
+            if (a.victoryPoints !== b.victoryPoints) {
+                return b.victoryPoints - a.victoryPoints;
+            }
+            if (a.totalLandAreas !== b.totalLandAreas) {
+                return b.totalLandAreas - a.totalLandAreas;
+            }
+            if (a.supplyLevel !== b.supplyLevel) {
+                return b.supplyLevel - a.supplyLevel;
+            }
+            return b.ironThronePosition - a.ironThronePosition;
+        });
+
+        const rsParticipants = $(gameElt)
+            .find('.game-participant-data')
+            .map(function () {
+                return {
+                    id: $(this).data('rs-participant-id'),
+                    name: $(this).data('rs-participant-name'),
+                    aliases: $(this)
+                        .siblings('span.player-alias')
+                        .map(function () {
+                            return $(this).text().trim().toLowerCase();
+                        }).get()
+                };
+            }).get();
+
+        const rsPlayers = $(gameElt).find('.player-data')
+            .map(function () {
+                return {
+                    id: $(this).data('rs-player-id'),
+                    house: $(this).data('rs-player-house'),
+                    penaltyPoints: $(this).data('rs-player-penalty-points')
+                };
+            })
+            .get();
+        const numberOfPlayers = rsPlayers.length;
+
+        let playerRankingsList = [];
+        for (let i = 0; i < snrVictoryTrack.length; i++) {
+            const snrPlayerRanking = snrVictoryTrack[i];
+            const house = snrPlayerRanking.house;
+            const rsPlayer = rsPlayers.find(p => p.house.toLowerCase() === house.toLowerCase());
+            if (!rsPlayer) throw new Error('No player found for house ' + house);
+
+            const snrPlayerName = snrPlayerRanking.player;
+            const rsParticipant = rsParticipants.find(p =>
+                p.name.toLowerCase() === snrPlayerName.toLowerCase()
+                || p.aliases.includes(snrPlayerName.toLowerCase())
+            );
+            if (!rsParticipant) throw new Error('No player found for house ' + house);
+
+            playerRankingsList.push({
+                playerId: rsPlayer.id,
+                participantId: rsParticipant.id,
+                participantName: rsParticipant.name,
+                house: house,
+                points: calcPlayerScore(i + 1, snrPlayerRanking.victoryPoints, numberOfPlayers),
+                castles: snrPlayerRanking.victoryPoints,
+                penaltyPoints: rsPlayer.penaltyPoints
+            });
+        }
+
+        return {
+            gameId: $(gameElt).data('rs-game-id'),
+            completed: true,
+            playerRankingList: playerRankingsList
+        };
+    }
+</script>

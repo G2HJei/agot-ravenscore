@@ -284,11 +284,12 @@
                                     data-bs-toggle="tooltip" data-bs-title="Create new game"
                                     onclick="newGame()"></button>
                             <button th:if="${model.adminUnlocked and not stage.completed}"
-                                    type="button"
-                                    class="btn btn-sm btn-outline-secondary bi bi-arrow-repeat"
+                                    type="button" class="btn btn-sm btn-outline-secondary visually-hidden"
                                     data-bs-toggle="tooltip"
-                                    data-bs-title="Auto-update stage games' progress (Swords & Ravens only). You must be authenticated at swordsandravens.net for this feature to work."
-                                    onclick="refreshGamesProgress()"></button>
+                                    data-bs-title="Refresh Swords & Ravens games' status"
+                                    onclick="showRefreshSnrModal()">
+                                <img th:src="@{/external/snr-logo.svg}" alt="SnR" style="height: 16px; width: 16px;">
+                            </button>
                         </span>
                         <span>Games
                             <i class="filter-button bi bi-funnel fs-5 text-brand highlight-primary ms-2"
@@ -398,21 +399,22 @@
                                                         <th:block
                                                                 th:if="${game.participantIdList.contains(participant.id)}">
                                                             <div class="col-4 mb-3">
-                                                        <span class="game-participant-data"
-                                                              th:data-rs-participant-name="${participant.name}"
-                                                              th:data-rs-participant-id="${participant.id}">
-                                                            <i class="bi bi-person-fill text-muted"></i>
-                                                            <span th:text="${participant.name}">Stark</span></span>
+                                                            <span class="game-participant-data"
+                                                                  th:data-rs-participant-name="${participant.name}"
+                                                                  th:data-rs-participant-id="${participant.id}">
+                                                                <i class="bi bi-person-fill text-muted"></i>
+                                                                <span th:text="${participant.name}">Stark</span>
+                                                            </span>
                                                                 <br/>
                                                                 <span th:if="${participant.replacedLabel ne null}"
                                                                       class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
                                                                       data-bs-toggle="tooltip"
                                                                       th:data-bs-title="${participant.replacedLabel}"></span>
                                                                 <th:block th:each="link : ${participant.profileLinks}">
-                                                                    <span th:if="${link.link eq null}"
-                                                                          class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill"
-                                                                          data-bs-toggle="tooltip" data-bs-title="Alias"
-                                                                          th:text="' ' + ${link.label}">Handle</span>
+                                                                <span th:if="${link.link eq null}"
+                                                                      class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
+                                                                      data-bs-toggle="tooltip" data-bs-title="Alias"
+                                                                      th:text="' ' + ${link.label}">Handle</span>
                                                                     <a th:if="${link.link ne null}"
                                                                        th:href="${link.link}" target="_blank"
                                                                        class="text-decoration-none badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
@@ -475,7 +477,7 @@
                                                                           th:data-bs-title="${player.replacedLabel}"></span>
                                                                     <th:block th:each="link : ${player.profileLinks}">
                                                                         <span th:if="${link.link eq null}"
-                                                                              class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill"
+                                                                              class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
                                                                               data-bs-toggle="tooltip"
                                                                               data-bs-title="Alias"
                                                                               th:text="' ' + ${link.label}">Handle</span>
@@ -519,7 +521,6 @@
 
     <!-- Components -->
     <div layout:replace="~{component/util/state}"></div>
-    <div layout:replace="~{component/util/swordsandravens}"></div>
     <div layout:replace="~{component/modal/stats}"></div>
     <div layout:replace="~{component/modal/rules}"></div>
     <div layout:replace="~{component/modal/unlock-admin}"></div>
@@ -534,6 +535,7 @@
         <div layout:replace="~{component/modal/admin/ranking-game}"></div>
         <div layout:replace="~{component/modal/admin/ranking-stage}"></div>
         <div layout:replace="~{component/modal/admin/restore-backup}"></div>
+        <div layout:replace="~{component/modal/admin/refresh-swordsandravens}"></div>
     </div>
 
     <!-- Utility cross-component functions -->

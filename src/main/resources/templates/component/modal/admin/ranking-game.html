@@ -162,10 +162,7 @@
     function autocompletePoints() {
         const data = getPlayersData();
         data.playersData.forEach(function (player, index) {
-            let points = data.numberOfPlayers //this formula is valid only for RANKING_PLUS_CASTLES scoring type
-                - (index + 1) //ranking position
-                + player.castles
-                + (index === 0 ? 3 : 0); // winner gets 3 extra points
+            let points = calcPlayerScore(index + 1, player.castles, data.numberOfPlayers);
             player.pointsElement.val(points);
         });
         if ($("#gameCompleted").is(":checked")) {
@@ -211,5 +208,10 @@
         } else {
             $("#rankingWarningHelp").addClass("visually-hidden");
         }
+    }
+
+    function calcPlayerScore(rank, castles, numberOfPlayers) {
+        //this formula is valid only for RANKING_PLUS_CASTLES scoring type
+        return numberOfPlayers - rank + castles + (rank === 1 ? 3 : 0); // winner gets 3 extra points
     }
 </script>
