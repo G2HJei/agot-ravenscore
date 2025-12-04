@@ -13,6 +13,8 @@ public class PlayerRanking {
 	@NotNull
 	private UUID	playerId;
 	private UUID	participantId;
+	private String	participantName;
+	private String	house;
 	private Integer	points			= 0;
 	private Integer	castles			= 0;
 	private Integer	penaltyPoints	= 0;

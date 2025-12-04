@@ -1,5 +1,6 @@
 package xyz.zlatanov.ravenscore.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.ResponseEntity.*;
 import static xyz.zlatanov.ravenscore.controller.ControllerConstants.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentRepository;
+import xyz.zlatanov.ravenscore.model.tourdetails.admin.GameUpdates;
 import xyz.zlatanov.ravenscore.model.tourdetails.admin.RankingsForm;
 import xyz.zlatanov.ravenscore.security.TournamentId;
 import xyz.zlatanov.ravenscore.service.GameAdminService;
@@ -56,6 +58,19 @@ public class AdminRestController {
 			return internalServerError().body("Unexpected error occurred.");
 		}
 		return noContent().build();
+	}
+
+	@GetMapping(value = REFRESH_SNR_GAME, produces = APPLICATION_JSON_VALUE)
+	public ResponseEntity<GameUpdates> refreshSnrGames(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
+			@PathVariable(STAGE_ID) UUID stageId, @PathVariable(GAME_ID) UUID gameId) {
+		try {
+			return ok(gameAdminService.refreshSnrGame(gameId));
+		} catch (RavenscoreException e) {
+			return badRequest().build();
+		} catch (Exception e) {
+			log.error("Unexpected error during fetch of SnR updates: {}", ExceptionUtils.getStackTrace(e));
+			return internalServerError().build();
+		}
 	}
 
 	private boolean unlockKeyIsValid(UUID tournamentId, String unlockKey) {

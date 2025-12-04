@@ -22,4 +22,6 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
 			WHERE :id = ANY(participant_id_list)
 			""")
 	List<Game> findByParticipantIdListContains(UUID id);
+
+	List<Game> findByTournamentStageIdAndCompleted(UUID stageId, Boolean completed);
 }

@@ -9,25 +9,16 @@
             </div>
             <div class="modal-body">
                 <div class="text-muted fst-italic mb-3 text-center">
-                    You can automatically fetch all Swords & Ravens games' status.
-                    You must be authenticated at <a class="text-brand" href="https://swordsandravens.net"
-                                                    target="_blank">SwordsAndRavens.net</a>
-                    for this feature to work.
-                </div>
-                <div class="d-flex justify-content-center align-items-center">
-                    <div class="me-auto"></div>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="fetchSnrData()">
-                        <span class="d-flex justify-content-center align-items-center gap-2">
-                            <img th:src="@{/external/snr-logo.svg}" alt="SnR" style="height: 16px; width: 16px;">
-                            Fetch SnR data
-                        </span>
-                    </button>
-                    <div id="snrIframe" class="ms-auto"></div>
+                    Checking for updates for all non-completed Swords & Ravens games...
                 </div>
                 <code id="snrProgress" class="overflow-auto d-block mt-2"
                       style="white-space: pre-wrap; word-wrap: break-word; max-height: 540px">
                 </code>
-                <div id="snrRefreshData" class="visually-hidden"></div>
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+                    <button id="updateSnrStatusBtn" type="button" class="btn btn-outline-secondary visually-hidden"
+                            onClick="updateSnrStatus()">Done
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -35,172 +26,89 @@
 
 <script th:inline="javascript">
 
+    const snrRefreshData = [];
+
+    function fetchSnrData(gameId, gameName) {
+        showRefreshSnrModal();
+        let gamesToFetch;
+        if (gameId) {
+            gamesToFetch = [{gameId: gameId, gameName: gameName}];
+        } else {
+            gamesToFetch = $('[data-rs-stage-id="' + getSelectedStageId() + '"] [data-rs-game-link]')
+                .filter(function () {
+                    return $(this).data('rs-game-completed') === false
+                })
+                .map(function () {
+                    return {
+                        gameId: $(this).data('rs-game-id'),
+                        gameName: $(this).data('rs-game-name')
+                    };
+                })
+                .get()
+        }
+        const promises = gamesToFetch.map(game => callSnr(game));
+        Promise.all(promises).then(() => {
+            if (snrRefreshData.length === 0) {
+                logSnr("No updates were found.");
+            } else {
+                $('#updateSnrStatusBtn').removeClass('visually-hidden');
+            }
+        });
+    }
+
     function showRefreshSnrModal() {
-        refreshGameModal();
+        $('#snrProgress').empty();
+        snrRefreshData.length = 0;
+        $("#updateSnrStatusBtn").addClass("visually-hidden");
         $("#refreshSnrGamesModal").modal("show");
     }
 
-    function resetRefreshSnrModal() {
-        $('#snrIframe').empty();
-        $('#snrProgress').empty();
-        $('#snrRefreshData').data('refresh-data', []);
-    }
-
-    async function fetchSnrData() {
-        resetRefreshSnrModal();
-        const stageId = getSelectedStageId();
-        let refreshData = [];
-        const gameElements = $('[data-rs-stage-id="' + stageId + '"] [data-rs-game-link]')
-            .filter(function () {
-                return $(this).data('rs-game-completed') === false
-            });
-
-        for (let i = 0; i < gameElements.length; i++) {
-            const gameElt = gameElements[i];
-            const gameName = $(gameElt).data('rs-game-name');
-            const gameId = $(gameElt).data('rs-game-link').match(/swordsandravens\.net\/play\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i)?.[1];
-
-            try {
-                const snrData = await loadSnrData(gameId);
-                if (snrData) {
-                    const snrUpdates = buildSnrUpdates(gameElt, snrData);
-                    if (Object.keys(snrUpdates).length > 0) {
-                        refreshData.push(snrUpdates);
-                        logUpdates(snrUpdates, gameName);
-                    }
-                }
-
-            } catch (error) {
-                console.error('Error loading game:', error);
-                logSnr(gameName);
-                logSnr('    Error loading game. Please manually update the game.\n');
-            }
-        }
-        $('#snrRefreshData').data('refresh-data', refreshData);
-    }
-
-    function loadSnrData(gameId) {
-        //  'http://localhost:8080/api/public/game/' + id + '?format=json',
-        return fetch('https://swordsandravens.net/api/public/game/' + gameId + '?format=json', {
-            credentials: 'include', // This sends cookies for authentication
-            mode: 'cors'
-        })
+    function callSnr(game) {
+        return fetch(`/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/refresh-snr-game/${game.gameId}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('HTTP error! status: ' + response.status);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
+            })
+            .then(gameUpdates => {
+                if (hasAnyUpdates(gameUpdates)) {
+                    displayUpdates(game.gameName, gameUpdates);
+                    snrRefreshData.push(gameUpdates);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching SNR games:', error);
+                $('#snrProgress').text(`Error fetching SNR games: ${error.message}`);
             });
     }
 
-    function logUpdates(snrUpdates, gameName) {
+    function hasAnyUpdates(gameUpdates) {
+        return gameUpdates.completed || gameUpdates.round || gameUpdates.playerRankingList;
+    }
+
+    function displayUpdates(gameName, updates) {
         logSnr(gameName);
-        if (snrUpdates.round) {
-            logSnr('    Round ' + snrUpdates.round
-                + (snrUpdates.completed ? ' (completed) ' : ''));
+        if (updates.round) {
+            logSnr('    Round ' + updates.round
+                + (updates.completed ? ' (completed) ' : ''));
         }
-        if (snrUpdates.completed) {
+        if (updates.completed) {
             logSnr('    Final rankings');
-            for (let r = 0; r < snrUpdates.rankingForm.playerRankingList.length; r++) {
-                const player = snrUpdates.rankingForm.playerRankingList[r];
-                logSnr('        ' + (r + 1) + '. ' + (player.participantName + ' (' + player.house + ')').padEnd(42, ' ')
-                    + (player.points + '').padStart(2, ' ') + ' pts. ' + (player.penaltyPoints ? (' -' + player.penaltyPoints + ' pen.pts.') : ''));
+            for (let r = 0; r < updates.playerRankingList.length; r++) {
+                const ranking = updates.playerRankingList[r];
+                logSnr('        ' + (r + 1) + '. ' + (ranking.participantName + ' (' + ranking.house + ')').padEnd(42, ' ')
+                    + (ranking.points + '').padStart(2, ' ') + ' pts. ' + (ranking.penaltyPoints ? (' -' + ranking.penaltyPoints + ' pen.pts.') : ''));
             }
         }
         logSnr('');
-    }
-
-    function buildSnrUpdates(gameElt, snrData) {
-        const snrState = snrData.state;
-        const snrRound = snrData.view_of_game.round;
-
-        const rsGameId = $(gameElt).data('rs-game-id');
-        let updates = {};
-        if (snrState === 'FINISHED') {
-            updates.completed = true;
-            updates.rankingForm = buildRankingForm(gameElt, snrData.view_of_game.victoryTrack);
-        }
-        const rsRound = $('#game-round-' + rsGameId + ' option:selected').val();
-        if (snrRound !== rsRound) {
-            updates.round = snrRound;
-        }
-
-        return updates;
     }
 
     function logSnr(log) {
         $('#snrProgress').append(log + "\n");
     }
 
-    function buildRankingForm(gameElt, snrVictoryTrack) {
-
-        snrVictoryTrack.sort((a, b) => {
-            if (a.victoryPoints !== b.victoryPoints) {
-                return b.victoryPoints - a.victoryPoints;
-            }
-            if (a.totalLandAreas !== b.totalLandAreas) {
-                return b.totalLandAreas - a.totalLandAreas;
-            }
-            if (a.supplyLevel !== b.supplyLevel) {
-                return b.supplyLevel - a.supplyLevel;
-            }
-            return b.ironThronePosition - a.ironThronePosition;
-        });
-
-        const rsParticipants = $(gameElt)
-            .find('.game-participant-data')
-            .map(function () {
-                return {
-                    id: $(this).data('rs-participant-id'),
-                    name: $(this).data('rs-participant-name'),
-                    aliases: $(this)
-                        .siblings('span.player-alias')
-                        .map(function () {
-                            return $(this).text().trim().toLowerCase();
-                        }).get()
-                };
-            }).get();
-
-        const rsPlayers = $(gameElt).find('.player-data')
-            .map(function () {
-                return {
-                    id: $(this).data('rs-player-id'),
-                    house: $(this).data('rs-player-house'),
-                    penaltyPoints: $(this).data('rs-player-penalty-points')
-                };
-            })
-            .get();
-        const numberOfPlayers = rsPlayers.length;
-
-        let playerRankingsList = [];
-        for (let i = 0; i < snrVictoryTrack.length; i++) {
-            const snrPlayerRanking = snrVictoryTrack[i];
-            const house = snrPlayerRanking.house;
-            const rsPlayer = rsPlayers.find(p => p.house.toLowerCase() === house.toLowerCase());
-            if (!rsPlayer) throw new Error('No player found for house ' + house);
-
-            const snrPlayerName = snrPlayerRanking.player;
-            const rsParticipant = rsParticipants.find(p =>
-                p.name.toLowerCase() === snrPlayerName.toLowerCase()
-                || p.aliases.includes(snrPlayerName.toLowerCase())
-            );
-            if (!rsParticipant) throw new Error('No player found for house ' + house);
-
-            playerRankingsList.push({
-                playerId: rsPlayer.id,
-                participantId: rsParticipant.id,
-                participantName: rsParticipant.name,
-                house: house,
-                points: calcPlayerScore(i + 1, snrPlayerRanking.victoryPoints, numberOfPlayers),
-                castles: snrPlayerRanking.victoryPoints,
-                penaltyPoints: rsPlayer.penaltyPoints
-            });
-        }
-
-        return {
-            gameId: $(gameElt).data('rs-game-id'),
-            completed: true,
-            playerRankingList: playerRankingsList
-        };
+    function updateSnrStatus() {
+        console.log("updating with: \n" + snrRefreshData);
     }
 </script>

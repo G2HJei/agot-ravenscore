@@ -42,6 +42,8 @@ public class ControllerConstants {
 	public static final String	UNLOCK_TOURNAMENT			= TOURNAMENT_DETAILS + "/unlock-tournament";
 	public static final String	UPDATE_ROUND				= UPSERT_GAME + "/{" + GAME_ID + "}/round/{" + ROUND + "}";
 	public static final String	UPDATE_GAME_RANKINGS		= UPSERT_GAME + "/{" + GAME_ID + "}/rankings";
+	public static final String	REFRESH_SNR_GAME			= TOURNAMENT_DETAILS + "/stage/{" + STAGE_ID + "}/refresh-snr-game/{" + GAME_ID
+			+ "}";
 
 	public static String redirectToTournamentWithMessage(UUID tournamentId, String message) {
 		return redirectToTournament(tournamentId) + "?message=" + URLEncoder.encode(message, UTF_8);

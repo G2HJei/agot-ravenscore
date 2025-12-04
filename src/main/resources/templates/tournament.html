@@ -284,10 +284,10 @@
                                     data-bs-toggle="tooltip" data-bs-title="Create new game"
                                     onclick="newGame()"></button>
                             <button th:if="${model.adminUnlocked and not stage.completed}"
-                                    type="button" class="btn btn-sm btn-outline-secondary visually-hidden"
+                                    type="button" class="btn btn-sm btn-outline-secondary"
                                     data-bs-toggle="tooltip"
-                                    data-bs-title="Refresh Swords & Ravens games' status"
-                                    onclick="showRefreshSnrModal()">
+                                    data-bs-title="Check Swords & Ravens games' status"
+                                    onclick="fetchSnrData()">
                                 <img th:src="@{/external/snr-logo.svg}" alt="SnR" style="height: 16px; width: 16px;">
                             </button>
                         </span>
