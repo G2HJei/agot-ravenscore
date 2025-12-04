@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 public class GameUpdates {
 
 	private UUID				gameId;
+	private String				gameName;
 	private Integer				round;
 	private Boolean				completed;
 	private List<PlayerRanking>	playerRankingList;

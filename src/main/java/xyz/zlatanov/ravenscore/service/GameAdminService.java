@@ -184,6 +184,7 @@ public class GameAdminService {
 		val snrCompleted = snrGameState.state() == FINISHED;
 		return new GameUpdates()
 				.gameId(game.id())
+				.gameName(game.name())
 				.round(!game.round().equals(snrRound) ? snrRound : null)
 				.completed(snrCompleted ? true : null)
 				.playerRankingList(snrCompleted ? getPlayerRankings(game, snrGameState) : null);

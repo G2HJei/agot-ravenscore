@@ -1,22 +1,33 @@
 <div id="refreshSnrGamesModal" class="modal modal-lg fade" tabindex="-1" aria-labelledby="refreshSnrGamesModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+        <div class="modal-content" style="height: 640px">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="refreshSnrGamesModalLabel">Refresh Swords & Ravens Games Status</h1>
                 <button type="button" class="btn-close text-brand" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div id="snrModalBody" class="modal-body">
                 <div class="text-muted fst-italic mb-3 text-center">
                     Checking for updates for all non-completed Swords & Ravens games...
                 </div>
                 <code id="snrProgress" class="overflow-auto d-block mt-2"
-                      style="white-space: pre-wrap; word-wrap: break-word; max-height: 540px">
+                      style="white-space: pre-wrap; word-wrap: break-word;">
                 </code>
-                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
-                    <button id="updateSnrStatusBtn" type="button" class="btn btn-outline-secondary visually-hidden"
-                            onClick="updateSnrStatus()">Done
+            </div>
+            <div id="updateSnrStatusBar" class="modal-footer d-flex justify-content-center gap-2 visually-hidden">
+                <div class="me-auto"></div>
+                <div class="text-muted fst-italic">No updates have been saved to Ravenscore yet. Confirm
+                    updates?
+                </div>
+                <div class="d-flex justify-content-end align-items-center gap-2 ms-auto">
+                    <div id="snrUpdatesSpinner" class="spinner-border text-brand visually-hidden" role="status">
+                    </div>
+                    <button id="updateSnrStatusBtn" type="button" class="btn btn-outline-secondary"
+                            onClick="updateSnrStatus()">Confirm
+                    </button>
+                    <button id="closeRefreshSnrModalBtn" type="button" class="btn btn-outline-secondary visually-hidden"
+                            onClick="closeRefreshSnrModal()">Close
                     </button>
                 </div>
             </div>
@@ -28,7 +39,7 @@
 
     const snrRefreshData = [];
 
-    function fetchSnrData(gameId, gameName) {
+    async function fetchSnrData(gameId, gameName) {
         showRefreshSnrModal();
         let gamesToFetch;
         if (gameId) {
@@ -46,21 +57,29 @@
                 })
                 .get()
         }
-        const promises = gamesToFetch.map(game => callSnr(game));
-        Promise.all(promises).then(() => {
-            if (snrRefreshData.length === 0) {
-                logSnr("No updates were found.");
-            } else {
-                $('#updateSnrStatusBtn').removeClass('visually-hidden');
-            }
-        });
+        for (const game of gamesToFetch) {
+            await callSnr(game);
+        }
+        if (snrRefreshData.length === 0) {
+            logSnr("No updates were found.");
+        } else {
+            $('#updateSnrStatusBar').removeClass('visually-hidden');
+            logSnr('');
+        }
     }
 
     function showRefreshSnrModal() {
         $('#snrProgress').empty();
         snrRefreshData.length = 0;
-        $("#updateSnrStatusBtn").addClass("visually-hidden");
+        $("#updateSnrStatusBar").addClass("visually-hidden");
+        $("#snrUpdatesSpinner").addClass("visually-hidden");
+        $('#updateSnrStatusBtn').removeClass("visually-hidden");
+        $('#closeRefreshSnrModalBtn').addClass('visually-hidden');
         $("#refreshSnrGamesModal").modal("show");
+    }
+
+    function closeRefreshSnrModal() {
+        $("#refreshSnrGamesModal").modal("hide");
     }
 
     function callSnr(game) {
@@ -79,7 +98,8 @@
             })
             .catch(error => {
                 console.error('Error fetching SNR games:', error);
-                $('#snrProgress').text(`Error fetching SNR games: ${error.message}`);
+                logSnr(game.gameName);
+                logSnr("    Could not check for updates. Try again later or update manually.\n")
             });
     }
 
@@ -106,9 +126,44 @@
 
     function logSnr(log) {
         $('#snrProgress').append(log + "\n");
+        const modalBody = $('#snrModalBody');
+        modalBody.scrollTop(modalBody[0].scrollHeight);
     }
 
-    function updateSnrStatus() {
+    async function updateSnrStatus() {
+        $('#updateSnrStatusBtn').addClass("visually-hidden");
+        $("#snrUpdatesSpinner").removeClass("visually-hidden");
         console.log("updating with: \n" + snrRefreshData);
+        for (const updates of snrRefreshData) {
+            logSnr('Updating "' + updates.gameName + '"...');
+            if (updates.round) {
+                await $.ajax({
+                    url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/round/${updates.round}`,
+                    type: "GET",
+                    error: function () {
+                        console.error("Update round request failed:", status, error);
+                    }
+                });
+            }
+            if (updates.completed) {
+                await $.ajax({
+                    url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/rankings`,
+                    type: "POST",
+                    data: JSON.stringify({
+                        gameId: updates.gameId,
+                        completed: updates.completed,
+                        playerRankingList: updates.playerRankingList
+                    }),
+                    contentType: "application/json",
+                    error: function () {
+                        console.error("Update game rankings request failed:", status, error);
+                    }
+                });
+            }
+        }
+        logSnr('\nDone.');
+        $("#snrUpdatesSpinner").addClass("visually-hidden");
+        $('#closeRefreshSnrModalBtn').removeClass('visually-hidden');
+        //  $("#refreshSnrGamesModal").modal("hide");
     }
 </script>
