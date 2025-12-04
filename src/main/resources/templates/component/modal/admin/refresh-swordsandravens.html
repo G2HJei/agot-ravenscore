@@ -80,6 +80,7 @@
 
     function closeRefreshSnrModal() {
         $("#refreshSnrGamesModal").modal("hide");
+        window.location.reload();
     }
 
     function callSnr(game) {
@@ -164,6 +165,5 @@
         logSnr('\nDone.');
         $("#snrUpdatesSpinner").addClass("visually-hidden");
         $('#closeRefreshSnrModalBtn').removeClass('visually-hidden');
-        //  $("#refreshSnrGamesModal").modal("hide");
     }
 </script>
