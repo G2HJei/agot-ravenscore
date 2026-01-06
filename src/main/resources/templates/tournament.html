@@ -341,7 +341,7 @@
                                         <div class="col-12 col-lg-4 d-flex flex-column justify-content-start align-items-center px-0 mb-3">
                                             <div th:if="${(not model.adminUnlocked) or stage.completed}"
                                                  class="text-center text-secondary-emphasis"
-                                                 th:text="${game.completed ? ('Round ' + game.round): ''}">
+                                                 th:text="${game.round ne null ? ('Round ' + game.round): 'Not started'}">
                                                 Round #
                                             </div>
                                             <div th:if="${model.adminUnlocked and not stage.completed}"
