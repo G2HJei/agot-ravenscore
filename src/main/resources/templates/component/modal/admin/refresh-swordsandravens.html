@@ -118,7 +118,7 @@
             logSnr('    Final rankings');
             for (let r = 0; r < updates.playerRankingList.length; r++) {
                 const ranking = updates.playerRankingList[r];
-                logSnr('        ' + (r + 1) + '. ' + (ranking.participantName + ' (' + ranking.house + ')').padEnd(42, ' ')
+                logSnr('        ' + (r + 1) + '. ' + (ranking.participantName + ' (' + ranking.house + ')').padEnd(32, ' ')
                     + (ranking.points + '').padStart(2, ' ') + ' pts. ' + (ranking.penaltyPoints ? (' -' + ranking.penaltyPoints + ' pen.pts.') : ''));
             }
         }
