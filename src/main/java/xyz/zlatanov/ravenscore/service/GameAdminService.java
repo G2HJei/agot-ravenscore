@@ -21,6 +21,7 @@ import xyz.zlatanov.ravenscore.model.tourdetails.admin.PlayerRanking;
 import xyz.zlatanov.ravenscore.model.tourdetails.admin.RankingsForm;
 import xyz.zlatanov.ravenscore.security.TournamentAdminOperation;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static xyz.zlatanov.ravenscore.model.swordsandravens.SnrState.FINISHED;
@@ -30,18 +31,19 @@ import static xyz.zlatanov.ravenscore.model.swordsandravens.SnrState.FINISHED;
 @Slf4j
 public class GameAdminService {
 
-    private final GameRepository gameRepository;
-    private final PlayerRepository playerRepository;
+    private final GameRepository        gameRepository;
+    private final PlayerRepository      playerRepository;
     private final ParticipantRepository participantRepository;
 
     @Transactional
     @TournamentAdminOperation
     public void game(@Valid GameForm gameForm) {
         validateParticipantCount(gameForm);
+        val ptsModifier = validateParticipantPointsModifier(gameForm.getParticipantIdList());
         if (gameForm.getId() == null) {
-            createGame(gameForm);
+            createGame(gameForm, ptsModifier);
         } else {
-            updateGame(gameForm);
+            updateGame(gameForm, ptsModifier);
         }
     }
 
@@ -91,14 +93,28 @@ public class GameAdminService {
         }
     }
 
-    private void createGame(GameForm gameForm) {
+    private BigDecimal validateParticipantPointsModifier(UUID[] participantIdList) {
+        val ptsModifiers = participantRepository.findByIdInOrderByName(Arrays.stream(participantIdList).toList())
+                .stream()
+                .map(Participant::pointsModifier)
+                .distinct()
+                .toList();
+        if (ptsModifiers.size() > 1) {
+            throw new RavenscoreException("All game participants must be with the same points modifier");
+        } else {
+            return ptsModifiers.getFirst();
+        }
+    }
+
+    private void createGame(GameForm gameForm, BigDecimal ptsModifier) {
         val game = gameRepository.save(new Game()
                 .type(gameForm.getType())
                 .name(gameForm.getName())
                 .link(gameForm.getLink())
                 .completed(false)
                 .tournamentStageId(gameForm.getStageId())
-                .participantIdList(gameForm.getParticipantIdList()));
+                .participantIdList(gameForm.getParticipantIdList())
+                .pointsModifier(ptsModifier));
         val defaultPlayers = gameForm.getType().houses()
                 .stream()
                 .map(house -> new Player()
@@ -108,7 +124,7 @@ public class GameAdminService {
         playerRepository.saveAll(defaultPlayers);
     }
 
-    private void updateGame(GameForm gameForm) {
+    private void updateGame(GameForm gameForm, BigDecimal ptsModifier) {
         val game = gameRepository.findById(gameForm.getId()).orElseThrow();
         if (game.completed()) {
             throw new RavenscoreException("Cannot update game details of a completed game.");
@@ -118,7 +134,8 @@ public class GameAdminService {
                 .name(gameForm.getName())
                 .link(gameForm.getLink())
                 .tournamentStageId(gameForm.getStageId())
-                .participantIdList(gameForm.getParticipantIdList()));
+                .participantIdList(gameForm.getParticipantIdList())
+                .pointsModifier(ptsModifier));
         // disassociate player from removed participant
         val players = playerRepository.findByGameIdOrderByPointsDesc(game.id()).stream()
                 .filter(p -> p.participantId() != null)

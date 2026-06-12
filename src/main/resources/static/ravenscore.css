@@ -114,6 +114,11 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
+input.points-modifier::-webkit-inner-spin-button,
+input.points-modifier::-webkit-outer-spin-button {
+    -webkit-appearance: auto;
+}
+
 input[type=number] {
     -moz-appearance: textfield;
 }

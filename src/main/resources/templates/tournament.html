@@ -168,45 +168,50 @@
                                          data-bs-toggle="tooltip"
                                          data-bs-title="Tournament winner"></th>
                                 <td>
-                                    <div class="d-flex justify-content-start align-items-center action-container">
-                                        <div>
-                                            <span class="participant-data"
+                                    <div class="d-flex justify-content-start gap-1 align-items-center action-container">
+                                            <span class="participant-data bi bi-person-fill text-muted"
                                                   th:data-rs-stage-id="${stage.id}"
                                                   th:data-rs-participant-id="${participant.id}"
                                                   th:data-rs-is-qualifier="${participantIdx.index lt stage.qualificationCount}"
                                                   th:data-rs-participant-stage-rank="${participantIdx.index+1}"
                                                   th:data-rs-participant-name="${participant.name}"
+                                                  th:data-rs-participant-points-modifier="${participant.pointsModifier}"
                                                   th:data-rs-score="${participant.score}"
                                                   th:data-rs-wins="${participant.wins.size()}"
-                                                  th:data-rs-clean-wins="${participant.cleanWins}">
-                                                <i class="bi bi-person-fill text-muted"></i>
-                                                <span th:text="${participant.name}">Petyr Baelish</span>
+                                                  th:data-rs-clean-wins="${participant.cleanWins}"
+                                                  th:text="${' '+participant.name}"> Petyr Baelish
                                             </span>
-                                            <span th:if="${participant.replacedLabel ne null}"
-                                                  class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
-                                                  data-bs-toggle="tooltip"
-                                                  th:data-bs-title="${participant.replacedLabel}"></span>
-                                            <th:block th:each="link : ${participant.profileLinks}">
+                                        <span th:if="${participant.replacedLabel ne null}"
+                                              class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"
+                                              data-bs-toggle="tooltip"
+                                              th:data-bs-title="${participant.replacedLabel}"></span>
+                                        <th:block th:each="link : ${participant.profileLinks}">
                                                 <span th:if="${link.link eq null}"
                                                       class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-person-fill player-alias"
                                                       data-bs-toggle="tooltip" data-bs-title="Alias"
                                                       th:text="' ' + ${link.label}">Handle</span>
-                                                <a th:if="${link.link ne null}" th:href="${link.link}"
-                                                   target="_blank"
-                                                   class="text-decoration-none badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
-                                                   data-bs-toggle="tooltip"
-                                                   th:data-bs-title="${'External player profile: '+link.link}"
-                                                   th:text="'  ' + ${link.label}">Profile</a>
-                                            </th:block>
-                                            <i th:if="${model.adminUnlocked and not stage.completed}"
-                                               class="bi bi-pencil-square visually-hidden action-icon"
+                                            <a th:if="${link.link ne null}" th:href="${link.link}"
+                                               target="_blank"
+                                               class="text-decoration-none badge rounded-pill border border-secondary text-secondary-emphasis bi bi-box-arrow-up-right player-alias"
                                                data-bs-toggle="tooltip"
-                                               data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
-                                        </div>
+                                               th:data-bs-title="${'External player profile: '+link.link}"
+                                               th:text="'  ' + ${link.label}">Profile</a>
+                                        </th:block>
+                                        <i th:if="${model.adminUnlocked and not stage.completed}"
+                                           class="bi bi-pencil-square visually-hidden action-icon"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
+                                        <span class="badge rounded-pill bi bi-x border border-secondary text-secondary-emphasis ms-auto"
+                                              th:text="${participant.pointsModifier}"
+                                              th:if="${participant.pointsModifier ne 1}"
+                                              data-bs-toggle="tooltip"
+                                              data-bs-title="Current score modifier. Does not affect completed games.">x0.75</span>
                                     </div>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <span th:text="${participant.score}">Pts</span>
+                                    <span th:text="${participant.score}"
+                                          th:data-bs-toggle="${model.hasPointsModifierGames ? 'tooltip' : ''}"
+                                          th:data-bs-title="${'Exact score (without rounding): ' + participant.scoreDecimal+' pts'}">Pts</span>
                                     <i th:if="${participant.penaltyPoints gt 0}"
                                        class="bi bi-heartbreak-fill text-danger-emphasis" data-bs-toggle="tooltip"
                                        th:data-bs-title="${participant.points+' pts. - '+participant.penaltyPoints+' penalty points.'}"></i>
@@ -249,9 +254,15 @@
                                  th:each="substitute : ${model.substituteModelList}">
                                 <span class="substitute-data"
                                       th:data-rs-substitute-id="${substitute.id}"
-                                      th:data-rs-substitute-name="${substitute.name}">
+                                      th:data-rs-substitute-name="${substitute.name}"
+                                      th:data-rs-substitute-points-modifier="${substitute.pointsModifier}">
                                     <i class="bi bi-person-fill text-muted"></i>
-                                    <span th:text="${substitute.name}">Sub Name</span>
+                                    <span th:text="${substitute.name}">Sansa Stark</span>
+                                    <span class="badge rounded-pill bi bi-x border border-secondary text-secondary-emphasis"
+                                          th:text="${substitute.pointsModifier}"
+                                          th:if="${substitute.pointsModifier ne 1}"
+                                          data-bs-toggle="tooltip"
+                                          data-bs-title="Current score modifier. Does not affect completed games.">x0.75</span>
                                 </span>&nbsp;
                                 <i th:if="${model.adminUnlocked}"
                                    class="bi bi-pencil-square highlight-primary visually-hidden action-icon"
@@ -317,14 +328,18 @@
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                         th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
                                         aria-controls="flush-collapse">
-                                    <span class="text-muted" th:text="${game.type.shortname}">Type</span>&nbsp;
-                                    <span th:text="${game.name}">Name</span>&nbsp;
-                                    <span th:if="${not game.completed}" th:text="${'(Round '+game.round+')'}"
-                                          th:class="${'text-muted fst-italic round-label '+(game.round eq null? 'visually-hidden' : '')}">
-                                        (Round #)
+                                    <span class="text-muted">
+                                        <span th:text="${game.type.shortname+' |&nbsp;'}">Type</span>
+                                        <span th:if="${not game.completed}"
+                                              th:text="${'Round '+game.round+' |&nbsp;'}"
+                                              th:class="${'round-label '+(game.round eq null? 'visually-hidden' : '')}">                                        Рound #                                    </span>
+                                        <span th:if="${game.completed}">Completed |&nbsp;</span>
+                                        <span th:if="${game.pointsModifier ne 1}"
+                                              data-bs-toggle="tooltip"
+                                              data-bs-title="Stage ranking points will be calculated after applying this modifier"
+                                              th:text="'x'+${game.pointsModifier()+' pts. |&nbsp;'}">x1.00</span>
                                     </span>
-                                    <span th:if="${game.completed}"
-                                          class="text-muted fst-italic">(Completed)</span>
+                                    <span th:text="${game.name}">Name</span>
                                 </button>
                             </h6>
                             <div th:id="${'flush-collapse-'+gameIdx.index}"
@@ -434,7 +449,13 @@
                                                     <tr>
                                                         <th scope="col" style="width: 5%"></th>
                                                         <th scope="col" style="width: 55%">Player</th>
-                                                        <th scope="col" class="text-center">Points</th>
+                                                        <th scope="col" class="text-center">Points
+                                                            <span class="text-muted fw-lighter"
+                                                                  data-bs-toggle="tooltip"
+                                                                  data-bs-title="Stage ranking points will be calculated after applying this modifier"
+                                                                  th:if="${game.pointsModifier ne 1}"
+                                                                  th:text="${'&nbsp;x'+ game.pointsModifier}">x0.67</span>
+                                                        </th>
                                                         <th scope="col" class="text-center"
                                                             th:text="${game.type.toString() ne 'A_FEAST_FOR_CROWS' ? 'Castles' : 'Objectives'}">
                                                             Castles

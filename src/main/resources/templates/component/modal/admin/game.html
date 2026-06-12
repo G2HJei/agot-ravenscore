@@ -116,11 +116,13 @@
             const participationChecked =
                 participatesInGame(participantId, gameId)
                     ? "checked" : ""
-
+            const pointsModifier = $(this).data("rs-participant-points-modifier")
+            const participantName = $(this).text().trim() +
+                (pointsModifier < 1.00 ? ' (x' + pointsModifier + ')' : '');
             participants.push({
                 id: participantId,
                 stageRank: stageRank,
-                name: $(this).text().trim(),
+                name: participantName,
                 checked: participationChecked
             });
         });
@@ -189,7 +191,7 @@
                 const roundLabel = successIndicator.closest(".accordion-item").find(".round-label");
                 if (roundNumber > 0) {
                     roundLabel.removeClass("visually-hidden")
-                        .text("(Round " + roundNumber + ")");
+                        .html(`Round ${roundNumber} |&nbsp;`);
                 } else {
                     roundLabel.addClass("visually-hidden");
                 }

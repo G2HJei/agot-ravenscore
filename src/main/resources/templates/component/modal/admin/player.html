@@ -18,6 +18,10 @@
                                         <label for="playerName" class="form-label">Name</label>
                                         <input type="text" required="" minlength="2" maxlength="64" class="form-control" id="playerName" placeholder="Enter player name" name="name" value="{{player-name}}">
                                     </div>
+                                    <div class="w-25">
+                                        <label for="playerPointsModifier" class="form-label">Pts. modifier</label>
+                                        <input type="number" min="0" max="1" step="0.05" required="" class="form-control points-modifier" id="playerPointsModifier" placeholder="0 to 1" name="pointsModifier" value="{{player-points-modifier}}">
+                                    </div>
                                     {{delete-button}}
                                 </div>
                                 <label for="profileLinks" class="form-label">Profile links & aliases</label>
@@ -51,6 +55,7 @@
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", getSelectedStageId())
             .replaceAll("{{player-name}}", "")
+            .replaceAll("{{player-points-modifier}}", "1")
             .replaceAll("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
     }
 
@@ -68,6 +73,7 @@
             .replaceAll("{{stage-id}}", getSelectedStageId())
             .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
             .replaceAll("{{player-name}}", actionContainer.find(".participant-data").data("rs-participant-name"))
+            .replaceAll("{{player-points-modifier}}", actionContainer.find(".participant-data").data("rs-participant-points-modifier"))
             .replaceAll("{{profile-links}}", profileLinksHTML));
     }
 
@@ -79,6 +85,7 @@
             .replaceAll("{{tour-id}}", getTournamentId())
             .replaceAll("{{stage-id}}", "")
             .replaceAll("{{player-name}}", "")
+            .replaceAll("{{player-points-modifier}}", "1")
             .replaceAll("{{profile-links}}", PROFILE_LINK.replace("{{profile-link}}", "")));
     }
 
@@ -95,6 +102,7 @@
             .replaceAll("{{stage-id}}", "")
             .replaceAll("{{remove-from-stage-id}}", getSelectedStageId())
             .replaceAll("{{player-name}}", actionContainer.find(".substitute-data").data("rs-substitute-name"))
+            .replaceAll("{{player-points-modifier}}", actionContainer.find(".substitute-data").data("rs-substitute-points-modifier"))
             .replaceAll("{{profile-links}}", profileLinksHTML);
 
         refreshPlayerModal(playerModalHTML);
