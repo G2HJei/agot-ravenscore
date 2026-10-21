@@ -22,6 +22,8 @@ import xyz.zlatanov.ravenscore.model.tourdetails.admin.RankingsForm;
 import xyz.zlatanov.ravenscore.security.TournamentAdminOperation;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 import static xyz.zlatanov.ravenscore.model.swordsandravens.SnrState.FINISHED;
@@ -203,7 +205,16 @@ public class GameAdminService {
                 .gameName(game.name())
                 .round(snrRound > 0 && !snrRound.equals(game.round()) ? snrRound : null)
                 .completed(snrCompleted ? true : null)
-                .playerRankingList(snrCompleted ? getPlayerRankings(game, snrGameState) : null);
+                .playerRankingList(snrCompleted ? getPlayerRankings(game, snrGameState) : null)
+                .inactiveHours(snrCompleted ? null : getInactiveHours(snrGameState.lastActiveAt()));
+    }
+
+    private static Long getInactiveHours(Instant lastActiveAt) {
+        if (lastActiveAt == null) {
+            return null;
+        }
+        val inactiveHours = Duration.between(lastActiveAt, Instant.now()).toHours();
+        return inactiveHours >= 48 ? inactiveHours : null;
     }
 
     private ArrayList<PlayerRanking> getPlayerRankings(Game game, SnrGameState snrGameState) {

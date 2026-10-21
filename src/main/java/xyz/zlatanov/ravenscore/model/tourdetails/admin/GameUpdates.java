@@ -19,4 +19,5 @@ public class GameUpdates {
 	private Integer				round;
 	private Boolean				completed;
 	private List<PlayerRanking>	playerRankingList;
+	private Long				inactiveHours;
 }

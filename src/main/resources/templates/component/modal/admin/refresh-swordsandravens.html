@@ -105,11 +105,14 @@
     }
 
     function hasAnyUpdates(gameUpdates) {
-        return gameUpdates.completed || gameUpdates.round || gameUpdates.playerRankingList;
+        return gameUpdates.completed || gameUpdates.round || gameUpdates.playerRankingList || gameUpdates.inactiveHours;
     }
 
     function displayUpdates(gameName, updates) {
         logSnr(gameName);
+        if (updates.inactiveHours) {
+            logSnrWarning('    Last active ' + updates.inactiveHours + ' hours ago!');
+        }
         if (updates.round) {
             logSnr('    Round ' + updates.round
                 + (updates.completed ? ' (completed) ' : ''));
@@ -127,6 +130,15 @@
 
     function logSnr(log) {
         $('#snrProgress').append(log + "\n");
+        scrollSnrLogToBottom();
+    }
+
+    function logSnrWarning(log) {
+        $('#snrProgress').append($('<span class="text-warning-emphasis">').text(log), "\n");
+        scrollSnrLogToBottom();
+    }
+
+    function scrollSnrLogToBottom() {
         const modalBody = $('#snrModalBody');
         modalBody.scrollTop(modalBody[0].scrollHeight);
     }
