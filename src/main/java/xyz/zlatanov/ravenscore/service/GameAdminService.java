@@ -7,13 +7,11 @@ import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
-import xyz.zlatanov.ravenscore.domain.model.Game;
-import xyz.zlatanov.ravenscore.domain.model.House;
-import xyz.zlatanov.ravenscore.domain.model.Participant;
-import xyz.zlatanov.ravenscore.domain.model.Player;
+import xyz.zlatanov.ravenscore.domain.model.*;
 import xyz.zlatanov.ravenscore.domain.repository.GameRepository;
 import xyz.zlatanov.ravenscore.domain.repository.ParticipantRepository;
 import xyz.zlatanov.ravenscore.domain.repository.PlayerRepository;
+import xyz.zlatanov.ravenscore.domain.repository.TournamentStageRepository;
 import xyz.zlatanov.ravenscore.model.swordsandravens.SnrGameState;
 import xyz.zlatanov.ravenscore.model.tourdetails.admin.GameForm;
 import xyz.zlatanov.ravenscore.model.tourdetails.admin.GameUpdates;
@@ -35,9 +33,10 @@ public class GameAdminService {
 
     private static final String SNR_DOMAIN = "swordsandravens.net";
 
-    private final GameRepository        gameRepository;
-    private final PlayerRepository      playerRepository;
-    private final ParticipantRepository participantRepository;
+    private final GameRepository            gameRepository;
+    private final PlayerRepository          playerRepository;
+    private final ParticipantRepository     participantRepository;
+    private final TournamentStageRepository tournamentStageRepository;
 
     @Transactional
     @TournamentAdminOperation
@@ -90,8 +89,17 @@ public class GameAdminService {
 
     @Transactional
     //not admin operation because it is triggered by cron job
-    public void updateSnrLastActive() {
-        gameRepository.findByCompletedFalseAndLinkContainingIgnoreCase(SNR_DOMAIN)
+    public void updateSnrLastActive(List<UUID> tournamentIds) {
+        if (tournamentIds.isEmpty()) {
+            return;
+        }
+        val stageIds = tournamentStageRepository.findByTournamentIdInOrderByStartDateDesc(tournamentIds).stream()
+                .map(TournamentStage::id)
+                .toList();
+        if (stageIds.isEmpty()) {
+            return;
+        }
+        gameRepository.findByTournamentStageIdInAndCompletedFalseAndLinkContainingIgnoreCase(stageIds, SNR_DOMAIN)
                 .forEach(game -> {
                     val lastActive = getSnrGameState(game).lastActiveAt();
                     gameRepository.save(game.lastActive(lastActive));

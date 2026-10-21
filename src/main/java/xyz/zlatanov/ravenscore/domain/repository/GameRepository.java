@@ -22,5 +22,5 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
             """)
     List<Game> findByParticipantIdListContains(UUID id);
 
-    List<Game> findByCompletedFalseAndLinkContainingIgnoreCase(String link);
+    List<Game> findByTournamentStageIdInAndCompletedFalseAndLinkContainingIgnoreCase(List<UUID> stageIds, String link);
 }

@@ -16,6 +16,13 @@ public interface TournamentRepository extends JpaRepository<Tournament, UUID> {
 
 	List<Tournament> findByHiddenFalseOrderByPinnedDescLastUpdatedDesc();
 
+	@NativeQuery("""
+			SELECT *
+			FROM tournament
+			WHERE EXTRACT(MINUTE FROM last_updated) BETWEEN :fromMinute AND :toMinute
+			""")
+	List<Tournament> findByLastUpdatedMinuteBetween(int fromMinute, int toMinute);
+
 	@Transactional // https://stackoverflow.com/questions/25821579/transactionrequiredexception-executing-an-update-delete-query
 	@Modifying
 	@NativeQuery("""
