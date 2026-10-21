@@ -60,7 +60,7 @@
         for (const game of gamesToFetch) {
             await callSnr(game);
         }
-        if (snrRefreshData.length === 0) {
+        if (!snrRefreshData.some(hasAnyUpdates)) {
             logSnr("No updates were found.");
         } else {
             $('#updateSnrStatusBar').removeClass('visually-hidden');
@@ -147,7 +147,7 @@
         $('#updateSnrStatusBtn').addClass("visually-hidden");
         $("#snrUpdatesSpinner").removeClass("visually-hidden");
         console.log("updating with: \n" + snrRefreshData);
-        for (const updates of snrRefreshData) {
+        for (const updates of snrRefreshData.filter(hasAnyUpdates)) {
             logSnr('Updating "' + updates.gameName + '"...');
             if (updates.round) {
                 await $.ajax({
@@ -170,6 +170,15 @@
                     contentType: "application/json",
                     error: function () {
                         console.error("Update game rankings request failed:", status, error);
+                    }
+                });
+            }
+            if (updates.lastActive) {
+                await $.ajax({
+                    url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/last-active/${updates.lastActive}`,
+                    type: "GET",
+                    error: function (xhr, status, error) {
+                        console.error("Update last active request failed:", status, error);
                     }
                 });
             }

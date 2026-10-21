@@ -23,7 +23,7 @@ import xyz.zlatanov.ravenscore.security.TournamentAdminOperation;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static xyz.zlatanov.ravenscore.model.swordsandravens.SnrState.FINISHED;
@@ -32,6 +32,8 @@ import static xyz.zlatanov.ravenscore.model.swordsandravens.SnrState.FINISHED;
 @RequiredArgsConstructor
 @Slf4j
 public class GameAdminService {
+
+    private static final String SNR_DOMAIN = "swordsandravens.net";
 
     private final GameRepository        gameRepository;
     private final PlayerRepository      playerRepository;
@@ -84,6 +86,23 @@ public class GameAdminService {
     public void updateRound(UUID gameId, Integer round) {
         val game = gameRepository.findById(gameId).orElseThrow();
         gameRepository.save(game.round(round));
+    }
+
+    @Transactional
+    //not admin operation because it is triggered by cron job
+    public void updateSnrLastActive() {
+        gameRepository.findByCompletedFalseAndLinkContainingIgnoreCase(SNR_DOMAIN)
+                .forEach(game -> {
+                    val lastActive = getSnrGameState(game).lastActiveAt();
+                    gameRepository.save(game.lastActive(lastActive));
+                });
+    }
+
+    @Transactional
+    @TournamentAdminOperation
+    public void updateLastActive(UUID gameId, LocalDateTime lastActive) {
+        val game = gameRepository.findById(gameId).orElseThrow();
+        gameRepository.save(game.lastActive(lastActive));
     }
 
     private void validateParticipantCount(@Valid GameForm gameForm) {
@@ -178,7 +197,7 @@ public class GameAdminService {
     public GameUpdates refreshSnrGame(UUID gameId) {
         val game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new RavenscoreException("Game not found"));
-        val isSnrGame = game.link().toLowerCase().contains("swordsandravens.net");
+        val isSnrGame = game.link().toLowerCase().contains(SNR_DOMAIN);
         if (!isSnrGame) {
             throw new RavenscoreException("This game is not a Swords & Ravens game");
         }
@@ -206,14 +225,15 @@ public class GameAdminService {
                 .round(snrRound > 0 && !snrRound.equals(game.round()) ? snrRound : null)
                 .completed(snrCompleted ? true : null)
                 .playerRankingList(snrCompleted ? getPlayerRankings(game, snrGameState) : null)
-                .inactiveHours(snrCompleted ? null : getInactiveHours(snrGameState.lastActiveAt()));
+                .inactiveHours(snrCompleted ? null : getInactiveHours(snrGameState.lastActiveAt()))
+                .lastActive(snrGameState.lastActiveAt());
     }
 
-    private static Long getInactiveHours(Instant lastActiveAt) {
+    private static Long getInactiveHours(LocalDateTime lastActiveAt) {
         if (lastActiveAt == null) {
             return null;
         }
-        val inactiveHours = Duration.between(lastActiveAt, Instant.now()).toHours();
+        val inactiveHours = Duration.between(lastActiveAt, LocalDateTime.now()).toHours();
         return inactiveHours >= 48 ? inactiveHours : null;
     }
 

@@ -1,5 +1,6 @@
 package xyz.zlatanov.ravenscore.model.tourdetails.admin;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,4 +21,5 @@ public class GameUpdates {
 	private Boolean				completed;
 	private List<PlayerRanking>	playerRankingList;
 	private Long				inactiveHours;
+	private LocalDateTime		lastActive;
 }

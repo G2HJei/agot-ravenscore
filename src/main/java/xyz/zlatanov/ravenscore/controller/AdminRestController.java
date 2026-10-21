@@ -1,13 +1,16 @@
 package xyz.zlatanov.ravenscore.controller;
 
+import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.http.ResponseEntity.*;
 import static xyz.zlatanov.ravenscore.controller.ControllerConstants.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +60,14 @@ public class AdminRestController {
 			log.error(ExceptionUtils.getStackTrace(e));
 			return internalServerError().body("Unexpected error occurred.");
 		}
+		return noContent().build();
+	}
+
+	@GetMapping(value = UPDATE_LAST_ACTIVE)
+	public ResponseEntity<Void> updateLastActive(@PathVariable(TOURNAMENT_ID) @TournamentId UUID tournamentId,
+			@PathVariable(GAME_ID) UUID gameId,
+			@PathVariable(LAST_ACTIVE) @DateTimeFormat(iso = DATE_TIME) LocalDateTime lastActive) {
+		gameAdminService.updateLastActive(gameId, lastActive);
 		return noContent().build();
 	}
 

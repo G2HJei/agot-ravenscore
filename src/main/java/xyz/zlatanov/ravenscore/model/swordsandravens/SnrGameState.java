@@ -1,10 +1,11 @@
 package xyz.zlatanov.ravenscore.model.swordsandravens;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.Data;
 import lombok.Getter;
@@ -26,5 +27,6 @@ public class SnrGameState {
     private SnrState state;
 
     @JsonProperty("last_active_at")
-    private Instant lastActiveAt;
+    @JsonDeserialize(using = SnrLocalDateTimeDeserializer.class)
+    private LocalDateTime lastActiveAt;
 }

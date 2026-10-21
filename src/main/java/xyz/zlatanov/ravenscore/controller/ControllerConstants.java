@@ -19,6 +19,7 @@ public class ControllerConstants {
 	public static final String	PARTICIPANT_ID				= "participantId";
 	public static final String	SUBSTITUTE_ID				= "substituteId";
 	public static final String	ROUND						= "round";
+	public static final String	LAST_ACTIVE					= "lastActive";
 
 	// MVC
 	public static final String	ROOT						= "/";
@@ -42,6 +43,7 @@ public class ControllerConstants {
 	public static final String	UNLOCK_TOURNAMENT			= TOURNAMENT_DETAILS + "/unlock-tournament";
 	public static final String	UPDATE_ROUND				= UPSERT_GAME + "/{" + GAME_ID + "}/round/{" + ROUND + "}";
 	public static final String	UPDATE_GAME_RANKINGS		= UPSERT_GAME + "/{" + GAME_ID + "}/rankings";
+	public static final String	UPDATE_LAST_ACTIVE			= UPSERT_GAME + "/{" + GAME_ID + "}/last-active/{" + LAST_ACTIVE + "}";
 	public static final String	REFRESH_SNR_GAME			= TOURNAMENT_DETAILS + "/stage/{" + STAGE_ID + "}/refresh-snr-game/{" + GAME_ID
 			+ "}";
 

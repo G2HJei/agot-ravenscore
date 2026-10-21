@@ -191,7 +191,7 @@
                 const roundLabel = successIndicator.closest(".accordion-item").find(".round-label");
                 if (roundNumber > 0) {
                     roundLabel.removeClass("visually-hidden")
-                        .html(`Round ${roundNumber} |&nbsp;`);
+                        .text(`Round ${roundNumber}`);
                 } else {
                     roundLabel.addClass("visually-hidden");
                 }

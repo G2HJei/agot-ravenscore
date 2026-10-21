@@ -6,6 +6,8 @@ import xyz.zlatanov.ravenscore.domain.model.*;
 import xyz.zlatanov.ravenscore.model.tourdetails.*;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static java.math.RoundingMode.UP;
@@ -158,11 +160,23 @@ public class TournamentDetailsBuilder {
                         .completed(g.completed())
                         .participantIdList(Arrays.stream(g.participantIdList()).map(UUID::toString).toList())
                         .pointsModifier(g.pointsModifier())
+                        .lastActiveLabel(getLastActiveLabel(g))
                         .playersRevealed(playerList.stream()
                                 .filter(player -> player.gameId().equals(g.id()))
                                 .allMatch(player -> player.participantId() != null))
                         .playerModelList(getPlayers(g.id())))
                 .toList();
+    }
+
+    private static String getLastActiveLabel(Game game) {
+        if (game.completed() || game.lastActive() == null) {
+            return null;
+        }
+        val hours = Duration.between(game.lastActive(), LocalDateTime.now()).toHours();
+        if (hours < 1) {
+            return "Last active recently";
+        }
+        return "Last active " + hours + (hours == 1 ? " hour" : " hours") + " ago";
     }
 
     private List<PlayerModel> getPlayers(UUID gameId) {

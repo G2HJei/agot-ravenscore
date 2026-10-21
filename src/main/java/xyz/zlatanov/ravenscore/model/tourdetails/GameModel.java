@@ -21,6 +21,7 @@ public class GameModel {
     private Boolean           playersRevealed;
     private List<String>      participantIdList;
     private BigDecimal        pointsModifier;
+    private String            lastActiveLabel;
     private List<PlayerModel> playerModelList = new ArrayList<>();
 
 }

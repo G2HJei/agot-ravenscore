@@ -11,6 +11,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static jakarta.persistence.EnumType.STRING;
@@ -42,5 +43,7 @@ public class Game {
     private UUID[] participantIdList;
 
     private BigDecimal pointsModifier = BigDecimal.ONE;
+
+    private LocalDateTime lastActive;
 
 }
