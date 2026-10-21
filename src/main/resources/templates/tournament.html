@@ -328,8 +328,8 @@
                                 <button class="accordion-button collapsed py-3 px-4" type="button"
                                         data-bs-toggle="collapse" aria-controls="flush-collapse"
                                         th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false">
-                                    <span class="d-flex flex-wrap gap-1">
-                                            <span th:text="${game.name}">Name</span>
+                                    <span class="d-flex flex-column gap-1">
+                                        <span th:text="${game.name}">Name</span>
                                         <span>
                                             <span class="badge rounded-pill border border-secondary text-secondary-emphasis"
                                                   th:text="${game.type.shortname}">Type</span>
