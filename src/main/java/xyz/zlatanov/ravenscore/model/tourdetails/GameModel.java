@@ -22,6 +22,7 @@ public class GameModel {
     private List<String>      participantIdList;
     private BigDecimal        pointsModifier;
     private String            lastActiveLabel;
+    private boolean           lastActiveOverdue;
     private List<PlayerModel> playerModelList = new ArrayList<>();
 
 }

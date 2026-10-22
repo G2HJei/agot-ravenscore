@@ -237,7 +237,8 @@
                                 </td>
                                 <td th:if="${participant.wins.size() eq 0}" data-testid="standings-wins"></td>
                                 <td class="align-middle text-center" th:text="${participant.avgPoints}"
-                                    data-testid="standings-avg-points">Avg pts</td>
+                                    data-testid="standings-avg-points">Avg pts
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -332,7 +333,8 @@
                         </th:block>
                     </div>
                     <div class="accordion accordion-flush scrollable-div" th:id="${'accordionGames-'+stageIdx.index}">
-                        <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}" data-testid="game-item">
+                        <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}"
+                             data-testid="game-item">
                             <h6 class="accordion-header highlight-primary">
                                 <button class="accordion-button collapsed py-3 px-4" type="button"
                                         data-bs-toggle="collapse" aria-controls="flush-collapse"
@@ -356,7 +358,8 @@
                                                   data-bs-title="Stage ranking points will be calculated after applying this modifier"
                                                   th:text="'x'+${game.pointsModifier()+' pts.'}">x1.00</span>
                                             <span th:if="${game.lastActiveLabel ne null}"
-                                                  class="badge rounded-pill border border-secondary text-secondary-emphasis"
+                                                  class="badge rounded-pill border border-secondary"
+                                                  th:classappend="${game.lastActiveOverdue ? 'text-warning-emphasis' : 'text-secondary-emphasis'}"
                                                   th:text="${game.lastActiveLabel}"
                                                   data-testid="game-last-active-badge">Last active recently</span>
                                         </span>
@@ -389,7 +392,8 @@
                                                 <button type="button"
                                                         class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
                                                         data-bs-toggle="tooltip" data-bs-title="Update game rankings"
-                                                        onclick="updateRanking()" data-testid="game-update-rankings"></button>
+                                                        onclick="updateRanking()"
+                                                        data-testid="game-update-rankings"></button>
                                                 <select th:id="${'game-round-'+game.id}" name="type" class="form-select"
                                                         data-bs-toggle="tooltip" data-bs-title="Change current round"
                                                         aria-label="Select round" onchange="updateRound(this)"

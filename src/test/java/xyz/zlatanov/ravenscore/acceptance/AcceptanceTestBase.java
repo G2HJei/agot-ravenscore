@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -16,7 +15,6 @@ import xyz.zlatanov.ravenscore.acceptance.drivers.web.RavenscoreWebDriver;
 import xyz.zlatanov.ravenscore.acceptance.dsl.Ravenscore;
 import xyz.zlatanov.ravenscore.acceptance.dsl.ScenarioContext;
 import xyz.zlatanov.ravenscore.acceptance.dsl.SwordsAndRavens;
-import xyz.zlatanov.ravenscore.acceptance.infrastructure.AcceptanceTestConfiguration;
 import xyz.zlatanov.ravenscore.acceptance.infrastructure.PlaywrightExtension;
 import xyz.zlatanov.ravenscore.acceptance.infrastructure.SnrWireMockServer;
 
@@ -31,7 +29,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("acceptance")
-@Import(AcceptanceTestConfiguration.class)
 @ExtendWith(PlaywrightExtension.class)
 public abstract class AcceptanceTestBase {
 

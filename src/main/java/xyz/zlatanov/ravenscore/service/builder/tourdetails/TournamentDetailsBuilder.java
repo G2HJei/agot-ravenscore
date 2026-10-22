@@ -13,6 +13,7 @@ import java.util.*;
 import static java.math.RoundingMode.UP;
 import static java.util.Comparator.comparing;
 import static xyz.zlatanov.ravenscore.Utils.*;
+import static xyz.zlatanov.ravenscore.service.GameAdminService.LAST_ACTIVE_HOURS_WARNING_THRESHOLD;
 
 @RequiredArgsConstructor
 public class TournamentDetailsBuilder {
@@ -151,28 +152,40 @@ public class TournamentDetailsBuilder {
     private List<GameModel> getGames(UUID stageId) {
         return gameList.stream()
                 .filter(g -> g.tournamentStageId().equals(stageId))
-                .map(g -> new GameModel()
-                        .id(g.id().toString())
-                        .name(g.name())
-                        .type(g.type())
-                        .link(g.link())
-                        .round(g.round())
-                        .completed(g.completed())
-                        .participantIdList(Arrays.stream(g.participantIdList()).map(UUID::toString).toList())
-                        .pointsModifier(g.pointsModifier())
-                        .lastActiveLabel(getLastActiveLabel(g))
-                        .playersRevealed(playerList.stream()
-                                .filter(player -> player.gameId().equals(g.id()))
-                                .allMatch(player -> player.participantId() != null))
-                        .playerModelList(getPlayers(g.id())))
+                .map(this::toGameModel)
                 .toList();
     }
 
-    private static String getLastActiveLabel(Game game) {
+    private GameModel toGameModel(Game game) {
+        val lastActiveHours = calcLastActiveHours(game);
+        return new GameModel()
+                .id(game.id().toString())
+                .name(game.name())
+                .type(game.type())
+                .link(game.link())
+                .round(game.round())
+                .completed(game.completed())
+                .participantIdList(Arrays.stream(game.participantIdList()).map(UUID::toString).toList())
+                .pointsModifier(game.pointsModifier())
+                .lastActiveLabel(getLastActiveLabel(lastActiveHours))
+                .lastActiveOverdue(lastActiveHours != null && lastActiveHours >= LAST_ACTIVE_HOURS_WARNING_THRESHOLD)
+                .playersRevealed(playerList.stream()
+                        .filter(player -> player.gameId().equals(game.id()))
+                        .allMatch(player -> player.participantId() != null))
+                .playerModelList(getPlayers(game.id()));
+    }
+
+    private Long calcLastActiveHours(Game game) {
         if (game.completed() || game.lastActive() == null) {
             return null;
         }
-        val hours = Duration.between(game.lastActive(), LocalDateTime.now()).toHours();
+        return Duration.between(game.lastActive(), LocalDateTime.now()).toHours();
+    }
+
+    private String getLastActiveLabel(Long hours) {
+        if (hours == null) {
+            return null;
+        }
         if (hours < 1) {
             return "Last active recently";
         }

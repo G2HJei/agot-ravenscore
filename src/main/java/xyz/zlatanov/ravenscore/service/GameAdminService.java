@@ -30,7 +30,8 @@ import static xyz.zlatanov.ravenscore.model.swordsandravens.SnrState.FINISHED;
 @Slf4j
 public class GameAdminService {
 
-    private static final String SNR_DOMAIN = "swordsandravens.net";
+    public static final  long   LAST_ACTIVE_HOURS_WARNING_THRESHOLD = 48;
+    private static final String SNR_DOMAIN                          = "swordsandravens.net";
 
     private final GameRepository            gameRepository;
     private final PlayerRepository          playerRepository;
@@ -237,7 +238,7 @@ public class GameAdminService {
             return null;
         }
         val inactiveHours = Duration.between(lastActiveAt, LocalDateTime.now()).toHours();
-        return inactiveHours >= 48 ? inactiveHours : null;
+        return inactiveHours >= LAST_ACTIVE_HOURS_WARNING_THRESHOLD ? inactiveHours : null;
     }
 
     private ArrayList<PlayerRanking> getPlayerRankings(Game game, SnrGameState snrGameState) {
