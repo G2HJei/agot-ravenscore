@@ -46,7 +46,8 @@
         <h3 class="text-center mt-4 mb-3">Tournaments</h3>
         <div class="row justify-content-center">
             <div class="col-12 col-lg-3 d-flex justify-content-center mb-3">
-                <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
+                <div class="card" style="width: 18rem; position: relative; overflow: hidden;"
+                     data-testid="home-new-tournament">
                     <img th:src="@{'/cards/bg-new.jpg'}" class="card-img-top" alt="Background">
                     <div class="card-body">
                         <a href="#" class="stretched-link" data-bs-toggle="modal" onclick="newTournament()"></a>
@@ -57,7 +58,8 @@
                 </div>
             </div>
             <div th:each="tourney : ${tourneysList}" class="col-12 col-lg-3 d-flex justify-content-center mb-3">
-                <div class="card" style="width: 18rem; position: relative; overflow: hidden;">
+                <div class="card" style="width: 18rem; position: relative; overflow: hidden;"
+                     data-testid="home-tournament-card">
                     <img th:src="@{'/cards/bg-'+${tourney.backgroundNumber}+'.jpg'}"
                          class="card-img-top" alt="Background">
                     <div class="card-body">
@@ -65,7 +67,7 @@
                            class="stretched-link"></a>
                         <h5 class="card-title text-center">
                             <i th:if="${tourney.pinned}" class="bi bi-pin-angle fs-4 text-muted"></i>
-                            <span class="text-brand" th:text="${tourney.name}">Tourney name</span>
+                            <span class="text-brand" th:text="${tourney.name}" data-testid="home-tournament-name">Tourney name</span>
                         </h5>
                         <p class="card-text text-muted text-center"
                            th:text="${tourney.numberOfParticipants + ' participants'}">
@@ -80,7 +82,7 @@
                             <th:block th:if="${tourney.winner ne null}">
                                 <span class="text-muted">Winner</span>
                                 <br/>
-                                <span th:text="${tourney.winner}"></span>
+                                <span th:text="${tourney.winner}" data-testid="home-tournament-winner"></span>
                                 <br/>
                             </th:block>
                             <span class="text-muted">Last updated</span>

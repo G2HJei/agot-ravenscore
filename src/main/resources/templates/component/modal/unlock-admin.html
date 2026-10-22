@@ -12,14 +12,15 @@
                 <div class="mb-3">
                     <form id="unlockForm">
                         <input type="text" minlength="8" maxlength="32" class="form-control" id="tournamentKey"
-                               placeholder="Administration key" required>
+                               placeholder="Administration key" required data-testid="unlock-key">
                     </form>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <div id="tournamentKeyError" class="text-danger visually-hidden ms-1 me-auto">
                         Incorrect key!
                     </div>
-                    <button type="button" class="btn btn-outline-secondary" onclick="unlockAdmin()">Unlock</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="unlockAdmin()"
+                            data-testid="unlock-submit">Unlock</button>
                 </div>
             </div>
         </div>

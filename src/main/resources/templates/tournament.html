@@ -20,21 +20,24 @@
         <button th:if="${model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
                 data-bs-toggle="tooltip" data-bs-title="Modify tournament details"
-                onclick="editTournament()"></button>
+                onclick="editTournament()" data-testid="tournament-edit"></button>
         <button th:if="${not model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-key-fill ms-2 me-2"
                 data-bs-toggle="tooltip" data-bs-title="Unlock tournament administration"
-                onclick="showUnlockModal()"></button>
+                onclick="showUnlockModal()" data-testid="tournament-unlock-admin"></button>
         <button th:if="${model.adminUnlocked}" type="button"
                 class="btn btn-sm btn-outline-secondary bi bi-unlock-fill ms-2"
                 data-bs-toggle="tooltip" data-bs-title="Tournament administration is unlocked. Click to lock it."
-                onclick="lockAdmin()"></button>
+                onclick="lockAdmin()" data-testid="tournament-lock-admin"></button>
     </div>
-    <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}">(Tournament Admin Mode)</h5>
-    <div th:if="${error ne null}" class="alert alert-danger text-center" role="alert" th:text="${error}">
+    <h5 class="text-brand ms-3 text-center fst-italic" th:if="${model.adminUnlocked}"
+        data-testid="tournament-admin-mode">(Tournament Admin Mode)</h5>
+    <div th:if="${error ne null}" class="alert alert-danger text-center" role="alert" th:text="${error}"
+         data-testid="tournament-error">
         Error message
     </div>
-    <div th:if="${message ne null}" class="alert alert-success text-center" role="alert" th:text="${message}">
+    <div th:if="${message ne null}" class="alert alert-success text-center" role="alert" th:text="${message}"
+         data-testid="tournament-message">
         Info message
     </div>
 
@@ -50,11 +53,11 @@
             <button th:if="${model.adminUnlocked}" type="button"
                     class="btn btn-sm btn-outline-secondary bi bi-plus-lg me-2"
                     data-bs-toggle="tooltip" data-bs-title="Create new tournament stage"
-                    onclick="newTournamentStage()"></button>
+                    onclick="newTournamentStage()" data-testid="stage-new"></button>
             <button th:if="${model.adminUnlocked}" type="button"
                     class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
                     data-bs-toggle="tooltip" data-bs-title="Modify selected tournament stage"
-                    onclick="editTournamentStage()"></button>
+                    onclick="editTournamentStage()" data-testid="stage-edit"></button>
         </div>
         <div class="col-12 col-lg-7 mb-3 d-flex justify-content-center justify-content-lg-start align-items-center">
             <ul id="stageNav" class="nav nav-underline" role="tablist">
@@ -63,8 +66,8 @@
                        th:data-rs-stage-id="${stage.id}"
                        th:data-rs-stage-name="${stage.name}"
                        th:data-rs-stage-qualification-count="${stage.qualificationCount}"
-                       data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stage.id}">
-                        <i th:if="${stage.completed}" class="bi bi-check-lg"></i>
+                       data-bs-toggle="tab" th:data-bs-target="${'#stage-'+stage.id}" data-testid="stage-tab">
+                        <i th:if="${stage.completed}" class="bi bi-check-lg" data-testid="stage-completed-icon"></i>
                         <span th:text="${stage.name}">
                         Stage
                     </span>
@@ -105,17 +108,19 @@
                             <button th:if="${model.adminUnlocked and not stage.completed}" type="button"
                                     data-bs-toggle="tooltip"
                                     data-bs-title="Add player" onclick="newParticipant()"
-                                    class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-2"></button>
+                                    class="btn btn-outline-secondary btn-sm bi bi-plus-lg me-2"
+                                    data-testid="stage-add-player"></button>
                             <button th:if="${model.adminUnlocked and not stage.completed}" type="button"
                                     data-bs-toggle="tooltip"
                                     data-bs-title="Import players qualifying from previous stages"
                                     onclick="importParticipants()"
-                                    class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down me-2"></button>
+                                    class="btn btn-outline-secondary btn-sm bi bi-box-arrow-down me-2"
+                                    data-testid="stage-import-players"></button>
                             <button type="button"
                                     th:if="${model.adminUnlocked and not stage.completed and stage.completable}"
                                     class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
                                     data-bs-toggle="tooltip" data-bs-title="Finalize rankings & complete stage"
-                                    onclick="updateStageRanking()"></button>
+                                    onclick="updateStageRanking()" data-testid="stage-finalize"></button>
                         </div>
                         <h5 class="text-center">Stage Rankings</h5>
                         <div class="ms-auto"></div>
@@ -156,15 +161,17 @@
                             </thead>
                             <tbody>
                             <tr th:each="participant, participantIdx: ${stage.participantModelList}"
-                                th:class="${participantIdx.index eq stage.qualificationCount ? 'border-top-brand' : ''}">
+                                th:class="${participantIdx.index eq stage.qualificationCount ? 'border-top-brand' : ''}"
+                                data-testid="standings-row">
                                 <th th:if="${participant.id ne model.winnerParticipantId}"
-                                    class="align-middle text-center text-muted"
+                                    class="align-middle text-center text-muted" data-testid="standings-rank"
                                     scope="row" th:text="${participantIdx.index+1}">#
                                 </th>
                                 <th th:if="${participant.id eq model.winnerParticipantId}"
-                                    class="align-middle text-center"
+                                    class="align-middle text-center" data-testid="standings-rank"
                                     scope="row">
                                     <img th:src="@{'/crown-golden.png'}" alt="winner" class="pb-2"
+                                         data-testid="tournament-winner-crown"
                                          data-bs-toggle="tooltip"
                                          data-bs-title="Tournament winner"></th>
                                 <td>
@@ -200,7 +207,8 @@
                                         <i th:if="${model.adminUnlocked and not stage.completed}"
                                            class="bi bi-pencil-square visually-hidden action-icon"
                                            data-bs-toggle="tooltip"
-                                           data-bs-title="Edit/remove" onclick="editParticipant(this)"></i>
+                                           data-bs-title="Edit/remove" onclick="editParticipant(this)"
+                                           data-testid="player-edit"></i>
                                         <span class="badge rounded-pill bi bi-x border border-secondary text-secondary-emphasis ms-auto"
                                               th:text="${participant.pointsModifier}"
                                               th:if="${participant.pointsModifier ne 1}"
@@ -208,7 +216,7 @@
                                               data-bs-title="Current score modifier. Does not affect completed games.">x0.75</span>
                                     </div>
                                 </td>
-                                <td class="align-middle text-center">
+                                <td class="align-middle text-center" data-testid="standings-score">
                                     <span th:text="${participant.score}"
                                           th:data-bs-toggle="${model.hasPointsModifierGames ? 'tooltip' : ''}"
                                           th:data-bs-title="${'Exact score (without rounding): ' + participant.scoreDecimal+' pts'}">Pts</span>
@@ -217,18 +225,19 @@
                                        th:data-bs-title="${participant.points+' pts. - '+participant.penaltyPoints+' penalty points.'}"></i>
                                 </td>
                                 <td th:if="${participant.games ne 0}" class="align-middle text-center"
-                                    th:text="${participant.games}">Games
+                                    th:text="${participant.games}" data-testid="standings-games">Games
                                 </td>
-                                <td th:if="${participant.games eq 0}"></td>
-                                <td th:if="${participant.wins.size() ne 0}"
+                                <td th:if="${participant.games eq 0}" data-testid="standings-games"></td>
+                                <td th:if="${participant.wins.size() ne 0}" data-testid="standings-wins"
                                     class="align-middle text-center" data-bs-toggle="tooltip"
                                     th:data-bs-title="${participant.wins.size()+' win(s), of which '+participant.cleanWins+' clean'}">
                                     <img th:each="win : ${participant.wins}"
                                          th:src="@{'/houses/'+${win.house.label()}+'.png'}" alt="house icon"
                                          style="max-height: 1rem">
                                 </td>
-                                <td th:if="${participant.wins.size() eq 0}"></td>
-                                <td class="align-middle text-center" th:text="${participant.avgPoints}">Avg pts</td>
+                                <td th:if="${participant.wins.size() eq 0}" data-testid="standings-wins"></td>
+                                <td class="align-middle text-center" th:text="${participant.avgPoints}"
+                                    data-testid="standings-avg-points">Avg pts</td>
                             </tr>
                             </tbody>
                         </table>
@@ -293,12 +302,12 @@
                             <button th:if="${model.adminUnlocked and not stage.completed}" type="button"
                                     class="btn btn-sm btn-outline-secondary bi bi-plus-lg"
                                     data-bs-toggle="tooltip" data-bs-title="Create new game"
-                                    onclick="newGame()"></button>
+                                    onclick="newGame()" data-testid="game-new"></button>
                             <button th:if="${model.adminUnlocked and not stage.completed}"
                                     type="button" class="btn btn-sm btn-outline-secondary"
                                     data-bs-toggle="tooltip"
                                     data-bs-title="Check Swords & Ravens games' status"
-                                    onclick="fetchSnrData()">
+                                    onclick="fetchSnrData()" data-testid="games-check-snr">
                                 <img th:src="@{/external/snr-logo.svg}" alt="SnR" style="height: 16px; width: 16px;">
                             </button>
                         </span>
@@ -323,21 +332,24 @@
                         </th:block>
                     </div>
                     <div class="accordion accordion-flush scrollable-div" th:id="${'accordionGames-'+stageIdx.index}">
-                        <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}">
+                        <div class="accordion-item" th:each="game, gameIdx : ${stage.gameModelList}" data-testid="game-item">
                             <h6 class="accordion-header highlight-primary">
                                 <button class="accordion-button collapsed py-3 px-4" type="button"
                                         data-bs-toggle="collapse" aria-controls="flush-collapse"
-                                        th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false">
+                                        th:data-bs-target="${'#flush-collapse-'+gameIdx.index}" aria-expanded="false"
+                                        data-testid="game-toggle">
                                     <span class="d-flex flex-column gap-1">
-                                        <span th:text="${game.name}">Name</span>
+                                        <span th:text="${game.name}" data-testid="game-name">Name</span>
                                         <span>
                                             <span class="badge rounded-pill border border-secondary text-secondary-emphasis"
                                                   th:text="${game.type.shortname}">Type</span>
                                             <span th:if="${not game.completed}"
                                                   th:text="${'Round '+game.round}"
-                                                  th:class="${'badge rounded-pill border border-secondary text-secondary-emphasis round-label'+(game.round eq null ? ' visually-hidden' : '')}">Round #</span>
+                                                  th:class="${'badge rounded-pill border border-secondary text-secondary-emphasis round-label'+(game.round eq null ? ' visually-hidden' : '')}"
+                                                  data-testid="game-round-badge">Round #</span>
                                             <span th:if="${game.completed}"
-                                                  class="badge rounded-pill border border-secondary text-secondary-emphasis">Completed</span>
+                                                  class="badge rounded-pill border border-secondary text-secondary-emphasis"
+                                                  data-testid="game-completed-badge">Completed</span>
                                             <span th:if="${game.pointsModifier ne 1}"
                                                   class="badge rounded-pill border border-secondary text-secondary-emphasis"
                                                   data-bs-toggle="tooltip"
@@ -345,7 +357,8 @@
                                                   th:text="'x'+${game.pointsModifier()+' pts.'}">x1.00</span>
                                             <span th:if="${game.lastActiveLabel ne null}"
                                                   class="badge rounded-pill border border-secondary text-secondary-emphasis"
-                                                  th:text="${game.lastActiveLabel}">Last active recently</span>
+                                                  th:text="${game.lastActiveLabel}"
+                                                  data-testid="game-last-active-badge">Last active recently</span>
                                         </span>
                                     </span>
                                 </button>
@@ -372,14 +385,15 @@
                                                 <button type="button"
                                                         class="btn btn-sm btn-outline-secondary bi bi-pencil-fill"
                                                         data-bs-toggle="tooltip" data-bs-title="Modify game details"
-                                                        onclick="editGame()"></button>
+                                                        onclick="editGame()" data-testid="game-edit"></button>
                                                 <button type="button"
                                                         class="btn btn-sm btn-outline-secondary bi bi-trophy-fill"
                                                         data-bs-toggle="tooltip" data-bs-title="Update game rankings"
-                                                        onclick="updateRanking()"></button>
+                                                        onclick="updateRanking()" data-testid="game-update-rankings"></button>
                                                 <select th:id="${'game-round-'+game.id}" name="type" class="form-select"
                                                         data-bs-toggle="tooltip" data-bs-title="Change current round"
-                                                        aria-label="Select round" onchange="updateRound(this)">
+                                                        aria-label="Select round" onchange="updateRound(this)"
+                                                        data-testid="game-round-select">
                                                     <option th:selected="${game.round eq null}" value="0">Not started
                                                     </option>
                                                     <option th:each="roundNb : ${#numbers.sequence(1, (game.type.toString() eq 'A_DANCE_WITH_DRAGONS' ? 6 : 10))}"
@@ -472,7 +486,7 @@
                                                     </thead>
                                                     <tbody>
                                                     <tr th:each="player, playerIdx: ${game.playerModelList}"
-                                                        class="player-data"
+                                                        class="player-data" data-testid="game-ranking-row"
                                                         th:data-rs-player-id="${player.id}"
                                                         th:data-rs-player-name="${player.name}"
                                                         th:data-rs-player-house="${player.house}"
@@ -488,7 +502,8 @@
                                                         <th th:if="${game.completed and playerIdx.index eq 0}"
                                                             class="align-middle text-center" scope="row">
                                                             <img th:src="@{'/crown.png'}" alt="winner" class="pb-2"
-                                                                 data-bs-toggle="tooltip" data-bs-title="Winner">
+                                                                 data-bs-toggle="tooltip" data-bs-title="Winner"
+                                                                 data-testid="game-winner-crown">
                                                         </th>
                                                         <td>
                                                             <div class="d-flex justify-content-start align-items-center">

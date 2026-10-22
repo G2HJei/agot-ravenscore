@@ -134,7 +134,7 @@
     }
 
     function logSnrWarning(log) {
-        $('#snrProgress').append($('<span class="text-warning-emphasis">').text(log), "\n");
+        $('#snrProgress').append($('<span class="text-warning-emphasis" data-testid="snr-inactivity-warning">').text(log), "\n");
         scrollSnrLogToBottom();
     }
 

@@ -38,11 +38,11 @@
                                 <input type="hidden" name="completed" value="false">
                                 <label class="form-check-label" for="gameCompleted">Completed</label>
                             </div>
-                            <button type="button" class="btn btn-outline-secondary" onclick="autocompletePoints()"
+                            <button type="button" class="btn btn-outline-secondary" onclick="autocompletePoints()" data-testid="ranking-calc-points"
                                     data-bs-toggle="tooltip" data-bs-title="Calculate points based on the scoring type. In case of tie-breakers such as land areas, supply etc, manually enter the points for each player instead.">
                                 Calc points
                             </button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="submitRanking()">Done</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="submitRanking()" data-testid="modal-done">Done</button>
                         </div>
                     </form>
                 </div>
@@ -50,7 +50,7 @@
         </div>
     </div>`;
     const RANKING_PLAYER_ROW = `
-    <tr>
+    <tr data-testid="ranking-row" data-rs-house="{{house}}">
         <input type="hidden" name="playerId" value="{{player-id}}">
         <td><img src="/houses/{{house}}.png" alt="house icon" style="max-height: 2.25rem"></td>
         <td class="align-middle"><select class="form-select " name="participantId" aria-label="Select participant">{{participant-options}}</select></td>

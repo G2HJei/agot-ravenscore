@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 import xyz.zlatanov.ravenscore.domain.model.*;
 import xyz.zlatanov.ravenscore.domain.repository.GameRepository;
 import xyz.zlatanov.ravenscore.domain.repository.ParticipantRepository;
@@ -37,6 +36,7 @@ public class GameAdminService {
     private final PlayerRepository          playerRepository;
     private final ParticipantRepository     participantRepository;
     private final TournamentStageRepository tournamentStageRepository;
+    private final SnrClient                 snrClient;
 
     @Transactional
     @TournamentAdminOperation
@@ -216,12 +216,7 @@ public class GameAdminService {
     private SnrGameState getSnrGameState(Game game) {
         val snrGameId = game.link()
                 .replaceAll(".*swordsandravens\\.net/play/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}).*", "$1");
-        return WebClient.create()
-                .get()
-                .uri("https://swordsandravens.net/api/public/game/" + snrGameId + "?format=json")
-                .retrieve()
-                .bodyToMono(SnrGameState.class)
-                .block();
+        return snrClient.getGameState(snrGameId);
     }
 
     private GameUpdates checkForUpdates(Game game, SnrGameState snrGameState) {

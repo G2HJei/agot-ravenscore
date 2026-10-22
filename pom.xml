@@ -17,10 +17,16 @@
         <java.version>21</java.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <commons-text.version>1.12.0</commons-text.version>
+        <hipersistence-utils-hibernate-63.version>3.9.0</hipersistence-utils-hibernate-63.version>
         <bootstrap.version>5.3.3</bootstrap.version>
         <bootstrap-icons.version>1.11.0</bootstrap-icons.version>
         <jquery.version>3.7.1</jquery.version>
         <guava.version>33.3.1-jre</guava.version>
+        <playwright.version>1.64.0</playwright.version>
+        <wiremock.version>3.13.2</wiremock.version>
+        <sortablejs.version>1.15.6</sortablejs.version>
+        <chartjs.version>4.4.7</chartjs.version>
+        <chartjs-plugin-datalabels.version>2.2.0</chartjs-plugin-datalabels.version>
     </properties>
     <dependencies>
         <dependency>
@@ -81,7 +87,7 @@
         <dependency>
             <groupId>io.hypersistence</groupId>
             <artifactId>hypersistence-utils-hibernate-63</artifactId>
-            <version>3.9.0</version>
+            <version>${hipersistence-utils-hibernate-63.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -97,27 +103,67 @@
             <groupId>nz.net.ultraq.thymeleaf</groupId>
             <artifactId>thymeleaf-layout-dialect</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>${bootstrap.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>bootstrap-icons</artifactId>
-            <version>${bootstrap-icons.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>jquery</artifactId>
-            <version>${jquery.version}</version>
-        </dependency>
 
         <!-- Utility -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+        <!-- Acceptance tests -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Served instead of jsDelivr in the acceptance tests (see ravenscore.cdn.enabled) -->
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>${bootstrap.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>bootstrap-icons</artifactId>
+            <version>${bootstrap-icons.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>jquery</artifactId>
+            <version>${jquery.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>sortablejs</artifactId>
+            <version>${sortablejs.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>chart.js</artifactId>
+            <version>${chartjs.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>chartjs-plugin-datalabels</artifactId>
+            <version>${chartjs-plugin-datalabels.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -135,6 +181,26 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*AcceptanceTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*AcceptanceTest.java</include>
+                    </includes>
+                    <!-- same timezone as the Docker image; en-US so numbers render as in production (e.g. 15.00) -->
+                    <argLine>-Duser.timezone=UTC -Duser.language=en -Duser.country=US</argLine>
                 </configuration>
             </plugin>
         </plugins>

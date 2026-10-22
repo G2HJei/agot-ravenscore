@@ -19,7 +19,7 @@ public class SnrLastActiveJob {
 
     // runs at hh:00, hh:10, ..., hh:50 and updates only the tournaments last updated within the current 10-minute
     // interval regardless of the hour (e.g. at 12:00 -> hh:00 - hh:09), so each tournament is updated once per hour
-    @Scheduled(cron = "0 */10 * * * *")
+    @Scheduled(cron = "${ravenscore.snr.last-active-job.cron}")
     public void updateSnrLastActive() {
         val fromMinute = (LocalTime.now().getMinute() / 10) * 10;
         val tournamentIds = tournamentRepository.findByLastUpdatedMinuteBetween(fromMinute, fromMinute + 9)
