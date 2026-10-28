@@ -105,13 +105,16 @@
     }
 
     function hasAnyUpdates(gameUpdates) {
-        return gameUpdates.completed || gameUpdates.round || gameUpdates.playerRankingList || gameUpdates.inactiveHours;
+        return gameUpdates.completed || gameUpdates.round || gameUpdates.playerRankingList || gameUpdates.inactiveHours
+            || gameUpdates.lastActive;
     }
 
     function displayUpdates(gameName, updates) {
         logSnr(gameName);
         if (updates.inactiveHours) {
             logSnrWarning('    Last active ' + updates.inactiveHours + ' hours ago!');
+        } else if (updates.lastActive) {
+            logSnr('    Last active ' + formatSnrLastActive(updates.lastActive));
         }
         if (updates.round) {
             logSnr('    Round ' + updates.round
@@ -126,6 +129,12 @@
             }
         }
         logSnr('');
+    }
+
+    // server time (UTC), e.g. 2026-10-28T12:34:35.968436 -> 28/10/2026 12:34 UTC
+    function formatSnrLastActive(lastActive) {
+        const [date, time] = lastActive.split('T');
+        return date.split('-').reverse().join('/') + ' ' + time.substring(0, 5) + ' UTC';
     }
 
     function logSnr(log) {
@@ -149,42 +158,45 @@
         console.log("updating with: \n" + snrRefreshData);
         for (const updates of snrRefreshData.filter(hasAnyUpdates)) {
             logSnr('Updating "' + updates.gameName + '"...');
-            if (updates.round) {
-                await $.ajax({
-                    url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/round/${updates.round}`,
-                    type: "GET",
-                    error: function () {
-                        console.error("Update round request failed:", status, error);
-                    }
-                });
-            }
-            if (updates.completed) {
-                await $.ajax({
-                    url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/rankings`,
-                    type: "POST",
-                    data: JSON.stringify({
-                        gameId: updates.gameId,
-                        completed: updates.completed,
-                        playerRankingList: updates.playerRankingList
-                    }),
-                    contentType: "application/json",
-                    error: function () {
-                        console.error("Update game rankings request failed:", status, error);
-                    }
-                });
-            }
-            if (updates.lastActive) {
-                await $.ajax({
-                    url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/last-active/${updates.lastActive}`,
-                    type: "GET",
-                    error: function (xhr, status, error) {
-                        console.error("Update last active request failed:", status, error);
-                    }
-                });
+            // a failed request is reported and the remaining games are still updated
+            try {
+                if (updates.round) {
+                    await $.ajax({
+                        url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/round/${updates.round}`,
+                        type: "GET"
+                    });
+                }
+                if (updates.completed) {
+                    await $.ajax({
+                        url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/rankings`,
+                        type: "POST",
+                        data: JSON.stringify({
+                            gameId: updates.gameId,
+                            completed: updates.completed,
+                            playerRankingList: updates.playerRankingList
+                        }),
+                        contentType: "application/json"
+                    });
+                }
+                if (updates.lastActive) {
+                    await $.ajax({
+                        url: `/tournament/${getTournamentId()}/stage/${getSelectedStageId()}/game/${updates.gameId}/last-active/${updates.lastActive}`,
+                        type: "GET"
+                    });
+                }
+            } catch (xhr) {
+                console.error('Update of "' + updates.gameName + '" failed:', xhr);
+                logSnr('    Update failed: ' + updateErrorMessage(xhr) + ' Update manually.');
             }
         }
         logSnr('\nDone.');
         $("#snrUpdatesSpinner").addClass("visually-hidden");
         $('#closeRefreshSnrModalBtn').removeClass('visually-hidden');
+    }
+
+    // the rankings endpoint explains rejections in plain text, other failures only have a status
+    function updateErrorMessage(xhr) {
+        const contentType = (xhr.getResponseHeader && xhr.getResponseHeader('Content-Type')) || '';
+        return contentType.startsWith('text/plain') && xhr.responseText ? xhr.responseText : 'HTTP error ' + xhr.status + '.';
     }
 </script>

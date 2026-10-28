@@ -16,17 +16,19 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Optional.ofNullable;
+import static xyz.zlatanov.ravenscore.domain.model.PlayerInactivity.UNTRACKED_START;
 
 @Service
 @RequiredArgsConstructor
 public class BackupService {
 
-    private final TournamentRepository      tournamentRepository;
-    private final ParticipantRepository     participantRepository;
-    private final SubstituteRepository      substituteRepository;
-    private final TournamentStageRepository tournamentStageRepository;
-    private final GameRepository            gameRepository;
-    private final PlayerRepository          playerRepository;
+    private final TournamentRepository       tournamentRepository;
+    private final ParticipantRepository      participantRepository;
+    private final SubstituteRepository       substituteRepository;
+    private final TournamentStageRepository  tournamentStageRepository;
+    private final GameRepository             gameRepository;
+    private final PlayerRepository           playerRepository;
+    private final PlayerInactivityRepository playerInactivityRepository;
 
     @Transactional(readOnly = true)
     @TournamentAdminOperation
@@ -40,8 +42,9 @@ public class BackupService {
         val games = gameRepository.findByTournamentStageIdInOrderByTypeAscNameAsc(stageIds);
         val gameIds = games.stream().map(Game::id).toList();
         val players = playerRepository.findByGameIdInOrderByPointsDesc(gameIds);
+        val playerInactivities = playerInactivityRepository.findByPlayerIdInOrderByStartTime(players.stream().map(Player::id).toList());
         return new TournamentExportBuilder(tournament, tourStages, substitutes,
-                participants, games, players).build();
+                participants, games, players, playerInactivities).build();
     }
 
     @Transactional
@@ -125,7 +128,24 @@ public class BackupService {
         val players = g.playerExportList().stream()
                 .map(pl -> createPlayer(participants, pl, game))
                 .toList();
-        playerRepository.saveAll(players);
+        val savedPlayers = playerRepository.saveAll(players);
+        for (int i = 0; i < savedPlayers.size(); i++) {
+            playerInactivityRepository.saveAll(createPlayerInactivities(g.playerExportList().get(i), savedPlayers.get(i)));
+        }
+    }
+
+    // backups taken before inactivity tracking get the same dummy entry as the migration for penalized players
+    private static List<PlayerInactivity> createPlayerInactivities(PlayerExport pl, Player player) {
+        val inactivityExportList = ofNullable(pl.inactivityExportList())
+                .orElseGet(() -> player.penaltyPoints() > 0
+                        ? List.of(new PlayerInactivityExport().startTime(UNTRACKED_START).durationHours(0))
+                        : List.of());
+        return inactivityExportList.stream()
+                .map(pie -> new PlayerInactivity()
+                        .playerId(player.id())
+                        .startTime(pie.startTime())
+                        .durationHours(pie.durationHours()))
+                .toList();
     }
 
     private List<Participant> createParticipants(TournamentExport tournamentExport) {

@@ -29,14 +29,16 @@ public class SwordsAndRavens {
     }
 
     /**
-     * Args: game, round (default 1), last active (e.g. "50 hours ago", default "recently")
+     * Args: game, round (default 1), last active (e.g. "50 hours ago", default "recently"), waiting for (as shown by
+     * the site, e.g. "Stark (alice), Lannister (bob)" or "Stark, Lannister" in faceless games, default nobody)
      */
     public void gameIsOngoing(String... args) {
-        val params = step("gameIsOngoing", args, "game", "round", "last active");
+        val params = step("gameIsOngoing", args, "game", "round", "last active", "waiting for");
         val game = params.required("game");
         driver.stubGame(context.snrGameId(game), new SnrGameJson(context.snrGameId(game), game)
                 .state("ONGOING")
                 .round(params.integer("round", 1))
+                .waitingFor(params.get("waiting for", ""))
                 .lastActiveAt(timeAgo(params.get("last active", "recently"))));
     }
 

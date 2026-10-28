@@ -18,5 +18,7 @@ public class PlayerModel {
 	private Integer				score;
 	private Integer				penaltyPoints;
 	private String				participantId;
-	private List<ProfileLink>	profileLinks	= new ArrayList<>();
+	private List<ProfileLink>	profileLinks		= new ArrayList<>();
+	private List<String>		inactivityLabels	= new ArrayList<>();
+	private boolean				inactivityWarning;
 }

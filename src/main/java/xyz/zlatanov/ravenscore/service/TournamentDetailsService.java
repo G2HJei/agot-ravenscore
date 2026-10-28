@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import xyz.zlatanov.ravenscore.domain.model.Game;
+import xyz.zlatanov.ravenscore.domain.model.Player;
 import xyz.zlatanov.ravenscore.domain.model.TournamentStage;
 import xyz.zlatanov.ravenscore.domain.repository.*;
 import xyz.zlatanov.ravenscore.model.tourdetails.TournamentDetailsModel;
@@ -21,13 +22,14 @@ import xyz.zlatanov.ravenscore.service.builder.tourdetails.TournamentDetailsBuil
 @RequiredArgsConstructor
 public class TournamentDetailsService {
 
-	private final TourInfoService			tourInfoService;
-	private final TournamentRepository		tournamentRepository;
-	private final ParticipantRepository		participantRepository;
-	private final SubstituteRepository		substituteRepository;
-	private final TournamentStageRepository	tournamentStageRepository;
-	private final GameRepository			gameRepository;
-	private final PlayerRepository			playerRepository;
+	private final TourInfoService				tourInfoService;
+	private final TournamentRepository			tournamentRepository;
+	private final ParticipantRepository			participantRepository;
+	private final SubstituteRepository			substituteRepository;
+	private final TournamentStageRepository		tournamentStageRepository;
+	private final GameRepository				gameRepository;
+	private final PlayerRepository				playerRepository;
+	private final PlayerInactivityRepository	playerInactivityRepository;
 
 	@Transactional(readOnly = true)
 	public TournamentDetailsModel getTournamentDetails(UUID tournamentId, RankingMode rankingMode) {
@@ -43,8 +45,9 @@ public class TournamentDetailsService {
 		val games = gameRepository.findByTournamentStageIdInOrderByTypeAscNameAsc(stageIds);
 		val gameIds = games.stream().map(Game::id).toList();
 		val players = playerRepository.findByGameIdInOrderByPointsDesc(gameIds);
+		val playerInactivities = playerInactivityRepository.findByPlayerIdInOrderByStartTime(players.stream().map(Player::id).toList());
 		return new TournamentDetailsBuilder(tourInfoService.tournamentIsUnlocked(tournamentId), tournament, tourStages, substitutes,
-				participants, games, players, rankingMode).build();
+				participants, games, players, playerInactivities, rankingMode).build();
 	}
 
 }

@@ -18,4 +18,7 @@ public class SnrViewOfGame {
 	private List<SnrPlayer>	victoryTrack;
 
 	private Integer			round;
+
+	// e.g. "Stark (alice), Lannister (bob)", only house names in faceless games, empty when nobody is waited
+	private String			waitingFor;
 }

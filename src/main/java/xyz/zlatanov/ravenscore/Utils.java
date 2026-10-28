@@ -15,6 +15,7 @@ public class Utils {
 
 	public static final DecimalFormat		DECIMAL_FORMATTER	= new DecimalFormat("#,##0.00");
 	public static final DateTimeFormatter	DATE_FORMATTER		= DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	public static final DateTimeFormatter	DATE_TIME_FORMATTER	= DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
 	public static String capitalizeFirstLetter(Object o) {
 		val enumName = o.toString().toLowerCase();

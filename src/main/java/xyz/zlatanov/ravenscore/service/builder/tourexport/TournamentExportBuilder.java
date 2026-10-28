@@ -11,12 +11,13 @@ import xyz.zlatanov.ravenscore.model.export.*;
 @RequiredArgsConstructor
 public class TournamentExportBuilder {
 
-	private final Tournament			tournament;
-	private final List<TournamentStage>	tournamentStageList;
-	private final List<Substitute>		substituteList;
-	private final List<Participant>		participantList;
-	private final List<Game>			gameList;
-	private final List<Player>			playerList;
+	private final Tournament				tournament;
+	private final List<TournamentStage>		tournamentStageList;
+	private final List<Substitute>			substituteList;
+	private final List<Participant>			participantList;
+	private final List<Game>				gameList;
+	private final List<Player>				playerList;
+	private final List<PlayerInactivity>	playerInactivityList;
 
 	public TournamentExport build() {
 		return new TournamentExport()
@@ -73,7 +74,13 @@ public class TournamentExportBuilder {
 																				.filter(part -> part.id().equals(pl.participantId()))
 																				.map(Participant::name)
 																				.findFirst()
-																				.orElse(null)))
+																				.orElse(null))
+																.inactivityExportList(playerInactivityList.stream()
+																		.filter(pi -> pi.playerId().equals(pl.id()))
+																		.map(pi -> new PlayerInactivityExport()
+																				.startTime(pi.startTime())
+																				.durationHours(pi.durationHours()))
+																		.toList()))
 														.toList()))
 										.toList()))
 						.toList());

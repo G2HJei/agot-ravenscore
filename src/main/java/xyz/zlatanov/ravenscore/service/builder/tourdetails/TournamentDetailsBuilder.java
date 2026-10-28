@@ -18,13 +18,14 @@ import static xyz.zlatanov.ravenscore.service.GameAdminService.LAST_ACTIVE_HOURS
 @RequiredArgsConstructor
 public class TournamentDetailsBuilder {
 
-    private final boolean               adminUnlocked;
-    private final Tournament            tournament;
-    private final List<TournamentStage> tournamentStageList;
-    private final List<Substitute>      substituteList;
-    private final List<Participant>     participantList;
-    private final List<Game>            gameList;
-    private final List<Player>          playerList;
+    private final boolean                adminUnlocked;
+    private final Tournament             tournament;
+    private final List<TournamentStage>  tournamentStageList;
+    private final List<Substitute>       substituteList;
+    private final List<Participant>      participantList;
+    private final List<Game>             gameList;
+    private final List<Player>           playerList;
+    private final List<PlayerInactivity> playerInactivityList;
 
     private final RankingMode rankingMode;
 
@@ -158,6 +159,7 @@ public class TournamentDetailsBuilder {
 
     private GameModel toGameModel(Game game) {
         val lastActiveHours = calcLastActiveHours(game);
+        val playerModelList = getPlayers(game.id());
         return new GameModel()
                 .id(game.id().toString())
                 .name(game.name())
@@ -172,7 +174,8 @@ public class TournamentDetailsBuilder {
                 .playersRevealed(playerList.stream()
                         .filter(player -> player.gameId().equals(game.id()))
                         .allMatch(player -> player.participantId() != null))
-                .playerModelList(getPlayers(game.id()));
+                .inactivityWarning(playerModelList.stream().anyMatch(PlayerModel::inactivityWarning))
+                .playerModelList(playerModelList);
     }
 
     private Long calcLastActiveHours(Game game) {
@@ -201,6 +204,7 @@ public class TournamentDetailsBuilder {
                                     .filter(p -> p.id().equals(participantId))
                                     .findFirst()
                                     .orElseThrow());
+                    val inactivityLabels = getInactivityLabels(player.id());
                     return new PlayerModel()
                             .id(player.id().toString())
                             .name(participant.map(Participant::name).orElse(capitalizeFirstLetter(player.house())))
@@ -217,8 +221,18 @@ public class TournamentDetailsBuilder {
                             .castles(player.castles())
                             .score(player.points())
                             .penaltyPoints(player.penaltyPoints())
+                            .inactivityLabels(inactivityLabels)
+                            .inactivityWarning(inactivityLabels.size() > player.penaltyPoints())
                             .participantId(Optional.ofNullable(player.participantId()).map(Object::toString).orElse(null));
                 })
+                .toList();
+    }
+
+    private List<String> getInactivityLabels(UUID playerId) {
+        return playerInactivityList.stream()
+                .filter(inactivity -> inactivity.playerId().equals(playerId))
+                .map(inactivity -> DATE_TIME_FORMATTER.format(inactivity.startTime()) + " UTC: "
+                        + inactivity.durationHours() + " hours")
                 .toList();
     }
 

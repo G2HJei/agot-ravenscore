@@ -12,7 +12,8 @@ real browser ([Playwright](https://playwright.dev/java/)). Ravenscore runs on an
 - **Test cases** (`*AcceptanceTest`) describe tournaments in the language of the game, e.g.
   `ravenscore.createGame("name: Table 1", "type: 2nd edition")`.
 - **DSL** (`dsl`) turns these steps into actions, filling in defaults and keeping tests isolated from each other.
-- **Protocol drivers** (`drivers`) click through the web pages and stub Swords & Ravens.
+- **Protocol drivers** (`drivers`) click through the web pages, stub Swords & Ravens and run the scheduled jobs, which
+  are switched off in tests, on demand.
 
 Run them with `mvn verify` (`mvn package` skips them). The first time, install the browser:
 

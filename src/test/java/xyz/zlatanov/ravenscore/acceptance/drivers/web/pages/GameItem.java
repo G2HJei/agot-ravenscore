@@ -28,12 +28,21 @@ public class GameItem {
                     lastActive: lastActive ? lastActive.innerText.trim() : null,
                     link: item.querySelector('.game-data').dataset.rsGameLink || null,
                     winner: crown ? crown.closest('tr').dataset.rsPlayerName : null,
-                    rankings: [...item.querySelectorAll('[data-testid=game-ranking-row]')].map(row => ({
-                        house: row.dataset.rsPlayerHouse,
-                        player: row.dataset.rsPlayerName,
-                        points: row.dataset.rsPlayerPoints || '',
-                        castles: row.dataset.rsPlayerCastles || ''
-                    }))
+                    inactivityWarning: find('game-inactivity-warning') !== null,
+                    rankings: [...item.querySelectorAll('[data-testid=game-ranking-row]')].map(row => {
+                        // tooltip: a heading, then one "dd/MM/yyyy HH:mm UTC: N hours" line per inactivity
+                        const inactivity = row.querySelector('[data-testid=player-inactivity]');
+                        return {
+                            house: row.dataset.rsPlayerHouse,
+                            player: row.dataset.rsPlayerName,
+                            points: row.dataset.rsPlayerPoints || '',
+                            castles: row.dataset.rsPlayerCastles || '',
+                            inactiveHours: inactivity
+                                ? inactivity.dataset.bsTitle.split('<br>').slice(1).map(line => line.match(/(\\d+) hours?$/)[1])
+                                : [],
+                            inactivityWarning: inactivity !== null && inactivity.dataset.rsInactivityWarning === 'true'
+                        };
+                    })
                 };
             }
             """;
@@ -76,8 +85,10 @@ public class GameItem {
     @SuppressWarnings("unchecked")
     public GameSummary summary() {
         val summary = (Map<String, Object>) root.evaluate(READ_SUMMARY);
-        val rankings = ((List<Map<String, String>>) summary.get("rankings")).stream()
-                .map(r -> new GameSummary.Ranking(r.get("house"), r.get("player"), r.get("points"), r.get("castles")))
+        val rankings = ((List<Map<String, Object>>) summary.get("rankings")).stream()
+                .map(r -> new GameSummary.Ranking((String) r.get("house"), (String) r.get("player"),
+                        (String) r.get("points"), (String) r.get("castles"), (List<String>) r.get("inactiveHours"),
+                        (Boolean) r.get("inactivityWarning")))
                 .toList();
         return new GameSummary(
                 (String) summary.get("name"),
@@ -86,6 +97,7 @@ public class GameItem {
                 (String) summary.get("lastActive"),
                 (String) summary.get("link"),
                 (String) summary.get("winner"),
+                (Boolean) summary.get("inactivityWarning"),
                 rankings);
     }
 }

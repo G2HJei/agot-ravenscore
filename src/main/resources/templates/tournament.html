@@ -362,6 +362,9 @@
                                                   th:classappend="${game.lastActiveOverdue ? 'text-warning-emphasis' : 'text-secondary-emphasis'}"
                                                   th:text="${game.lastActiveLabel}"
                                                   data-testid="game-last-active-badge">Last active recently</span>
+                                            <i th:if="${game.inactivityWarning}"
+                                               class="bi bi-exclamation-triangle-fill text-warning-emphasis"
+                                               data-testid="game-inactivity-warning"></i>
                                         </span>
                                     </span>
                                 </button>
@@ -518,6 +521,12 @@
                                                                   th:class="${player.profileLinks.isEmpty() ? 'text-muted' : ''}">
                                                                 Lannister
                                                             </span>
+                                                                    <i th:if="${not player.inactivityLabels.isEmpty()}"
+                                                                       th:class="${player.inactivityWarning ? 'bi bi-exclamation-triangle-fill text-warning-emphasis ms-1' : 'bi bi-hourglass-split text-secondary-emphasis ms-1'}"
+                                                                       data-bs-toggle="tooltip" data-bs-html="true"
+                                                                       data-testid="player-inactivity"
+                                                                       th:data-rs-inactivity-warning="${player.inactivityWarning}"
+                                                                       th:data-bs-title="${'Did not act for 48+ hours:<br>' + #strings.listJoin(player.inactivityLabels, '<br>')}"></i>
                                                                     <br/>
                                                                     <span th:if="${player.replacedLabel ne null}"
                                                                           class="badge rounded-pill border border-secondary text-secondary-emphasis bi bi-arrow-down-up d-inline-block"

@@ -3,6 +3,7 @@ package xyz.zlatanov.ravenscore.acceptance.dsl;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.assertj.core.api.SoftAssertions;
+import xyz.zlatanov.ravenscore.acceptance.drivers.jobs.ScheduledJobsDriver;
 import xyz.zlatanov.ravenscore.acceptance.drivers.web.RavenscoreWebDriver;
 import xyz.zlatanov.ravenscore.acceptance.drivers.web.modals.Modal;
 import xyz.zlatanov.ravenscore.acceptance.drivers.web.modals.RefreshSnrModal;
@@ -32,13 +33,15 @@ public class Ravenscore {
     private static final String SNR_GAME    = "https://swordsandravens.net/play/";
 
     private final RavenscoreWebDriver driver;
+    private final ScheduledJobsDriver jobs;
     private final ScenarioContext     context;
     private       String              unverifiedError;
     private       RefreshSnrModal     snrModal;
     private       SnrReport           snrReport;
 
-    public Ravenscore(RavenscoreWebDriver driver, ScenarioContext context) {
+    public Ravenscore(RavenscoreWebDriver driver, ScheduledJobsDriver jobs, ScenarioContext context) {
         this.driver = driver;
+        this.jobs = jobs;
         this.context = context;
     }
 
@@ -241,6 +244,18 @@ public class Ravenscore {
     }
 
     /**
+     * The hourly automatic update of the tournament's unfinished Swords & Ravens games runs, then the tournament page
+     * is reloaded to show its results.
+     */
+    public void automaticUpdatesRun() {
+        step("automaticUpdatesRun", new String[0]);
+        val tournament = context.currentTournament();
+        jobs.updateSwordsAndRavensGames(tournament.url());
+        snrModal = null;
+        driver.openTournament(tournament.url());
+    }
+
+    /**
      * Finalizes the selected stage's rankings. Args: order (optional, comma-separated: rearranges the top players)
      */
     public void finalizeStage(String... args) {
@@ -358,10 +373,10 @@ public class Ravenscore {
 
     /**
      * Args: game, status (completed, in progress or not started), round (unfinished games only), winner, last active (e.g.
-     * "3 hours ago" or "recently")
+     * "3 hours ago" or "recently"), inactivity warning (yes/no: a player did not act more times than their penalty points)
      */
     public void verifyGame(String... args) {
-        val params = step("verifyGame", args, "game", "status", "round", "winner", "last active");
+        val params = step("verifyGame", args, "game", "status", "round", "winner", "last active", "inactivity warning");
         val name = params.required("game");
         val game = summary(name);
         val softly = new SoftAssertions();
@@ -371,6 +386,9 @@ public class Ravenscore {
         params.optional("last active").ifPresent(lastActive -> softly.assertThat(game.lastActiveLabel())
                 .as("last activity of %s", name)
                 .isEqualTo("Last active " + lastActive));
+        params.optional("inactivity warning").ifPresent(warning -> softly.assertThat(game.inactivityWarning())
+                .as("inactivity warning on %s", name)
+                .isEqualTo(params.yesNo("inactivity warning", false)));
         softly.assertAll();
     }
 
@@ -384,6 +402,30 @@ public class Ravenscore {
                 .map(row -> expected.columns().stream().map(column -> gameRankingValue(row, column)).toList())
                 .toList());
         assertThat(tables.actual()).as("rankings of %s", params.required("game")).isEqualTo(tables.expected());
+    }
+
+    /**
+     * Verifies, next to the listed houses, the hours of each time the player held the game up for 48 hours or more
+     * (comma-separated, oldest first, or "none") and whether that is flagged as more times than their penalty points.
+     * <p>
+     * Args: game + table: house | inactive hours [| warning (yes/no)]
+     */
+    public void verifyInactivity(String... args) {
+        val params = step("verifyInactivity", args, "game");
+        val name = params.required("game");
+        val expected = params.table();
+        val rankings = summary(name).rankings();
+        val tables = TableComparison.of(expected, expected.rows().stream()
+                .map(row -> {
+                    val house = GameTypes.house(row.get("house"));
+                    val ranking = rankings.stream()
+                            .filter(r -> r.house().equals(house))
+                            .findFirst()
+                            .orElseThrow(() -> new AssertionError("No house " + house + " in " + name));
+                    return expected.columns().stream().map(column -> inactivityValue(ranking, column)).toList();
+                })
+                .toList());
+        assertThat(tables.actual()).as("inactivity in %s", name).isEqualTo(tables.expected());
     }
 
     /**
@@ -565,6 +607,15 @@ public class Ravenscore {
             case "points" -> row.points();
             case "castles" -> row.castles();
             default -> throw new IllegalArgumentException("Unknown game rankings column \"" + column + "\"");
+        };
+    }
+
+    private static String inactivityValue(GameSummary.Ranking row, String column) {
+        return switch (column) {
+            case "house" -> row.house();
+            case "inactive hours" -> row.inactiveHours().isEmpty() ? "none" : String.join(", ", row.inactiveHours());
+            case "warning" -> row.inactivityWarning() ? "yes" : "no";
+            default -> throw new IllegalArgumentException("Unknown inactivity column \"" + column + "\"");
         };
     }
 

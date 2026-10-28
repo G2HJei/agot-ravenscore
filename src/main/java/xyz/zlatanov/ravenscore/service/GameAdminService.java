@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import xyz.zlatanov.ravenscore.domain.model.*;
 import xyz.zlatanov.ravenscore.domain.repository.GameRepository;
 import xyz.zlatanov.ravenscore.domain.repository.ParticipantRepository;
+import xyz.zlatanov.ravenscore.domain.repository.PlayerInactivityRepository;
 import xyz.zlatanov.ravenscore.domain.repository.PlayerRepository;
 import xyz.zlatanov.ravenscore.domain.repository.TournamentStageRepository;
 import xyz.zlatanov.ravenscore.model.swordsandravens.SnrGameState;
@@ -21,9 +22,11 @@ import xyz.zlatanov.ravenscore.security.TournamentAdminOperation;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static xyz.zlatanov.ravenscore.model.swordsandravens.SnrState.FINISHED;
+import static xyz.zlatanov.ravenscore.model.swordsandravens.SnrState.ONGOING;
 
 @Service
 @RequiredArgsConstructor
@@ -33,11 +36,12 @@ public class GameAdminService {
     public static final  long   LAST_ACTIVE_HOURS_WARNING_THRESHOLD = 48;
     private static final String SNR_DOMAIN                          = "swordsandravens.net";
 
-    private final GameRepository            gameRepository;
-    private final PlayerRepository          playerRepository;
-    private final ParticipantRepository     participantRepository;
-    private final TournamentStageRepository tournamentStageRepository;
-    private final SnrClient                 snrClient;
+    private final GameRepository             gameRepository;
+    private final PlayerRepository           playerRepository;
+    private final PlayerInactivityRepository playerInactivityRepository;
+    private final ParticipantRepository      participantRepository;
+    private final TournamentStageRepository  tournamentStageRepository;
+    private final SnrClient                  snrClient;
 
     @Transactional
     @TournamentAdminOperation
@@ -102,9 +106,51 @@ public class GameAdminService {
         }
         gameRepository.findByTournamentStageIdInAndCompletedFalseAndLinkContainingIgnoreCase(stageIds, SNR_DOMAIN)
                 .forEach(game -> {
-                    val lastActive = getSnrGameState(game).lastActiveAt();
-                    gameRepository.save(game.lastActive(lastActive));
+                    val snrGameState = getSnrGameState(game);
+                    gameRepository.save(game.lastActive(snrGameState.lastActiveAt()));
+                    trackInactivePlayers(game, snrGameState);
                 });
+    }
+
+    // records the players being waited on once the game is inactive past the threshold, keyed by the game's last
+    // activity, so later runs only update the duration of the same inactivity
+    private void trackInactivePlayers(Game game, SnrGameState snrGameState) {
+        if (snrGameState.state() != ONGOING || snrGameState.lastActiveAt() == null) {
+            return;
+        }
+        // whole seconds, so the key is found again regardless of the database's timestamp precision
+        val lastActiveAt = snrGameState.lastActiveAt().truncatedTo(ChronoUnit.SECONDS);
+        val inactiveHours = hoursSince(lastActiveAt);
+        if (inactiveHours < LAST_ACTIVE_HOURS_WARNING_THRESHOLD) {
+            return;
+        }
+        val waitingHouses = waitingHouses(snrGameState.viewOfGame().waitingFor());
+        playerRepository.findByGameIdOrderByPointsDesc(game.id()).stream()
+                .filter(player -> waitingHouses.contains(player.house()))
+                .forEach(player -> {
+                    val inactivity = playerInactivityRepository.findByPlayerIdAndStartTime(player.id(), lastActiveAt)
+                            .orElseGet(() -> new PlayerInactivity()
+                                    .playerId(player.id())
+                                    .startTime(lastActiveAt));
+                    playerInactivityRepository.save(inactivity.durationHours((int) inactiveHours));
+                });
+    }
+
+    // waitingFor lists "House (user)" entries, or only "House" in faceless games; entries not starting with a known
+    // house are ignored, which tolerates user names containing ", "
+    private static Set<House> waitingHouses(String waitingFor) {
+        if (waitingFor == null || waitingFor.isBlank()) {
+            return Set.of();
+        }
+        val houses = EnumSet.noneOf(House.class);
+        for (val entry : waitingFor.split(", ")) {
+            val houseLabel = entry.replaceAll(" \\(.*", "").trim();
+            Arrays.stream(House.values())
+                    .filter(house -> house.label().equalsIgnoreCase(houseLabel))
+                    .findFirst()
+                    .ifPresent(houses::add);
+        }
+        return houses;
     }
 
     @Transactional
@@ -230,15 +276,25 @@ public class GameAdminService {
                 .completed(snrCompleted ? true : null)
                 .playerRankingList(snrCompleted ? getPlayerRankings(game, snrGameState) : null)
                 .inactiveHours(snrCompleted ? null : getInactiveHours(snrGameState.lastActiveAt()))
-                .lastActive(snrGameState.lastActiveAt());
+                .lastActive(isNewLastActive(game, snrGameState.lastActiveAt()) ? snrGameState.lastActiveAt() : null);
+    }
+
+    // compared in whole seconds, as the database may not keep all the precision of the SnR timestamp
+    private static boolean isNewLastActive(Game game, LocalDateTime snrLastActive) {
+        return snrLastActive != null && (game.lastActive() == null
+                || !snrLastActive.truncatedTo(ChronoUnit.SECONDS).equals(game.lastActive().truncatedTo(ChronoUnit.SECONDS)));
     }
 
     private static Long getInactiveHours(LocalDateTime lastActiveAt) {
         if (lastActiveAt == null) {
             return null;
         }
-        val inactiveHours = Duration.between(lastActiveAt, LocalDateTime.now()).toHours();
+        val inactiveHours = hoursSince(lastActiveAt);
         return inactiveHours >= LAST_ACTIVE_HOURS_WARNING_THRESHOLD ? inactiveHours : null;
+    }
+
+    private static long hoursSince(LocalDateTime dateTime) {
+        return Duration.between(dateTime, LocalDateTime.now()).toHours();
     }
 
     private ArrayList<PlayerRanking> getPlayerRankings(Game game, SnrGameState snrGameState) {

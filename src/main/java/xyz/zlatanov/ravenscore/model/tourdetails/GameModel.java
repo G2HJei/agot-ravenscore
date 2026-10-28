@@ -23,6 +23,7 @@ public class GameModel {
     private BigDecimal        pointsModifier;
     private String            lastActiveLabel;
     private boolean           lastActiveOverdue;
+    private boolean           inactivityWarning;
     private List<PlayerModel> playerModelList = new ArrayList<>();
 
 }

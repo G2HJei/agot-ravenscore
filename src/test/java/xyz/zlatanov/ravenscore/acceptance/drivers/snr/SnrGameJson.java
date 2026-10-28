@@ -24,6 +24,7 @@ public class SnrGameJson {
         root.put("name", name);
         state("ONGOING");
         round(1);
+        waitingFor("");
         lastActiveAt(Instant.now());
     }
 
@@ -35,6 +36,12 @@ public class SnrGameJson {
 
     public SnrGameJson round(int round) {
         viewOfGame.put("round", round);
+        return this;
+    }
+
+    /** e.g. "Stark (alice), Lannister (bob)", only the houses in faceless games, empty when nobody is waited on */
+    public SnrGameJson waitingFor(String waitingFor) {
+        viewOfGame.put("waitingFor", waitingFor);
         return this;
     }
 
